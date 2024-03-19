@@ -1,0 +1,22 @@
+{
+  "name": "Patrols",
+  "short_name": "CPNZ",
+  "start_url": "/",
+  "background_color": "#eeeeee",
+  "theme_color": "#654321",
+  "display": "standalone",
+  "icons": [
+    {
+      "src": "/vite.svg",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/src/assets/react.svg",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ]
+}
