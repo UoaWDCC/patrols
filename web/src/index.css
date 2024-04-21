@@ -74,3 +74,19 @@
       @apply bg-background text-foreground;
     }
   }
+
+.text-body {
+  @apply text-[24px] leading-[30px];
+}
+
+.text-subheading {
+  @apply text-[35px] leading-[45px] font-[600];
+}
+
+.text-heading {
+  @apply text-[48px] leading-[60px] font-[700];
+}
+
+.h1, h2, h3, h4 {
+
+}

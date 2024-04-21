@@ -13,11 +13,23 @@ module.exports = {
       center: true,
       padding: "2rem",
       screens: {
-        "2xl": "1400px",
+        "2xl": "1340px",
       },
     },
+
+    screens: {
+      xl: "1440px",
+      lg: "1120px",
+      md: "800px",
+      sm: "480px",
+    },
+
     extend: {
       colors: {
+        "cpnz-blue-400": "#6D93CD",
+        "cpnz-blue-800": "#31358D",
+        "cpnz-grey-900": "221E1F",
+
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
         ring: "hsl(var(--ring))",
