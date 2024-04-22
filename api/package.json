@@ -22,7 +22,7 @@
     "typescript": "^5.3.3"
   },
   "dependencies": {
-    "@prisma/client": "5.12.1",
+    "@prisma/client": "^5.12.1",
     "@types/cors": "^2.8.17",
     "@types/express": "^4.17.21",
     "@types/nodemailer": "^6.4.14",
