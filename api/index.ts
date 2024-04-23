@@ -6,6 +6,7 @@ import patrolDb from './db/Patrols';
 
 // Import Routers
 import helloRoutes from './routes/hello';
+import authLoginRoute from './routes/auth/login';
 
 const app = express();
 config();
@@ -19,25 +20,26 @@ app.use(express.static('public'));
 
 // Routes
 app.use('/hello', helloRoutes);
+app.use('/auth', authLoginRoute);
 
 /**
  * This block of code is temporary, need to find a way to link it succinctly with express,
  * or when front-end calling api-routes in backend, these db functions can be directly access
  * in api-routes, and return data to front-end
  */
-async function test() {
-  try {
-    const patrolEmail = "john@cpnz.com";
-    console.log("Testing: Find John Smith......")
-    const patrol = await patrolDb.testCredentials(patrolEmail)
-    console.log("patrol: " + JSON.stringify(patrol))
+// async function test() {
+//   try {
+//     const patrolEmail = "john@cpnz.com";
+//     console.log("Testing: Find John Smith......")
+//     const patrol = await patrolDb.testCredentials(patrolEmail)
+//     console.log("patrol: " + JSON.stringify(patrol))
 
-  } catch (e: any) {
-    console.log(e.message)
-  }
-}
+//   } catch (e: any) {
+//     console.log(e.message)
+//   }
+// }
 
-test()
+// test()
 /**
  * END
  */
