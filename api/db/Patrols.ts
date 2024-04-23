@@ -32,7 +32,7 @@ async function createSomeDummyPatrols() {
                 email: 'sam@cpnz.com',
                 name: 'Sam Brown',
                 role: 'patrol',
-                supervisorID: 1,
+                supervisorID: 2,
             },
         ]
     })

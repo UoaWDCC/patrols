@@ -21,9 +21,9 @@ model Patrols{
   role String @default("Patrol")
   vehicles Vehicles[]
   reports Reports[]
-  supervisorID Int?
+  supervisorID Int? @unique
   supervisor Patrols? @relation("patrolSupervisor", fields: [supervisorID], references: [id])
-  patrol Patrols[] @relation("patrolSupervisor")
+  patrol Patrols? @relation("patrolSupervisor")
 }
 
 model Vehicles{
