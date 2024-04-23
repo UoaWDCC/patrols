@@ -16,7 +16,9 @@
 
 ## Tech Stack
 
-This
+- React
+- Node.js
+- Express.js
 
 ## Setup Runbook
 
