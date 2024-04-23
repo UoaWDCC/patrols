@@ -6,7 +6,7 @@
 - Tech Lead - Jason Huang
 - Frontend - Seth Yoo
 - Frontend - Jay Song
-- Frontend -
+- Frontend - Deasy Lie
 - Backend - Tuocheng (Tony) Li
 - Backend -
 - Backend - 
