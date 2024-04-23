@@ -8,7 +8,7 @@
 - Frontend - Jay Song
 - Frontend - Deasy Lie
 - Backend - Tuocheng (Tony) Li
-- Backend -
+- Backend - Joey Sehan Back
 - Backend - 
 - Front & Back - Raymond Yang
 - Front & Back -
