@@ -6,7 +6,7 @@ import { authenticateUser } from '../../auth_util/auth';
 const authRoutes = Router();
 
 const loginSchema = z.object({
-  cpnzID: z.number(),
+    id: z.number(),
   password: z.string(),
 });
 
@@ -17,8 +17,8 @@ authRoutes.post('/login', async (req: Request, res: Response) => {
     return res.status(400).json({ error: parseResult.error.flatten() });
   }
 
-  const { cpnzID: cpnzID, password } = parseResult.data;
-  const result = await authenticateUser(cpnzID, password);
+  const { id: id, password } = parseResult.data;
+  const result = await authenticateUser(id, password);
 
   if (result.error) {
     return res.status(401).json({ error: result.error });
