@@ -4,7 +4,7 @@
 
 - Project Manager - Isaac Lee
 - Tech Lead - Jason Huang
-- Frontend - 
+- Frontend - Seth Yoo
 - Frontend - 
 - Frontend -
 - Backend - Tuocheng (Tony) Li
