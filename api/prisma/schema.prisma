@@ -32,8 +32,8 @@ model Vehicles{
   registration String
   make String
   model String
-  patrols Patrols @relation(fields: [patrolID], references: [id])
   patrolID Int
+  patrols Patrols @relation(fields: [patrolID], references: [id])
 }
 
 model Reports{
@@ -41,15 +41,14 @@ model Reports{
   title String
   createdAt DateTime @default(now())
   location String
-  patrols Patrols @relation(fields: [patrolID], references: [id])
-  incident IncidentType[]
   patrolID Int
+  reportIncidentType String
+  patrols Patrols @relation(fields: [patrolID], references: [id])
+  incident IncidentType @relation(fields: [reportIncidentType], references: [incidentType])
 }
 
 model IncidentType{
-  incidentType String @unique
-  report Reports @relation(fields: [reportID], references: [id])
-  reportID Int @unique
-  @@id([incidentType, reportID])
+  incidentType String @id @unique
   description String
+  reports Reports[]
 }
