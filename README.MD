@@ -12,7 +12,7 @@
 - Backend - 
 - Front & Back 
 - Front & Back -
-- Designer - 
+- Designer - Lucy Zhu
 
 ## Tech Stack
 
