@@ -10,7 +10,7 @@ const loginSchema = z.object({
   password: z.string(),
 });
 
-authRoutes.post('/auth/login', async (req: Request, res: Response) => {
+authRoutes.post('/login', async (req: Request, res: Response) => {
   const parseResult = loginSchema.safeParse(req.body);
 
   if (!parseResult.success) {

@@ -14,7 +14,7 @@ config();
 // const databaseUrl: string = process.env.DATABASE_URL!;
 // connect(databaseUrl);
 
-app.use(json());
+app.use(express.json());
 app.use(cors());
 app.use(express.static('public'));
 
