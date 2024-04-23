@@ -21,17 +21,22 @@ app.use(express.static('public'));
 app.use('/hello', helloRoutes);
 
 /**
- * This block of code is temporary, need to find a way to link it succinctly with express
- * just to see if it works
+ * This block of code is temporary, need to find a way to link it succinctly with express,
+ * or when front-end calling api-routes in backend, these db functions can be directly access
+ * in api-routes, and return data to front-end
  */
 async function test() {
-  await patrolDb.createSomeDummyPatrols();
-  
-  const patrolEmail = "john@cpnz.com";
-  
-  const patrol = await patrolDb.testCredentials(patrolEmail)
-  
-  console.log("patrol: " + JSON.stringify(patrol))
+  try {
+    await patrolDb.createSomeDummyPatrols();
+
+    const patrolEmail = "john@cpnz.com";
+    console.log("Testing: Find John Smith......")
+    const patrol = await patrolDb.testCredentials(patrolEmail)
+    console.log("patrol: " + JSON.stringify(patrol))
+
+  } catch (e: any) {
+    console.log(e.message)
+  }
 }
 
 test()

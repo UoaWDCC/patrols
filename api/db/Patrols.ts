@@ -1,7 +1,13 @@
 import prisma from './database';
+import { Prisma } from '@prisma/client';
 
 async function createSomeDummyPatrols() {
-    await prisma.patrols.deleteMany()
+    const deletePreviousDummy = await prisma.patrols.deleteMany()
+
+    if (!deletePreviousDummy) {
+        throw new Error("DB ERROR: Failed to delete previous dummy patrols")
+    }
+
     const dummyPatrols = await prisma.patrols.createMany({
         data: [
             {
@@ -20,7 +26,7 @@ async function createSomeDummyPatrols() {
                 role: 'patrol',
                 supervisorID: 1,
             },
-            {   
+            {
                 id: 3,
                 password: '123',
                 email: 'sam@cpnz.com',
@@ -30,8 +36,15 @@ async function createSomeDummyPatrols() {
             },
         ]
     })
+
+    if (!dummyPatrols) {
+        throw new Error("DB ERROR: Failed to create dummy patrols data")
+    }
+
     console.log("created " + dummyPatrols.count + " dummy patrols")
 }
+
+
 async function getPatrolCredentials(patrolID: number, emailInput: string, passwordInput: string) {
     const patrol = await prisma.patrols.findUnique({
         where: {
@@ -41,7 +54,7 @@ async function getPatrolCredentials(patrolID: number, emailInput: string, passwo
         }
     })
 
-    if(patrol) {
+    if (patrol) {
         return patrol
     }
 
@@ -54,17 +67,26 @@ async function getPatrolCredentials(patrolID: number, emailInput: string, passwo
  * @returns
  */
 async function testCredentials(emailInput: string) {
-    const patrol = await prisma.patrols.findUnique({
-        where: {
-            email: emailInput
+    try {
+        const patrol = await prisma.patrols.findUnique({
+            where: {
+                email: emailInput
+            }
+        })
+
+        if (patrol) {
+            return patrol;
         }
-    })
 
-    if(patrol) {
-        return patrol
+        return false;
+
+    } catch(e: any) {
+        if(e instanceof Prisma.PrismaClientKnownRequestError) {
+            throw e.message
+        } else {
+            throw e
+        }
     }
-
-    return false;
 }
 
 
