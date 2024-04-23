@@ -1,50 +1,13 @@
 import prisma from './database';
 import { Prisma } from '@prisma/client';
 
-async function createSomeDummyPatrols() {
-    const deletePreviousDummy = await prisma.patrols.deleteMany()
-
-    if (!deletePreviousDummy) {
-        throw new Error("DB ERROR: Failed to delete previous dummy patrols")
-    }
-
-    const dummyPatrols = await prisma.patrols.createMany({
-        data: [
-            {
-                id: 1,
-                password: '123',
-                email: 'john@cpnz.com',
-                name: 'John Smith',
-                role: 'patrol lead',
-                supervisorID: null
-            },
-            {
-                id: 2,
-                password: '123',
-                email: 'tom@cpnz.com',
-                name: 'Tom bruce',
-                role: 'patrol',
-                supervisorID: 1
-            },
-            {
-                id: 3,
-                password: '123',
-                email: 'sam@cpnz.com',
-                name: 'Sam Brown',
-                role: 'patrol',
-                supervisorID: 2,
-            },
-        ]
-    })
-
-    if (!dummyPatrols) {
-        throw new Error("DB ERROR: Failed to create dummy patrols data")
-    }
-
-    console.log("created " + dummyPatrols.count + " dummy patrols")
-}
-
-
+/**
+ * Verify users credential and return the user info
+ * @param patrolID 
+ * @param emailInput 
+ * @param passwordInput 
+ * @returns 
+ */
 async function getPatrolCredentials(patrolID: number, emailInput: string, passwordInput: string) {
     try {
         const patrol = await prisma.patrols.findUnique({
@@ -71,7 +34,7 @@ async function getPatrolCredentials(patrolID: number, emailInput: string, passwo
 }
 
 /**
- * to find correct user and return
+ * For testing only, also fetch user with email as credential
  * @param patrolID 
  * @returns
  */
@@ -102,7 +65,6 @@ async function testCredentials(emailInput: string) {
 const patrolDb = {
     getPatrolCredentials,
     testCredentials,
-    createSomeDummyPatrols
 }
 
 export default patrolDb

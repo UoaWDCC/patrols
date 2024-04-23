@@ -27,8 +27,6 @@ app.use('/hello', helloRoutes);
  */
 async function test() {
   try {
-    await patrolDb.createSomeDummyPatrols();
-
     const patrolEmail = "john@cpnz.com";
     console.log("Testing: Find John Smith......")
     const patrol = await patrolDb.testCredentials(patrolEmail)
