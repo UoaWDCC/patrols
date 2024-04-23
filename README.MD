@@ -1,4 +1,4 @@
-# React Template
+# Community Patrols NZ
 
 ## Team
 
