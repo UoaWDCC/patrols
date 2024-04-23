@@ -10,7 +10,7 @@
 - Backend - 
 - Backend -
 - Backend - 
-- Front & Back 
+- Front & Back - Raymond Yang
 - Front & Back -
 - Designer - Lucy Zhu
 
