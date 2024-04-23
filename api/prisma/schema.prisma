@@ -33,7 +33,7 @@ model Vehicles{
   make String
   model String
   patrols Patrols @relation(fields: [patrolID], references: [id])
-  patrolID Int @unique
+  patrolID Int
 }
 
 model Reports{
@@ -43,7 +43,7 @@ model Reports{
   location String
   patrols Patrols @relation(fields: [patrolID], references: [id])
   incident IncidentType[]
-  patrolID Int @unique
+  patrolID Int
 }
 
 model IncidentType{
