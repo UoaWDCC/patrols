@@ -1,0 +1,54 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Patrols{
+  id Int @id @unique @default(autoincrement())
+  password String
+  email String @unique
+  name String
+  role String @default("Patrol")
+  vehicles Vehicles[]
+  reports Reports[]
+  supervisorID Int? @unique
+  supervisor Patrols? @relation("patrolSupervisor", fields: [supervisorID], references: [id])
+  patrol Patrols? @relation("patrolSupervisor")
+}
+
+model Vehicles{
+  id Int @id @unique @default(autoincrement())
+  numberPlate String @unique
+  registration String
+  make String
+  model String
+  patrolID Int
+  patrols Patrols @relation(fields: [patrolID], references: [id])
+}
+
+model Reports{
+  id Int @id @unique @default(autoincrement())
+  title String
+  createdAt DateTime @default(now())
+  location String
+  patrolID Int
+  reportIncidentType String
+  patrols Patrols @relation(fields: [patrolID], references: [id])
+  incident IncidentType @relation(fields: [reportIncidentType], references: [incidentType])
+}
+
+model IncidentType{
+  incidentType String @id @unique
+  description String
+  reports Reports[]
+}
