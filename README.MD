@@ -11,7 +11,7 @@
 - Backend - Joey Sehan Back
 - Backend - 
 - Front & Back - Raymond Yang
-- Front & Back -
+- Front & Back - Cedric Yu
 - Designer - Lucy Zhu
 
 ## Tech Stack
