@@ -5,7 +5,7 @@
 - Project Manager - Isaac Lee
 - Tech Lead - Jason Huang
 - Frontend - Seth Yoo
-- Frontend - 
+- Frontend - Jay Song
 - Frontend -
 - Backend - Tuocheng (Tony) Li
 - Backend -
