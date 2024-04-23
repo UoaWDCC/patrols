@@ -46,19 +46,28 @@ async function createSomeDummyPatrols() {
 
 
 async function getPatrolCredentials(patrolID: number, emailInput: string, passwordInput: string) {
-    const patrol = await prisma.patrols.findUnique({
-        where: {
-            email: emailInput,
-            id: patrolID,
-            password: passwordInput
+    try {
+        const patrol = await prisma.patrols.findUnique({
+            where: {
+                email: emailInput,
+                id: patrolID,
+                password: passwordInput
+            }
+        })
+
+        if (patrol) {
+            return patrol
         }
-    })
 
-    if (patrol) {
-        return patrol
+        return null;
+
+    } catch (e: any) {
+        if (e instanceof Prisma.PrismaClientKnownRequestError) {
+            throw e.message
+        } else {
+            throw e
+        }
     }
-
-    return null;
 }
 
 /**
@@ -80,8 +89,8 @@ async function testCredentials(emailInput: string) {
 
         return false;
 
-    } catch(e: any) {
-        if(e instanceof Prisma.PrismaClientKnownRequestError) {
+    } catch (e: any) {
+        if (e instanceof Prisma.PrismaClientKnownRequestError) {
             throw e.message
         } else {
             throw e
