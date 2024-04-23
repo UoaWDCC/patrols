@@ -1,5 +1,19 @@
 # React Template
 
+## Team
+
+- Project Manager - 
+- Tech Lead - 
+- Frontend - 
+- Frontend - 
+- Frontend -
+- Backend - 
+- Backend -
+- Backend - 
+- Front & Back 
+- Front & Back -
+- Designer - 
+
 ## Tech Stack
 
 This
