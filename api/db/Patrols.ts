@@ -16,7 +16,7 @@ async function createSomeDummyPatrols() {
                 email: 'john@cpnz.com',
                 name: 'John Smith',
                 role: 'patrol lead',
-                supervisorID: 0,
+                supervisorID: null
             },
             {
                 id: 2,
@@ -24,7 +24,7 @@ async function createSomeDummyPatrols() {
                 email: 'tom@cpnz.com',
                 name: 'Tom bruce',
                 role: 'patrol',
-                supervisorID: 1,
+                supervisorID: 1
             },
             {
                 id: 3,
