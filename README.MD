@@ -2,7 +2,7 @@
 
 ## Team
 
-- Project Manager - 
+- Project Manager - Isaac Lee
 - Tech Lead - Jason Huang
 - Frontend - 
 - Frontend - 
