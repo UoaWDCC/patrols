@@ -3,7 +3,7 @@
 ## Team
 
 - Project Manager - 
-- Tech Lead - 
+- Tech Lead - Jason Huang
 - Frontend - 
 - Frontend - 
 - Frontend -
