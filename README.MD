@@ -9,7 +9,7 @@
 - Frontend - Deasy Lie
 - Backend - Tuocheng (Tony) Li
 - Backend - Joey Sehan Back
-- Backend - 
+- Backend - Joshua Mak
 - Front & Back - Raymond Yang
 - Front & Back - Cedric Yu
 - Designer - Lucy Zhu
