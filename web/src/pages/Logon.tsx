@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { Link } from "react-router-dom";
 import { FaChevronLeft } from "react-icons/fa";
 import { useForm } from "react-hook-form";
@@ -18,14 +17,17 @@ import {
 import imageCpnzLogo from "../assets/images/cpnz_logo.png";
 
 export default function Logon() {
-  const items = ["Item 1", "Item 2", "Item 3"];
-  const [selectedIndex, setSelectedIndex] = useState(-1);
-
   const formSchema = z.object({
-    eventNo: z.string().min(8, {
-      message: "Event Number must be 8 digits.",
+    //Gonna also have to check whether the Event Number is even a number.
+    eventNo: z
+      .string()
+      .max(8, { message: "Event Number must be 8 digits." })
+      .min(8, {
+        message: "Event Number must be 8 digits.",
+      }),
+    patrolVehicle: z.string().refine((value) => value !== "", {
+      message: "Please select a patrol vehicle.",
     }),
-    patrolVehicle: z.string(),
     reg: z.string(),
     colour: z.string(),
     livery: z.string(),
@@ -44,8 +46,35 @@ export default function Logon() {
     },
   });
 
-  const onSubmit = (e: any) => {
-    e.preventDefault();
+  const handleVehicleChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+    const selectedVehicle = event.target.value;
+    let reg = "";
+    let colour = "";
+    let livery = "";
+    let callSign = "";
+
+    if (selectedVehicle === "HAVAL Jolion") {
+      reg = "QHK6";
+      colour = "WHITE";
+      livery = "YES";
+      callSign = "CSCP";
+    } else if (selectedVehicle === "HAVAL H2") {
+      reg = "LTB442";
+      colour = "WHITE";
+      livery = "YES";
+      callSign = "CSCP2";
+    }
+
+    form.setValue("patrolVehicle", selectedVehicle);
+    form.setValue("reg", reg);
+    form.setValue("colour", colour);
+    form.setValue("livery", livery);
+    form.setValue("callSign", callSign);
+  };
+
+  const onSubmit = (data: z.infer<typeof formSchema>) => {
+    // Handle form submission
+    console.log(data);
   };
 
   return (
@@ -119,10 +148,9 @@ export default function Logon() {
                               <select
                                 {...field}
                                 className="w-60 px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                onChange={handleVehicleChange}
                               >
-                                <option value="" disabled selected>
-                                  Select a vehicle
-                                </option>
+                                <option value="">Select a vehicle</option>
                                 <option value="HAVAL Jolion">
                                   HAVAL Jolion
                                 </option>
@@ -194,45 +222,6 @@ export default function Logon() {
                   </div>
                 </form>
               </Form>
-
-              <div></div>
-
-              {/*Buttons for Report and Home*/}
-              {/* <div className="mt-8">
-                <Link to="/report">
-                  <button className="bg-green-100 px-8 py-4 rounded-lg transition-all duration-300 hover:bg-green-600 hover:text-white shadow-sm hover:shadow-lg">
-                    Report
-                  </button>
-                </Link>
-                <Link to="/home">
-                  <button className="flex items-center gap-4 border-b-2 border-green-200 hover:border-green-500 px-8 py-4 transition-all duration-300 shadow-sm hover:shadow-lg">
-                    <FaChevronLeft size={12} /> Back
-                  </button>
-                </Link>
-              </div> */}
-
-              {/*List Element*/}
-              {/* <div>
-                <h1>List</h1>
-                <ul className="bg-white rounded-lg border border-gray-200 text-gray-900">
-                  {items.length === 0 && <p>No Item Found</p>}
-                  {items.map((item, index) => (
-                    <li
-                      key={item}
-                      className={
-                        selectedIndex === index
-                          ? "px-6 py-2 border-b border-gray-200 w-full active [&.active] bg-gray-100"
-                          : "px-6 py-2 border-b border-gray-200 w-full"
-                      }
-                      onClick={() => {
-                        setSelectedIndex(index);
-                      }}
-                    >
-                      {item}
-                    </li>
-                  ))}
-                </ul>
-              </div> */}
             </div>
           </div>
         </div>
