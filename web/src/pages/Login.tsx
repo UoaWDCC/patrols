@@ -4,7 +4,6 @@ import { z } from 'zod';
 import { Button } from '@components/ui/button';
 import { Form, 
   FormControl, 
-  FormDescription,
   FormField, 
   FormItem, 
   FormLabel, 
@@ -32,7 +31,7 @@ export default function Login() {
   return (
     <div className="min-h-screen pt-24 flex flex-col justify-items-center items-center bg-[#eff6ff]">
       <div className='text-center'>
-        <h3 className="font-bold">One sentence description/opening about the community patrols app</h3>
+        <h3 className="font-bold px-10">One sentence description/opening about the community patrols app</h3>
       </div>
       <div>
         <h2 className="text-2xl tracking-[0.25px] leading-[28.8px] mb-5 mt-20 text-center">Log In</h2>
