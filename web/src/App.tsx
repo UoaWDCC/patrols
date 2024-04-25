@@ -3,8 +3,13 @@ import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import { useState } from "react";
 import Home from "@pages/Home";
 import Report from "@pages/Report";
+import Logon from "@pages/Logon";
 
 const router = createBrowserRouter([
+  {
+    path: "/logon",
+    element: <Logon />,
+  },
   {
     path: "/",
     element: <Home />,
