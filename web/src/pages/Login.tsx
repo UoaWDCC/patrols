@@ -9,6 +9,7 @@ import { Form,
   FormLabel, 
   FormMessage } from '@components/ui/form';
 import { Input } from '@components/ui/input';
+import cpnzLogo from '../assets/logo/cpnzLogo.png';
 
 export default function Login() {
   const formSchema = z.object({
@@ -29,12 +30,19 @@ export default function Login() {
   };
 
   return (
-    <div className="min-h-screen pt-24 flex flex-col justify-items-center items-center bg-[#eff6ff]">
-      <div className='text-center'>
+    <div className="min-h-screen flex flex-col justify-items-center items-center bg-[#eff6ff]">
+      <div>
+      <img 
+          src={cpnzLogo}
+          alt='cpnz logo'
+          className='pt-16'
+        />
+      </div>
+      <div className='text-center mt-8 px-10'>
         <h3 className="font-bold px-10">One sentence description/opening about the community patrols app</h3>
       </div>
       <div>
-        <h2 className="text-2xl tracking-[0.25px] leading-[28.8px] mb-5 mt-20 text-center">Log In</h2>
+        <h2 className="text-2xl tracking-[0.25px] leading-[28.8px] mb-5 mt-10 text-center">Log In</h2>
         <p className="text-xs text-muted-foreground">Please contact XXX if you do not have your login details.</p>
       </div>
       <div className='pt-14'>
