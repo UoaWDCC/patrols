@@ -32,22 +32,22 @@ export default function Home() {
   };
 
   return (
-    <div className="text-center min-h-screen relative">
-      <div className="bg-blue-100 py-8 rounded-b-3xl">
+    <div className="text-center min-h-screen relative bg-blue-50">
+      <div className="bg-blue-900 py-8 rounded-b-3xl">
         <div className="absolute top-4 right-4">
-          <FaCog className="text-2xl text-gray-500 cursor-pointer hover:text-gray-700 transition-colors duration-300" />
+          <FaCog className="text-2xl text-gray-500 cursor-pointer hover:text-gray-400 transition-colors duration-300" />
         </div>
-        <h1 className="text-3xl font-bold mb-2">Welcome back, XXXXXX</h1>
+        <h1 className="text-xl font-bold mb-2 text-white">Welcome back, XXXXXX</h1>
       </div>
       <div className="mb-8 ml-4 mr-4">
         <button
-          className="bg-blue-500 w-full max-w-3xl mx-auto px-8 py-4 mt-4 rounded-lg transition-all duration-300 hover:bg-blue-600 text-white shadow-sm hover:shadow-lg">
+          className="bg-blue-800 w-full mx-auto px-8 py-4 mt-4 rounded-lg text-lg font-semibold transition-all duration-300 hover:bg-blue-500 text-white shadow-sm hover:shadow-lg">
           Log a new report
         </button>
       </div>
       <div className="grid grid-cols-2 mb-8">
         <div
-          className="bg-gray-200 text-black p-4 rounded-lg flex items-center mx-4 hover:bg-gray-300 hover:text-black transition-colors duration-300"
+          className="bg-gray-400 text-white p-4 rounded-lg flex items-center mx-4 hover:bg-gray-300 transition-colors duration-300"
         >
           <div className="mr-4">{/* Add an icon or image */}</div>
           <div>
@@ -55,7 +55,7 @@ export default function Home() {
           </div>
         </div>
         <div
-          className="bg-gray-200 text-black p-4 rounded-lg flex items-center mx-4 hover:bg-gray-300 hover:text-black transition-colors duration-300"
+          className="bg-gray-400 text-white p-4 rounded-lg flex items-center mx-4 hover:bg-gray-300 transition-colors duration-300"
         >
           <div className="mr-4">{/* Add an icon or image */}</div>
           <div>
@@ -65,13 +65,13 @@ export default function Home() {
       </div>
       <div>
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6 ml-4 mr-4">
             <FormField
               control={form.control}
               name="username"
               render={({ field }) => (
-                <FormItem className="text-left ml-4">
-                  <FormLabel className="text-gray-700 text-lg font-bold">Username</FormLabel>
+                <FormItem className="text-left">
+                  <FormLabel className="text-gray-700 text-lg font-bold">USERNAME</FormLabel>
                   <FormControl>
                     <Input
                       placeholder="shadcn"
@@ -88,7 +88,7 @@ export default function Home() {
             />
             <Button
               type="submit"
-              className="bg-blue-500 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-md transition-colors duration-300 ml-auto"
+              className="bg-blue-800 w-full hover:bg-blue-500 text-white font-semibold py-2 px-4 rounded-md transition-colors duration-300 ml-auto"
             >
               Submit
             </Button>
