@@ -24,6 +24,9 @@ export default function Logon() {
       .max(8, { message: "Event Number must be 8 digits." })
       .min(8, {
         message: "Event Number must be 8 digits.",
+      })
+      .regex(/^[0-9]*$/, {
+        message: "Event Number must only contain numbers.",
       }),
     patrolVehicle: z.string().refine((value) => value !== "", {
       message: "Please select a patrol vehicle.",
@@ -41,6 +44,7 @@ export default function Logon() {
     vehicleSafety: z.string().refine((value) => value !== "", {
       message: "Please select an option.",
     }),
+    vehicleDamage: z.string(),
   });
 
   const form = useForm<z.infer<typeof formSchema>>({
@@ -55,6 +59,7 @@ export default function Logon() {
       vehicleWof: "",
       vehicleRegistration: "",
       vehicleSafety: "",
+      vehicleDamage: "",
     },
   });
 
@@ -65,7 +70,13 @@ export default function Logon() {
     let livery = "";
     let callSign = "";
 
-    if (selectedVehicle === "HAVAL Jolion") {
+    if (selectedVehicle === "") {
+      // Set initial values to an empty string when no vehicle is selected
+      reg = "";
+      colour = "";
+      livery = "";
+      callSign = "";
+    } else if (selectedVehicle === "HAVAL Jolion") {
       reg = "QHK6";
       colour = "WHITE";
       livery = "YES";
@@ -127,6 +138,7 @@ export default function Logon() {
                               placeholder="Only enter the 8 digits after the P0"
                               {...field}
                               className="w-60"
+                              maxLength={8}
                             />
                           </FormControl>
                           <FormDescription className="text-xs italic text-black">
@@ -175,6 +187,8 @@ export default function Logon() {
                           </>
                         )}
                       />
+
+                      {/*Patrol Vehicle Details*/}
                       <FormField
                         control={form.control}
                         name="reg"
@@ -224,7 +238,7 @@ export default function Logon() {
                         )}
                       />
                     </div>
-
+                    {/*Patrol Vehicle Condition*/}
                     <div className="flex space-x-4">
                       <FormField
                         control={form.control}
@@ -301,6 +315,33 @@ export default function Logon() {
                         )}
                       />
                     </div>
+                  </div>
+
+                  <div>
+                    <FormField
+                      control={form.control}
+                      name="vehicleDamage"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel className="block mb-1">
+                            Please record any visible damage before starting
+                            your shift (if applicable)
+                          </FormLabel>
+                          <FormControl>
+                            <Input
+                              placeholder="Check condition of tyres, Lighting, external damage etc"
+                              {...field}
+                              className="max-w-screen-xl"
+                            />
+                          </FormControl>
+                          <FormDescription className="text-xs italic text-black">
+                            e.g. small dent on lower left hand passenger door,
+                            by B Pillar, behind decal
+                          </FormDescription>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
                   </div>
 
                   <div className="flex justify-end items-center space-x-4">
