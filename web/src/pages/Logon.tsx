@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { FaChevronLeft } from "react-icons/fa";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -17,6 +17,8 @@ import {
 import imageCpnzLogo from "../assets/images/cpnz_logo.png";
 
 export default function Logon() {
+  const navigate = useNavigate();
+
   const formSchema = z.object({
     //Gonna also have to check whether the Event Number is even a number.
     eventNo: z
@@ -96,8 +98,16 @@ export default function Logon() {
   };
 
   const onSubmit = (data: z.infer<typeof formSchema>) => {
-    // Handle form submission
-    console.log(data);
+    const formErrors = form.formState.errors;
+
+    // Check if there are any form errors
+    if (Object.keys(formErrors).length === 0) {
+      console.log(data);
+      navigate("/logon-two");
+    } else {
+      // There are errors, do not navigate
+      console.log("Please fix the errors before proceeding.");
+    }
   };
 
   return (
@@ -350,7 +360,9 @@ export default function Logon() {
                         <FaChevronLeft size={12} /> Back
                       </button>
                     </Link>
-                    <Button type="submit">Next Page</Button>
+                    <Button type="button" onClick={form.handleSubmit(onSubmit)}>
+                      Next Page
+                    </Button>
                   </div>
                 </form>
               </Form>

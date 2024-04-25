@@ -4,12 +4,9 @@ import { useState } from "react";
 import Home from "@pages/Home";
 import Report from "@pages/Report";
 import Logon from "@pages/Logon";
+import LogonTwo from "@pages/LogonTwo";
 
 const router = createBrowserRouter([
-  {
-    path: "/logon",
-    element: <Logon />,
-  },
   {
     path: "/",
     element: <Home />,
@@ -17,6 +14,14 @@ const router = createBrowserRouter([
   {
     path: "/report",
     element: <Report />,
+  },
+  {
+    path: "/logon",
+    element: <Logon />,
+  },
+  {
+    path: "/logon-two",
+    element: <LogonTwo />,
   },
 ]);
 
