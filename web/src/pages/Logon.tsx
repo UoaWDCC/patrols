@@ -32,6 +32,9 @@ export default function Logon() {
     colour: z.string(),
     livery: z.string(),
     callSign: z.string(),
+    vehicleWof: z.string(),
+    vehicleRegistration: z.string(),
+    vehicleSafety: z.string(),
   });
 
   const form = useForm<z.infer<typeof formSchema>>({
@@ -43,6 +46,9 @@ export default function Logon() {
       colour: "",
       livery: "",
       callSign: "",
+      vehicleWof: "",
+      vehicleRegistration: "",
+      vehicleSafety: "",
     },
   });
 
@@ -135,7 +141,7 @@ export default function Logon() {
                       Driver is responsible for ensuring vehicle is LEGAL & SAFE
                       to drive
                     </p>
-                    <div className="flex space-x-4">
+                    <div className="flex space-x-4 mb-4">
                       <FormField
                         control={form.control}
                         name="patrolVehicle"
@@ -207,6 +213,77 @@ export default function Logon() {
                               <Input {...field} className="w-20" />
                             </FormControl>
                           </FormItem>
+                        )}
+                      />
+                    </div>
+
+                    <div className="flex space-x-4">
+                      <FormField
+                        control={form.control}
+                        name="vehicleWof"
+                        render={({ field }) => (
+                          <>
+                            <FormItem>
+                              <FormLabel className="block">
+                                Vehicle has current WOF?
+                              </FormLabel>
+                              <select
+                                {...field}
+                                className="w-60 px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                              >
+                                <option value="">Select</option>
+                                <option value="YES">YES</option>
+                                <option value="NO">NO</option>
+                              </select>
+                              <FormMessage />
+                            </FormItem>
+                          </>
+                        )}
+                      />
+
+                      <FormField
+                        control={form.control}
+                        name="vehicleRegistration"
+                        render={({ field }) => (
+                          <>
+                            <FormItem>
+                              <FormLabel className="block">
+                                Vehicle has current Registration?
+                              </FormLabel>
+                              <select
+                                {...field}
+                                className="w-60 px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                              >
+                                <option value="">Select</option>
+                                <option value="YES">YES</option>
+                                <option value="NO">NO</option>
+                              </select>
+                              <FormMessage />
+                            </FormItem>
+                          </>
+                        )}
+                      />
+
+                      <FormField
+                        control={form.control}
+                        name="vehicleSafety"
+                        render={({ field }) => (
+                          <>
+                            <FormItem>
+                              <FormLabel className="block">
+                                Is vehicle safe to drive? (e.g. good tyres etc)?
+                              </FormLabel>
+                              <select
+                                {...field}
+                                className="w-60 px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                              >
+                                <option value="">Select</option>
+                                <option value="YES">YES</option>
+                                <option value="NO">NO</option>
+                              </select>
+                              <FormMessage />
+                            </FormItem>
+                          </>
                         )}
                       />
                     </div>
