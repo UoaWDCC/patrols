@@ -32,9 +32,15 @@ export default function Logon() {
     colour: z.string(),
     livery: z.string(),
     callSign: z.string(),
-    vehicleWof: z.string(),
-    vehicleRegistration: z.string(),
-    vehicleSafety: z.string(),
+    vehicleWof: z.string().refine((value) => value !== "", {
+      message: "Please select an option.",
+    }),
+    vehicleRegistration: z.string().refine((value) => value !== "", {
+      message: "Please select an option.",
+    }),
+    vehicleSafety: z.string().refine((value) => value !== "", {
+      message: "Please select an option.",
+    }),
   });
 
   const form = useForm<z.infer<typeof formSchema>>({
@@ -156,7 +162,9 @@ export default function Logon() {
                                 className="w-60 px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                                 onChange={handleVehicleChange}
                               >
-                                <option value="">Select a vehicle</option>
+                                <option value="" disabled>
+                                  Select a vehicle
+                                </option>
                                 <option value="HAVAL Jolion">
                                   HAVAL Jolion
                                 </option>
@@ -231,9 +239,11 @@ export default function Logon() {
                                 {...field}
                                 className="w-60 px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                               >
-                                <option value="">Select</option>
-                                <option value="YES">YES</option>
-                                <option value="NO">NO</option>
+                                <option value="" disabled>
+                                  Select
+                                </option>
+                                <option value="Yes">Yes</option>
+                                <option value="No">No</option>
                               </select>
                               <FormMessage />
                             </FormItem>
@@ -254,9 +264,11 @@ export default function Logon() {
                                 {...field}
                                 className="w-60 px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                               >
-                                <option value="">Select</option>
-                                <option value="YES">YES</option>
-                                <option value="NO">NO</option>
+                                <option value="" disabled>
+                                  Select
+                                </option>
+                                <option value="Yes">Yes</option>
+                                <option value="No">No</option>
                               </select>
                               <FormMessage />
                             </FormItem>
@@ -277,9 +289,11 @@ export default function Logon() {
                                 {...field}
                                 className="w-60 px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                               >
-                                <option value="">Select</option>
-                                <option value="YES">YES</option>
-                                <option value="NO">NO</option>
+                                <option value="" disabled>
+                                  Select
+                                </option>
+                                <option value="Yes">Yes</option>
+                                <option value="No">No</option>
                               </select>
                               <FormMessage />
                             </FormItem>
