@@ -13,7 +13,7 @@ import {
   FormMessage,
 } from "@components/ui/form";
 import { Input } from "@components/ui/input";
-import { FaCog } from "react-icons/fa";
+import { FaCog, FaClipboardList, FaCogs, FaPlus } from "react-icons/fa";
 
 const formSchema = z.object({
   username: z.string().min(2, { message: "Username must be at least 2 characters." }),
@@ -32,32 +32,34 @@ export default function Home() {
   };
 
   return (
-    <div className="text-center min-h-screen relative bg-blue-50">
-      <div className="bg-blue-900 py-8 rounded-b-3xl">
+    <div className="text-center min-h-screen relative bg-[#E6F0FF]">
+      <div className="bg-[#1E3A8A] py-8 rounded-b-3xl flex flex-col justify-between">
         <div className="absolute top-4 right-4">
-          <FaCog className="text-2xl text-gray-500 cursor-pointer hover:text-gray-400 transition-colors duration-300" />
+          <FaCog className="text-2xl text-gray-400 cursor-pointer hover:text-gray-200 transition-colors duration-300" />
         </div>
-        <h1 className="text-xl font-bold mb-2 text-white">Welcome back, XXXXXX</h1>
+        <div className="pl-4 pb-2">
+          <h1 className="text-xl font-bold text-white">Welcome back, XXXXXX</h1>
+        </div>
       </div>
       <div className="mb-8 ml-4 mr-4">
-        <button
-          className="bg-blue-800 w-full mx-auto px-8 py-4 mt-4 rounded-lg text-lg font-semibold transition-all duration-300 hover:bg-blue-500 text-white shadow-sm hover:shadow-lg">
+        <button className="bg-[#334D92] w-full mx-auto px-8 py-4 mt-4 rounded-lg text-lg font-semibold flex items-center justify-center transition-all duration-300 hover:bg-[#243B73] text-white shadow-sm hover:shadow-lg">
+          <FaPlus className="mr-2" />
           Log a new report
         </button>
       </div>
       <div className="grid grid-cols-2 mb-8">
         <div
-          className="bg-gray-400 text-white p-4 rounded-lg flex items-center mx-4 hover:bg-gray-300 transition-colors duration-300"
+          className="bg-[#969696] text-white p-4 rounded-lg flex items-center mx-4 hover:bg-[#808080] transition-colors duration-300"
         >
-          <div className="mr-4">{/* Add an icon or image */}</div>
+          <FaClipboardList className="mr-4" />
           <div>
             <h3 className="text-lg font-semibold">Past Reports</h3>
           </div>
         </div>
         <div
-          className="bg-gray-400 text-white p-4 rounded-lg flex items-center mx-4 hover:bg-gray-300 transition-colors duration-300"
+          className="bg-[#969696] text-white p-4 rounded-lg flex items-center mx-4 hover:bg-[#808080] transition-colors duration-300"
         >
-          <div className="mr-4">{/* Add an icon or image */}</div>
+          <FaCogs className="mr-4" />
           <div>
             <h3 className="text-lg font-semibold">Report Settings</h3>
           </div>
@@ -88,7 +90,7 @@ export default function Home() {
             />
             <Button
               type="submit"
-              className="bg-blue-800 w-full hover:bg-blue-500 text-white font-semibold py-2 px-4 rounded-md transition-colors duration-300 ml-auto"
+              className="bg-[#334D92] w-full hover:bg-[#243B73] text-white font-semibold py-2 px-4 rounded-md transition-colors duration-300 ml-auto"
             >
               Submit
             </Button>
