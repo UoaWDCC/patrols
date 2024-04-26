@@ -25,7 +25,7 @@ async function authenticateUser(id: number, password: string): Promise<AuthResul
         });
 
         if (error) {
-            return { error: user.email };
+            return { error: error.message };
         }
 
         if (data && data.session) {
