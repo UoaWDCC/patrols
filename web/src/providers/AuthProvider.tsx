@@ -10,7 +10,7 @@ export default function AuthProvider({ children }: ChildrenType) {
     const [loading, setLoading] = useState<boolean>(true);
 
     useEffect(() => {
-        const getUserData = async function () {
+        const getSessionData = async function () {
             const {
                 data: { session },
                 error,
@@ -29,7 +29,7 @@ export default function AuthProvider({ children }: ChildrenType) {
             }
         );
 
-        getUserData();
+        getSessionData();
 
         return () => {
             listener?.subscription.unsubscribe();
