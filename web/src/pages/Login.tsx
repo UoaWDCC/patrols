@@ -1,6 +1,4 @@
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useForm } from 'react-hook-form';
-import { z } from 'zod';
 import { Button } from '@components/ui/button';
 import { Form, 
   FormControl, 
@@ -10,24 +8,75 @@ import { Form,
   FormMessage } from '@components/ui/form';
 import { Input } from '@components/ui/input';
 import cpnzLogo from '../assets/logo/cpnzLogo.png';
+import { supabaseClient } from '../auth-client/SupabaseClient';
+import { useNavigate } from 'react-router-dom';
+import { useState, FormEvent, useEffect } from 'react';
+import axios from 'axios';
+import { z } from 'zod';
+import { useForm } from 'react-hook-form';
+
+const tokenSchema = z.object({
+    access_token: z.string(),
+    refresh_token: z.string(),
+});
 
 export default function Login() {
   const formSchema = z.object({
-    email: z.string().email('Invalid email format'),
-    password: z.string().min(4, { message: 'Password must be at least 4 characters' }),
+    cpnzID: z.number(),
+    password: z.string().min(3, { message: 'Password must be at least 3 characters' }),
   });
   
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      email: "",
+      cpnzID: 0,
       password: "",
     },
   });
 
-  const onSubmit = (e: any) => {
-    e.preventDefault();
+
+  const navigate = useNavigate();
+  const [loginId, setLoginId] = useState<string>('');
+  const [password, setPassword] = useState<string>('');
+
+  const onSubmit = async (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault(); // Prevents form data being reset when incorrect details entered
+
+    try {
+        const session = await axios.post(
+            `${import.meta.env.VITE_API_URL}/auth/login`,
+            { id: parseInt(loginId), password: password }
+        );
+
+        const { access_token: accessToken, refresh_token: refreshToken } =
+            tokenSchema.parse(session.data.session);
+
+        if (!accessToken || !refreshToken) {
+            throw new Error('Missing access token or refresh token');
+        }
+
+        const { error: sessionError } =
+            await supabaseClient.auth.setSession({
+                access_token: accessToken,
+                refresh_token: refreshToken,
+            });
+
+        if (sessionError) {
+            throw new Error('Unable to set session');
+        }
+
+        // Navigates to report upon successful login. Can be changed to any route
+        navigate('/report');
+    } catch (error) {
+        axios.isAxiosError(error)
+            ? console.log(error.response?.data.error)
+            : console.error('Unexpected error during login:', error);
+    }
   };
+
+  useEffect(() => {
+    console.log(password)
+  }, [loginId])
 
   return (
     <div className="min-h-screen flex flex-col justify-items-center items-center bg-[#eff6ff]">
@@ -47,15 +96,15 @@ export default function Login() {
       </div>
       <div className='pt-14'>
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5">
+        <form onSubmit={onSubmit} className="space-y-5">
           <FormField
             control={form.control}
-            name="email"
+            name="cpnzID"
             render={({ field }) => (
               <FormItem>
-                <FormLabel className='text-base'>Email</FormLabel>
+                <FormLabel className='text-base'>CPNZ ID</FormLabel>
                 <FormControl>
-                  <Input placeholder="Email" {...field} className='w-80'/>
+                  <Input placeholder="ID" {...field} onChange={(e) => setLoginId(e.target.value)} value={loginId} className='w-80'/>
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -68,7 +117,7 @@ export default function Login() {
               <FormItem>
                 <FormLabel className='text-base'>Password</FormLabel>
                 <FormControl>
-                  <Input type="password" placeholder="Password" {...field} />
+                  <Input type="password" placeholder="Password" {...field} value={password} onChange={(e) => setPassword(e.target.value)} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -88,4 +137,3 @@ export default function Login() {
     </div>
   );
 };
-
