@@ -5,8 +5,8 @@ import { z } from 'zod';
 import { supabaseClient } from '../auth-client/SupabaseClient';
 
 const tokenSchema = z.object({
-    accessToken: z.string(),
-    refreshToken: z.string(),
+    access_token: z.string(),
+    refresh_token: z.string(),
 });
 
 export default function Login() {
@@ -23,9 +23,8 @@ export default function Login() {
                 { id: loginId, password: password }
             );
 
-            const { accessToken, refreshToken } = tokenSchema.parse(
-                session.data.session
-            );
+            const { access_token: accessToken, refresh_token: refreshToken } =
+                tokenSchema.parse(session.data.session);
 
             if (!accessToken || !refreshToken) {
                 throw new Error('Missing access token or refresh token');
