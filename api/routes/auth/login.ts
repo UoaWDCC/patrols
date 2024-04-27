@@ -6,8 +6,8 @@ import { authenticateUser } from '../../auth_util/auth';
 const authRoutes = Router();
 
 const loginSchema = z.object({
-    id: z.string(),
-    password: z.string().min(4, 'Password must be at least 4 characters long'),
+  id: z.string(),
+  password: z.string().min(4, "Password must be at least 4 characters long"),
 });
 
 authRoutes.post('/login', async (req: Request, res: Response) => {
