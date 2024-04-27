@@ -17,6 +17,7 @@ config();
 app.use(express.json());
 app.use(cors());
 app.use(express.static('public'));
+app.use(express.urlencoded({ extended: false }));
 
 // Routes
 app.use('/hello', helloRoutes);
@@ -39,7 +40,7 @@ async function test() {
   }
 }
 
-test()
+// test()
 /**
  * END
  */
