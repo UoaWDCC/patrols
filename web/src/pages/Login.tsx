@@ -1,7 +1,13 @@
 import { useNavigate } from 'react-router-dom';
 import { useState, FormEvent } from 'react';
 import axios from 'axios';
+import { z } from 'zod';
 import { supabaseClient } from '../auth-client/SupabaseClient';
+
+const tokenSchema = z.object({
+    accessToken: z.string(),
+    refreshToken: z.string(),
+});
 
 export default function Login() {
     const navigate = useNavigate();
@@ -17,8 +23,9 @@ export default function Login() {
                 { id: loginId, password: password }
             );
 
-            const accessToken: string = session.data.session.access_token;
-            const refreshToken: string = session.data.session.refresh_token;
+            const { accessToken, refreshToken } = tokenSchema.parse(
+                session.data.session
+            );
 
             if (!accessToken || !refreshToken) {
                 throw new Error('Missing access token or refresh token');
