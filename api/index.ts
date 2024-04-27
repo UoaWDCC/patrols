@@ -7,6 +7,7 @@ import patrolDb from './db/Patrols';
 // Import Routers
 import helloRoutes from './routes/hello';
 import authLoginRoute from './routes/auth/login';
+import reportRoutes from './routes/report';
 
 const app = express();
 config();
@@ -22,6 +23,7 @@ app.use(express.urlencoded({ extended: false }));
 // Routes
 app.use('/hello', helloRoutes);
 app.use('/auth', authLoginRoute);
+app.use('/report', reportRoutes)
 
 /**
  * This block of code is temporary, need to find a way to link it succinctly with express,
