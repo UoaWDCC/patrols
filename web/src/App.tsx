@@ -3,9 +3,10 @@ import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import { useState } from "react";
 import Home from "@pages/Home";
 import Report from "@pages/Report";
-import Log_Home from "@pages/Log_Home";
+import LogHome from "@pages/LogHome";
 import Logon from "@pages/Logon";
 import LogonTwo from "@pages/LogonTwo";
+import AuthProvider from "./providers/AuthProvider";
 
 const router = createBrowserRouter([
   {
@@ -13,8 +14,8 @@ const router = createBrowserRouter([
     element: <Home />,
   },
   {
-    path: "/Log_Home",
-    element: <Log_Home />,
+    path: "/LogHome",
+    element: <LogHome />,
   },
   {
     path: "/Report",
