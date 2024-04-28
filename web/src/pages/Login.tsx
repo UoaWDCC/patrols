@@ -65,8 +65,8 @@ export default function Login() {
             throw new Error('Unable to set session');
         }
 
-        // Navigates to report upon successful login. Can be changed to any route
-        navigate('/report');
+        // Navigates to home upon successful login. Can be changed to any route
+        navigate('/home');
     } catch (error) {
         axios.isAxiosError(error)
             ? console.log(error.response?.data.error)

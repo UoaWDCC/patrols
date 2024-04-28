@@ -1,7 +1,14 @@
-import { Link } from "react-router-dom";
+import { Link, Navigate } from "react-router-dom";
 import { FaCog, FaClipboardList, FaCogs, FaPlus } from "react-icons/fa";
+import { useAuth } from "../hooks/useAuth";
 
 export default function Home() {
+  // Go to login page if user is not authenticated
+  const { user } = useAuth();
+    if (!user) {
+      return <Navigate to={'/login'} />; 
+  }
+
   return (
     <div className="text-center min-h-screen relative bg-[#E6F0FF]">
       <div className="bg-[#1E3A8A] py-8 rounded-b-3xl flex flex-col justify-between">
