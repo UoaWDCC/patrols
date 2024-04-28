@@ -6,12 +6,12 @@
 - Tech Lead - Jason Huang
 - Frontend - Seth Yoo
 - Frontend - Jay Song
-- Frontend -
+- Frontend - Deasy Lie
 - Backend - Tuocheng (Tony) Li
-- Backend -
-- Backend - 
+- Backend - Joey Sehan Back
+- Backend - Joshua Mak
 - Front & Back - Raymond Yang
-- Front & Back -
+- Front & Back - Cedric Yu
 - Designer - Lucy Zhu
 
 ## Tech Stack

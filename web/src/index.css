@@ -1,8 +1,8 @@
 @tailwind base;
-  @tailwind components;
-  @tailwind utilities;
+@tailwind components;
+@tailwind utilities;
 
-  @layer base {
+@layer base {
     :root {
       --background: 0 0% 100%;
       --foreground: 240 10% 3.9%;
@@ -75,18 +75,51 @@
     }
   }
 
+.text-xs {
+  @apply text-[14px] leading-[18px];
+}
+
+.text-sm {
+  @apply text-[18px] leading-[24px];
+}
+
 .text-body {
   @apply text-[24px] leading-[30px];
 }
 
+.text-lg {
+  @apply text-[28px] leading-[37px]
+}
+
 .text-subheading {
-  @apply text-[35px] leading-[45px] font-[600];
+  @apply text-[35px] leading-[48px] font-[600];
 }
 
 .text-heading {
-  @apply text-[48px] leading-[60px] font-[700];
+  @apply text-[48px] leading-[63px] font-[700];
 }
 
-.h1, h2, h3, h4 {
-
+.text-xs-light {
+  @apply text-[14px] leading-[18px] text-white;
 }
+
+.text-sm-light {
+  @apply text-[18px] leading-[24px] text-white;
+}
+
+.text-body-light {
+  @apply text-[24px] leading-[30px] text-white;
+}
+
+.text-lg-light {
+  @apply text-[28px] leading-[37px] text-white;
+}
+
+.text-subheading-light {
+  @apply text-[35px] leading-[48px] font-[600] text-white;
+}
+
+.text-heading-light {
+  @apply text-[48px] leading-[63px] font-[700] text-white;
+}
+

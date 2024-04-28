@@ -4,6 +4,8 @@ import { useState } from "react";
 import Home from "@pages/Home";
 import Report from "@pages/Report";
 import Log_Home from "@pages/Log_Home";
+import Logon from "@pages/Logon";
+import LogonTwo from "@pages/LogonTwo";
 
 const router = createBrowserRouter([
   {
@@ -18,13 +20,23 @@ const router = createBrowserRouter([
     path: "/Report",
     element: <Report />,
   },
+  {
+    path: "/logon",
+    element: <Logon />,
+  },
+  {
+    path: "/logon-two",
+    element: <LogonTwo />,
+  },
 ]);
 
 export default function App() {
-  const [queryClient] = useState(() => new QueryClient());
-  return (
-    <QueryClientProvider client={queryClient}>
-      <RouterProvider router={router} />
-    </QueryClientProvider>
-  );
+    const [queryClient] = useState(() => new QueryClient());
+    return (
+        <QueryClientProvider client={queryClient}>
+            <AuthProvider>
+                <RouterProvider router={router} />
+            </AuthProvider>
+        </QueryClientProvider>
+    );
 }

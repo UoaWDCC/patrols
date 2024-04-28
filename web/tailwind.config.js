@@ -28,7 +28,9 @@ module.exports = {
       colors: {
         "cpnz-blue-400": "#6D93CD",
         "cpnz-blue-800": "#31358D",
-        "cpnz-grey-900": "221E1F",
+        "cpnz-blue-900": "#0f1363",
+        "cpnz-grey-300": "#D9D9D9",
+        "cpnz-grey-900": "#221E1F",
 
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
