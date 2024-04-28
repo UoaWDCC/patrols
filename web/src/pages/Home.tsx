@@ -1,102 +1,44 @@
-// import { useQuery } from "@tanstack/react-query";
-// import QueryKeys from "@utils/queryKeys";
-// import axios from "axios";
-// import { useParams } from "react-router";
-// import urls from "@utils/urls";
-
 import { Link } from "react-router-dom";
-
-import { zodResolver } from "@hookform/resolvers/zod"
-import { useForm } from "react-hook-form"
-import { z } from "zod"
- 
-import { Button } from "@components/ui/button";
-import {
-  Form,
-  FormControl,
-  FormDescription,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@components/ui/form"
-import { Input } from "@components/ui/input"
- 
-const formSchema = z.object({
-  username: z.string().min(2, {
-    message: "Username must be at least 2 characters.",
-  }),
-})
+import { FaCog, FaClipboardList, FaCogs, FaPlus } from "react-icons/fa";
 
 export default function Home() {
-  // const { name } = useParams();
-
-  // const { data, isLoading, isError, error } = useQuery({
-  //   queryKey: [QueryKeys.GetIntro, name],
-  //   queryFn: async () => {
-  //     const { data } = await axios(`/hello/${name}`, {
-  //       method: 'get',
-  //       baseURL: urls.apiUrl,
-  //     });
-  //     return data;
-  //   },
-  // });
-
-  // if (isLoading) {
-  //   return <div className="loading loading-spinner" />;
-  // }
-  // if (isError) {
-  //   return <div>Error: {error.name}</div>;
-  // }
-  // return <div>{data}</div>;
-
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
-    defaultValues: {
-      username: ""
-    }
-  })
-
-  const onSubmit = (e: any) => {
-    e.preventDefault();
-  }
-
   return (
-    <div className="text-center h-[80vh] pt-24 flex flex-col justify-between items-center">
-      <div>
-        <h1 className="text-5xl font-bold mb-6">Hello World</h1>
-        <h3>Welcome to CPNZ progressive web app</h3>
-      </div>
-
-      <div>
-        <Link to="/report">
-          <button className="bg-green-100 px-8 py-4 rounded-lg transition-all duration-300 hover:bg-green-600 hover:text-white shadow-sm hover:shadow-lg">
-            Report
-          </button>
+    <div className="text-center min-h-screen relative bg-[#E6F0FF]">
+      <div className="bg-[#1E3A8A] py-8 rounded-b-3xl flex flex-col justify-between">
+        <div className="absolute top-4 right-4">
+          <FaCog className="text-2xl text-gray-400 cursor-pointer hover:text-gray-200 transition-colors duration-300" />
+        </div>
+        <Link to="/another-page">
+          <div className="pl-4 pb-2 cursor-pointer">
+            <h1 className="text-xl font-bold text-white">Welcome back, XXXXXX</h1>
+          </div>
         </Link>
       </div>
-
-      <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-          <FormField
-            control={form.control}
-            name="username"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Username</FormLabel>
-                <FormControl>
-                  <Input placeholder="shadcn" {...field} />
-                </FormControl>
-                <FormDescription>
-                  This is your public display name.
-                </FormDescription>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <Button type="submit">Submit</Button>
-        </form>
-      </Form>
+      <div className="max-w-800 mx-auto px-4 my-8">
+        <button
+          className="bg-[#334D92] w-full mx-auto px-8 py-8 mt-4 rounded-lg text-lg font-semibold flex items-center justify-center transition-all duration-300 hover:bg-[#243B73] text-white shadow-sm hover:shadow-lg"
+        >
+          <FaPlus className="mr-2" /> Log a new report
+        </button>
+        <div className="grid grid-cols-2 mb-8 mt-8 gap-6">
+          <div
+            className="bg-[#969696] text-white text-center p-8 rounded-lg flex items-center hover:bg-[#808080] transition-colors duration-300"
+          >
+            <FaClipboardList className="mr-12" />
+            <div>
+              <h3 className="text-lg font-semibold">Past Reports</h3>
+            </div>
+          </div>
+          <div
+            className="bg-[#969696] text-white p-6 rounded-lg flex items-center hover:bg-[#808080] transition-colors duration-300"
+          >
+            <FaCogs className="mr-12" />
+            <div>
+              <h3 className="text-lg font-semibold">Report Settings</h3>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }
