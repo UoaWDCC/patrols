@@ -26,10 +26,12 @@ const router = createBrowserRouter([
 ]);
 
 export default function App() {
-  const [queryClient] = useState(() => new QueryClient());
-  return (
-    <QueryClientProvider client={queryClient}>
-      <RouterProvider router={router} />
-    </QueryClientProvider>
-  );
+    const [queryClient] = useState(() => new QueryClient());
+    return (
+        <QueryClientProvider client={queryClient}>
+            <AuthProvider>
+                <RouterProvider router={router} />
+            </AuthProvider>
+        </QueryClientProvider>
+    );
 }
