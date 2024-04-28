@@ -6,6 +6,7 @@ import Report from "@pages/Report";
 import LogHome from "@pages/LogHome";
 import Logon from "@pages/Logon";
 import LogonTwo from "@pages/LogonTwo";
+import Login from "@pages/Login";
 import AuthProvider from "./providers/AuthProvider";
 
 const router = createBrowserRouter([
@@ -28,6 +29,10 @@ const router = createBrowserRouter([
   {
     path: "/logon-two",
     element: <LogonTwo />,
+  },
+  {
+    path: "/login",
+    element: <Login />,
   },
 ]);
 
