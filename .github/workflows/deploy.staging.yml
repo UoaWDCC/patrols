@@ -16,6 +16,7 @@ jobs:
         working-directory: ./web
         env:
           FLY_API_TOKEN: ${{ secrets.FLY_WEB_STAGING_API_TOKEN }}
+          VITE_SUPABASE_KEY: ${{ secrets.VITE_SUPABASE_KEY }}
 
   deploy-api:
     name: Deploy Api
