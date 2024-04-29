@@ -22,14 +22,14 @@ const tokenSchema = z.object({
 
 export default function Login() {
   const formSchema = z.object({
-    cpnzID: z.number(),
+    cpnzID: z.string(),
     password: z.string().min(3, { message: 'Password must be at least 3 characters' }),
   });
   
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      cpnzID: 0,
+      cpnzID: "",
       password: "",
     },
   });
@@ -45,7 +45,7 @@ export default function Login() {
     try {
         const session = await axios.post(
             `${import.meta.env.VITE_API_URL}/auth/login`,
-            { id: parseInt(loginId), password: password }
+            { id: loginId, password: password }
         );
 
         const { access_token: accessToken, refresh_token: refreshToken } =
