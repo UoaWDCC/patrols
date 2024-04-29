@@ -1,12 +1,19 @@
-import { Link, Navigate } from "react-router-dom";
+import { Link, Navigate, useNavigate } from "react-router-dom";
 import { FaCog, FaClipboardList, FaCogs, FaPlus } from "react-icons/fa";
 import { useAuth } from "../hooks/useAuth";
 
 export default function Home() {
+  const navigate = useNavigate();
+
   // Go to login page if user is not authenticated
   const { user } = useAuth();
-    if (!user) {
-      return <Navigate to={'/login'} />; 
+  if (!user) {
+    return <Navigate to={'/login'} />; 
+  }
+
+  // Function to navigate to the logon page when new report button is clicked
+  const handleNewReport = () => {
+    navigate('/logon');
   }
 
   return (
@@ -22,7 +29,8 @@ export default function Home() {
         </Link>
       </div>
       <div className="max-w-800 mx-auto px-4 my-8">
-        <button
+        <button 
+          onClick={handleNewReport} // If user clicks log new report button, navigate to logon page
           className="bg-[#334D92] w-full mx-auto px-8 py-8 mt-4 rounded-lg text-lg font-semibold flex items-center justify-center transition-all duration-300 hover:bg-[#243B73] text-white shadow-sm hover:shadow-lg"
         >
           <FaPlus className="mr-2" /> Log a new report

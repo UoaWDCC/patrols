@@ -1,4 +1,4 @@
-import { Link, useNavigate } from "react-router-dom";
+import { Link, Navigate, useNavigate } from "react-router-dom";
 import { FaChevronLeft } from "react-icons/fa";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -15,10 +15,16 @@ import {
   FormMessage,
 } from "@components/ui/form";
 import imageCpnzLogo from "../assets/images/cpnz_logo.png";
+import { useAuth } from "../hooks/useAuth";
 
 export default function Logon() {
+  // Go to login page if user is not authenticated
+  const { user } = useAuth();
+  if (!user) {
+    return <Navigate to={'/login'} />; 
+  }
+  
   const navigate = useNavigate();
-
   const formSchema = z.object({
     //Gonna also have to check whether the Event Number is even a number.
     eventNo: z
