@@ -8,63 +8,64 @@ import { Prisma } from '@prisma/client';
  * @param passwordInput 
  * @returns 
  */
-async function getPatrolCredentials(patrolID: number, emailInput: string, passwordInput: string) {
-    try {
-        const patrol = await prisma.patrols.findUnique({
-            where: {
-                email: emailInput,
-                id: patrolID,
-                password: passwordInput
-            }
-        })
+// async function getPatrolCredentials(patrolID: number, emailInput: string, passwordInput: string) {
+//     try {
+//         const patrol = await prisma.patrols.findUnique({
+//             where: {
+//                 email: emailInput,
+//                 id: patrolID,
+//                 password: passwordInput
+//             }
+//         })
 
-        if (patrol) {
-            return patrol
-        }
+//         if (patrol) {
+//             return patrol
+//         }
 
-        return null;
+//         return null;
 
-    } catch (e: any) {
-        if (e instanceof Prisma.PrismaClientKnownRequestError) {
-            throw e.message
-        } else {
-            throw e
-        }
-    }
-}
+//     } catch (e: any) {
+      
+//         if (e instanceof Prisma.PrismaClientKnownRequestError) {
+//             throw e.message
+//         } else {
+//             throw e
+//         }
+//     }
+// }
 
-/**
- * For testing only, also fetch user with email as credential
- * @param patrolID 
- * @returns
- */
-async function testCredentials(emailInput: string) {
-    try {
-        const patrol = await prisma.patrols.findUnique({
-            where: {
-                email: emailInput
-            }
-        })
+// /**
+//  * For testing only, also fetch user with email as credential
+//  * @param patrolID 
+//  * @returns
+//  */
+// async function testCredentials(emailInput: string) {
+//     try {
+//         const patrol = await prisma.patrols.findUnique({
+//             where: {
+//                 email: emailInput
+//             }
+//         })
 
-        if (patrol) {
-            return patrol;
-        }
+//         if (patrol) {
+//             return patrol;
+//         }
 
-        return false;
+//         return false;
 
-    } catch (e: any) {
-        if (e instanceof Prisma.PrismaClientKnownRequestError) {
-            throw e.message
-        } else {
-            throw e
-        }
-    }
-}
+//     } catch (e: any) {
+//         if (e instanceof Prisma.PrismaClientKnownRequestError) {
+//             throw e.message
+//         } else {
+//             throw e
+//         }
+//     }
+// }
 
 
 const patrolDb = {
-    getPatrolCredentials,
-    testCredentials,
+    // getPatrolCredentials,
+    // testCredentials,
 }
 
 export default patrolDb

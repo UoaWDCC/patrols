@@ -8,6 +8,7 @@ import patrolDb from './db/Patrols';
 import helloRoutes from './routes/hello';
 import authLoginRoute from './routes/auth/login';
 import reportRoutes from './routes/report';
+import { Prisma } from '@prisma/client';
 
 const app = express();
 config();
@@ -30,17 +31,18 @@ app.use('/report', reportRoutes)
  * or when front-end calling api-routes in backend, these db functions can be directly access
  * in api-routes, and return data to front-end
  */
-async function test() {
-  try {
-    const patrolEmail = "john@cpnz.com";
-    console.log("Testing: Find John Smith......")
-    const patrol = await patrolDb.testCredentials(patrolEmail)
-    console.log("patrol: " + JSON.stringify(patrol))
 
-  } catch (e: any) {
-    console.log(e.message)
-  }
-}
+// async function test() {
+//   try {
+//     const patrolEmail = "john@cpnz.com";
+//     console.log("Testing: Find John Smith......")
+//     const patrol = await patrolDb.testCredentials(patrolEmail)
+//     console.log("patrol: " + JSON.stringify(patrol))
+
+//   } catch (e: any) {
+//     console.log(e.message)
+//   }
+// }
 
 // test()
 /**
