@@ -29,7 +29,7 @@ COPY --link . .
 
 # Set build time environment variables
 ENV VITE_API_URL="https://wdcc-patrols-api-staging.fly.dev"
-ENV VITE_SUPABASE_URL=="https://uwfsywtrderpzyneshop.supabase.co"
+ENV VITE_SUPABASE_URL="https://uwfsywtrderpzyneshop.supabase.co"
 
 # Build application
 RUN yarn run build
