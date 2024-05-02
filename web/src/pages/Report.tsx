@@ -1,16 +1,7 @@
 import { FaChevronLeft } from 'react-icons/fa';
 import { Link } from 'react-router-dom';
-import { Navigate } from 'react-router-dom';
-import { useAuth } from '../hooks/useAuth';
 
 const Report = () => {
-    // Example usage of useAuth hook to check session
-    const { user } = useAuth();
-
-    if (!user) {
-        return <Navigate to={'/'} />;
-    }
-
     return (
         <div className="text-center h-[80vh] pt-24 flex flex-col justify-between items-center">
             <div>
