@@ -10,7 +10,7 @@ import { Input } from '@components/ui/input';
 import cpnzLogo from '../assets/logo/cpnzLogo.png';
 import { supabaseClient } from '../auth-client/SupabaseClient';
 import { useNavigate } from 'react-router-dom';
-import { useState, FormEvent, useEffect } from 'react';
+import { useState, FormEvent } from 'react';
 import axios from 'axios';
 import { z } from 'zod';
 import { useForm } from 'react-hook-form';
@@ -74,10 +74,6 @@ export default function Login() {
     }
   };
 
-  useEffect(() => {
-    console.log(password)
-  }, [loginId])
-
   return (
     <div className="min-h-screen flex flex-col justify-items-center items-center bg-[#eff6ff]">
       <div>
@@ -136,4 +132,4 @@ export default function Login() {
       </div>
     </div>
   );
-};
+}
