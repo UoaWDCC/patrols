@@ -6,6 +6,7 @@ import { config } from 'dotenv';
 import helloRoutes from './routes/hello';
 import authLoginRoute from './routes/auth/login';
 import reportRoutes from './routes/report';
+import userRoutes from './routes/UserRoutes';
 
 const app = express();
 config();
@@ -19,6 +20,7 @@ app.use(express.urlencoded({ extended: false }));
 app.use('/hello', helloRoutes);
 app.use('/auth', authLoginRoute);
 app.use('/report', reportRoutes);
+app.use('/user', userRoutes);
 
 /**
  * This block of code is temporary, need to find a way to link it succinctly with express,
