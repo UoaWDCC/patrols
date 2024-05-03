@@ -9,26 +9,28 @@ jobs:
   deploy-web:
     name: Deploy Web
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: web
     steps:
       - run: touch .env
-        working-directory: ./web
       - name: Create env file
         run: echo ${{ secrets.STAGING_WEB_ENV_FILE }} | base64 --decode > .env
-        working-directory: ./web
       - uses: actions/checkout@v3
       - uses: superfly/flyctl-actions/setup-flyctl@master
       - run: flyctl deploy --remote-only --config fly.staging.toml
-        working-directory: ./web
         env:
           FLY_API_TOKEN: ${{ secrets.FLY_WEB_STAGING_API_TOKEN }}
 
   deploy-api:
     name: Deploy Api
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: api
     steps:
       - uses: actions/checkout@v3
       - uses: superfly/flyctl-actions/setup-flyctl@master
       - run: flyctl deploy --remote-only --config fly.staging.toml
-        working-directory: ./api
         env:
           FLY_API_TOKEN: ${{ secrets.FLY_API_STAGING_API_TOKEN }}
