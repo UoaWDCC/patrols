@@ -13,6 +13,7 @@
 - Front & Back - Raymond Yang
 - Front & Back - Cedric Yu
 - Designer - Lucy Zhu
+- Tech Consultant - Alex McLeod
 
 ## Tech Stack
 
