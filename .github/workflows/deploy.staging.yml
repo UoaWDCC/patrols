@@ -13,7 +13,6 @@ jobs:
       run:
         working-directory: web
     steps:
-      - run: touch .env
       - name: Create env file
         run: echo ${{ secrets.STAGING_WEB_ENV_FILE }} | base64 --decode > .env
       - uses: actions/checkout@v3
