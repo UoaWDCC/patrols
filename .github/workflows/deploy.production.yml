@@ -7,6 +7,7 @@ jobs:
     name: Deploy Web
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v3
       - name: Create env file
         run: echo ${{ secrets.PRODUCTION_WEB_ENV_FILE }} | base64 --decode > .env
         working-directory: web
