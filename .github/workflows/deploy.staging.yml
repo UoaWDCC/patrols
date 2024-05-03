@@ -15,7 +15,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - name: Create env file
-        run: echo ${{ secrets.STAGING_WEB_ENV_FILE }} | base64 --decode > .env
+        run: echo "${{ secrets.STAGING_WEB_ENV_FILE }}" | base64 --decode > .env
       - uses: superfly/flyctl-actions/setup-flyctl@master
       - run: flyctl deploy --remote-only --config fly.staging.toml
         env:
