@@ -7,6 +7,7 @@ import LogHome from "@pages/LogHome";
 import Logon from "@pages/Logon";
 import LogonTwo from "@pages/LogonTwo";
 import Login from "@pages/Login";
+import Profile from '@pages/Profile';
 import AuthProvider from "./providers/AuthProvider";
 import ProtectedRoute from '@components/ProtectedRoute';
 
@@ -56,6 +57,14 @@ const router = createBrowserRouter([
         element: (
             <ProtectedRoute>
                 <LogonTwo />
+            </ProtectedRoute>
+        ),
+    },
+    {
+        path: '/profile',
+        element: (
+            <ProtectedRoute>
+                <Profile />
             </ProtectedRoute>
         ),
     },
