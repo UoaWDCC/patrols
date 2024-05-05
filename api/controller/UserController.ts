@@ -65,7 +65,9 @@ export const updateUserDetails = async (req: Request, res: Response) => {
                 id: id,
             },
             data: {
+                // email: email,
                 password: password,
+                // vehicles: vehicles,
             },
         });
 
