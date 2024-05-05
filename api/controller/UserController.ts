@@ -20,6 +20,7 @@ export const getUserDetailsByEmail = async (req: Request, res: Response) => {
                 email: userEmail,
             },
             select: {
+                id: true,
                 email: true,
                 name: true,
                 vehicles: true,
