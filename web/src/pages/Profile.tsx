@@ -25,13 +25,14 @@ export default function Profile() {
     const [loading, setLoading] = useState(true);
     const [errorMessage, setErrorMessage] = useState<string>('');
     const [currentUserDetails, setCurrentUserDetails] = useState<UserDetails>();
-    const [email, setEmail] = useState<string>();
+    const [email, setEmail] = useState<string>('');
     const [password, setPassword] = useState<string>('');
     const [confirmPassword, setConfirmPassword] = useState<string>('');
 
     const fetchUserData = async () => {
         const userDetails = await getUserDetails();
         setCurrentUserDetails(userDetails);
+        setEmail(userDetails?.email);
         setLoading(false);
     };
 
@@ -63,7 +64,6 @@ export default function Profile() {
             password: confirmPassword,
             // vehicles: currentUserDetails?.vehicles,
         };
-        console.log(email);
         await axios.patch(
             `${import.meta.env.VITE_API_URL}/user/updateUserDetails`,
             updatedUserData
@@ -103,7 +103,6 @@ export default function Profile() {
                         id="email"
                         name="email"
                         disabled={!editable}
-                        defaultValue={currentUserDetails?.email}
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
                     />
