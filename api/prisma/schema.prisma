@@ -18,7 +18,7 @@ model Patrols{
   password String
   email String @unique
   name String
-  role String @default("Patrol")
+  role Role @default(patrol)
   vehicles Vehicles[]
   reports Reports[]
   supervisorID Int? @unique
@@ -51,4 +51,10 @@ model IncidentType{
   incidentType String @id @unique
   description String
   reports Reports[]
+}
+
+enum Role {
+  patrol
+  lead
+  admin
 }
