@@ -114,7 +114,7 @@ model OtherPatrolsInLogOff {
 
 model Amendment {
   id Int @id @unique @default(autoincrement())
-  logOffAt DateTime @default(now())
+  amendmentMadeAt DateTime @default(now())
   shiftHoursChange Int?
   policeStationBase String?
   cpCallSign String?
