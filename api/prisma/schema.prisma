@@ -21,6 +21,12 @@ model Patrols{
   role Role @default(patrol)
   vehicles Vehicles[]
   reports Reports[]
+  logOns LogOn[]
+  asFollowerWhenLogOn OtherPatrolsInLogOn[]
+  logOffs LogOff[]
+  asFollowerWhenLogOff OtherPatrolsInLogOff[]
+  amendments Amendment[]
+  asFollowerInAmendment OtherPatrolsInAmendment[]
   supervisorID Int? @unique
   supervisor Patrols? @relation("patrolSupervisor", fields: [supervisorID], references: [id])
   patrol Patrols? @relation("patrolSupervisor")
@@ -34,6 +40,9 @@ model Vehicles{
   model String
   patrolID Int
   patrols Patrols @relation(fields: [patrolID], references: [id])
+  inLogOn LogOn[]
+  inLogOff LogOff[]
+  inAmendment Amendment[]
 }
 
 model Reports{
@@ -51,6 +60,81 @@ model IncidentType{
   incidentType String @id @unique
   description String
   reports Reports[]
+}
+
+model LogOn {
+  id Int @id @unique @default(autoincrement())
+  logOnAt DateTime @default(now())
+  expectedHours Int
+  policeStationBase String
+  cpCallSign String
+  logOnPatrolId Int
+  patrols Patrols @relation(fields: [logOnPatrolId], references: [id])
+  OtherPatrols OtherPatrolsInLogOn[]
+  vehicleId Int
+  vehicles Vehicles @relation(fields: [vehicleId], references: [id])
+  hasLiveryOrSignage Boolean
+  hasPoliceRadio Boolean
+  logOff LogOff?
+  amendment Amendment[]
+}
+
+model OtherPatrolsInLogOn {
+  LogOnId Int
+  logOns LogOn @relation(fields: [LogOnId], references: [id])
+  patrolId Int
+  patrols Patrols @relation(fields: [patrolId], references: [id])
+  @@id([LogOnId, patrolId])
+}
+
+model LogOff {
+  id Int @id @unique @default(autoincrement())
+  logOffAt DateTime @default(now())
+  actualHours Int?
+  policeStationBase String
+  cpCallSign String
+  logOffPatrolId Int
+  patrols Patrols @relation(fields: [logOffPatrolId], references: [id])
+  OtherPatrols OtherPatrolsInLogOff[]
+  vehicleId Int
+  vehicles Vehicles @relation(fields: [vehicleId], references: [id])
+  hasLiveryOrSignage Boolean
+  hasPoliceRadio Boolean
+  logOnId Int @unique
+  logOn LogOn @relation(fields: [logOnId], references: [id])
+}
+
+model OtherPatrolsInLogOff {
+  LogOffId Int
+  logOffs LogOff @relation(fields: [LogOffId], references: [id])
+  patrolId Int
+  patrols Patrols @relation(fields: [patrolId], references: [id])
+  @@id([LogOffId, patrolId])
+}
+
+model Amendment {
+  id Int @id @unique @default(autoincrement())
+  logOffAt DateTime @default(now())
+  shiftHoursChange Int?
+  policeStationBase String?
+  cpCallSign String?
+  amendmentPatrolId Int
+  patrols Patrols @relation(fields: [amendmentPatrolId], references: [id])
+  OtherPatrols OtherPatrolsInAmendment[]
+  vehicleId Int
+  vehicles Vehicles @relation(fields: [vehicleId], references: [id])
+  hasLiveryOrSignage Boolean
+  hasPoliceRadio Boolean
+  logOnId Int
+  logOn LogOn @relation(fields: [logOnId], references: [id])
+}
+
+model OtherPatrolsInAmendment {
+  amendmentId Int
+  amendment Amendment @relation(fields: [amendmentId], references: [id])
+  patrolId Int
+  patrols Patrols @relation(fields: [patrolId], references: [id])
+  @@id([amendmentId, patrolId])
 }
 
 enum Role {
