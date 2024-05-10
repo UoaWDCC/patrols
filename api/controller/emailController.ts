@@ -4,9 +4,9 @@ import { Resend } from 'resend';
 import prisma from '../db/database';
 
 const EMAIL_API_KEY = process.env.RESEND_API_KEY
-const resend = new Resend(EMAIL_API_KEY);
 const trialDomain = 'onboarding@resend.dev';
 const CPNZ_APP_EMAIL = process.env.CPNZ_DOMAIN ?? trialDomain
+const resend = new Resend(EMAIL_API_KEY);
 
 export const sendEmail = async (req: Request, res: Response) => {
 
@@ -49,7 +49,7 @@ export const sendEmail = async (req: Request, res: Response) => {
             from: `Acme <${trialDomain}>`,
             to: [`${email}`],
             subject: `Request Log On - Patrol ID: ${patrolID}`,
-            html: `<strong>${patrolName}</strong> request log on to shift with following details: <br><br> ${formData}`,
+            html: `<strong>${patrolName}</strong> request to log on a shift with following details: <br><br> ${formData}<br><br><hr>please reply with the <strong>Event ID<strong> to <a href="mailto:cpnz123@kmail.com">CPNZ Patrol Email</a>`,
         });
 
         res.status(200).json(data);
