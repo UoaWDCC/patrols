@@ -3,6 +3,7 @@ import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import { useState } from "react";
 import Home from "@pages/Home";
 import Report from "@pages/Report";
+import ReportTwo from "@pages/ReportTwo";
 import LogHome from "@pages/LogHome";
 import Logon from "@pages/Logon";
 import LogonTwo from "@pages/LogonTwo";
@@ -15,17 +16,19 @@ const router = createBrowserRouter([
     {
         path: '/',
         element: (
-            <ProtectedRoute>
-                <Home />
-            </ProtectedRoute>
+            // <ProtectedRoute>
+            //     <Home />
+            // </ProtectedRoute>
+            <Home />
         ),
     },
     {
         path: '/home',
         element: (
-            <ProtectedRoute>
-                <Home />
-            </ProtectedRoute>
+            // <ProtectedRoute>
+            //     <Home />
+            // </ProtectedRoute>
+            <Home />
         ),
     },
     {
@@ -39,9 +42,19 @@ const router = createBrowserRouter([
     {
         path: '/Report',
         element: (
-            <ProtectedRoute>
-                <Report />
-            </ProtectedRoute>
+            // <ProtectedRoute>
+            //     <Report />
+            // </ProtectedRoute>
+            <Report />
+        ),
+    },
+    {
+        path: '/ReportTwo',
+        element: (
+            // <ProtectedRoute>
+            //     <ReportTwo />
+            // </ProtectedRoute>
+            <ReportTwo />
         ),
     },
     {

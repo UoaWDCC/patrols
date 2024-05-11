@@ -9,42 +9,76 @@ export default function Home() {
         navigate('/logon');
     };
 
+    const handleReport = () => {
+        navigate('/Report');
+    };
+
     return (
-        <div className="text-center min-h-screen relative bg-[#E6F0FF]">
-            <div className="bg-[#1E3A8A] py-8 rounded-b-3xl flex flex-col justify-between">
-                <div className="absolute top-4 right-4">
-                    <FaCog className="text-2xl text-gray-400 cursor-pointer hover:text-gray-200 transition-colors duration-300" />
+        <div className="text-center min-h-screen relative bg-[#FFFFFF] max-w-3xl mx-auto">
+            <div className="bg-[#ECEDFF] py-6 flex justify-between items-center px-4 rounded-b-3xl">
+                <div className='px-8'>
+                    <h1 className="text-xl font-bold text-black">
+                        Welcome back, XXXXXXX
+                    </h1>
                 </div>
-                <Link to="/another-page">
-                    <div className="pl-4 pb-2 cursor-pointer">
-                        <h1 className="text-xl font-bold text-white">
-                            Welcome back, XXXXXX
-                        </h1>
-                    </div>
-                </Link>
+                <FaCog className="text-2xl text-gray-400 cursor-pointer hover:text-gray-200 transition-colors duration-300" />
             </div>
-            <div className="max-w-800 mx-auto px-4 my-8">
+
+            <div className="max-w-800 mx-auto px-8 my-8">
+                <div className="bg-[#ECEDFF] p-4 rounded-lg shadow-md mb-6">
+                    <div className="flex justify-between items-center mb-2">
+                        <h2 className="text-md font-semibold">
+                            Draft report detected
+                        </h2>
+                        <FaCog className="text-md text-gray-400 cursor-pointer" />
+                    </div>
+                    <p className="text-gray-600">Finish your report?</p>
+                    <button
+                        onClick={handleReport}
+                        className="bg-[#334D92] w-full mx-auto px-6 py-4 mb-6 rounded-lg text-md font-semibold flex items-center justify-center transition-all duration-300 hover:bg-[#243B73] text-white shadow-sm hover:shadow-lg"
+                    >
+                    Write a report
+                    </button>
+                </div>
+
                 <button
-                    onClick={handleNewReport} // If user clicks log new report button, navigate to logon page
-                    className="bg-[#334D92] w-full mx-auto px-8 py-8 mt-4 rounded-lg text-lg font-semibold flex items-center justify-center transition-all duration-300 hover:bg-[#243B73] text-white shadow-sm hover:shadow-lg"
+                    onClick={handleNewReport}
+                    className="bg-[#334D92] w-full mx-auto px-6 py-4 mb-6 rounded-lg text-md font-semibold flex items-center justify-center transition-all duration-300 hover:bg-[#243B73] text-white shadow-sm hover:shadow-lg"
                 >
-                    <FaPlus className="mr-2" /> Log a new report
+                    <FaPlus className="mr-2" /> Log on to start a new shift
                 </button>
-                <div className="grid grid-cols-2 mb-8 mt-8 gap-6">
-                    <div className="bg-[#969696] text-white text-center p-8 rounded-lg flex items-center hover:bg-[#808080] transition-colors duration-300">
-                        <FaClipboardList className="mr-12" />
-                        <div>
-                            <h3 className="text-lg font-semibold">
+
+                <div className="bg-[#ECEDFF] p-4 rounded-lg shadow-md mb-6">
+                    <h2 className="text-md font-semibold mb-2">
+                        Patrol vehicles
+                    </h2>
+                    <p className="text-gray-600 mb-4">
+                        Create a new report from scratch or select a template.
+                    </p>
+                    <button className="bg-white w-full mx-auto px-6 py-3 rounded-lg text-md font-semibold text-black shadow-sm hover:shadow-lg">
+                        View and Update Patrol Vehicles
+                    </button>
+                </div>
+
+                <div className="grid grid-cols-2 gap-4">
+                    <div className="bg-[#ECEDFF] text-black p-4 rounded-lg flex items-center hover:bg-[#808080] transition-colors duration-300">
+                        <FaClipboardList className="mr-4 text-2xl" />
+                        <div className="text-left">
+                            <h3 className="text-base font-semibold">
                                 Past Reports
                             </h3>
+                            <p className="text-xs">View reports in the past.</p>
                         </div>
                     </div>
-                    <div className="bg-[#969696] text-white p-6 rounded-lg flex items-center hover:bg-[#808080] transition-colors duration-300">
-                        <FaCogs className="mr-12" />
-                        <div>
-                            <h3 className="text-lg font-semibold">
+                    <div className="bg-[#ECEDFF] text-black p-4 rounded-lg flex items-center hover:bg-[#808080] transition-colors duration-300">
+                        <FaCogs className="mr-4 text-2xl" />
+                        <div className="text-left">
+                            <h3 className="text-md font-semibold">
                                 Report Settings
                             </h3>
+                            <p className="text-xs">
+                                Modify report templates including templates.
+                            </p>
                         </div>
                     </div>
                 </div>
