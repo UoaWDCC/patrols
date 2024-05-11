@@ -4,6 +4,7 @@ import { useState } from "react";
 import Home from "@pages/Home";
 import Report from "@pages/Report";
 import ReportTwo from "@pages/ReportTwo";
+import ReportThree from "@pages/ReportThree";
 import LogHome from "@pages/LogHome";
 import Logon from "@pages/Logon";
 import LogonTwo from "@pages/LogonTwo";
@@ -55,6 +56,15 @@ const router = createBrowserRouter([
             //     <ReportTwo />
             // </ProtectedRoute>
             <ReportTwo />
+        ),
+    },
+    {
+        path: '/ReportThree',
+        element: (
+            // <ProtectedRoute>
+            //     <ReportTwo />
+            // </ProtectedRoute>
+            <ReportThree />
         ),
     },
     {

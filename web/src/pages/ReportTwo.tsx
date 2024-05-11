@@ -7,7 +7,7 @@ export default function ReportFormIntel() {
     // Function to navigate to the next form page
     const handleNextPage = () => {
         // Navigate to the next form page
-        navigate('/report-form-observation');
+        navigate('/ReportThree');
     };
 
     // Function to navigate to the previous form page
