@@ -57,7 +57,7 @@ export default function Home() {
                     </div>
                 </div>
                 <div>
-                    <Button onClick={handleSignOut} className='bg-cpnz-blue-900 h-12'>
+                    <Button onClick={handleSignOut} className='bg-cpnz-blue-900 h-12 hover:bg-cpnz-blue-800'>
                         Sign Out
                     </Button>
                 </div>
