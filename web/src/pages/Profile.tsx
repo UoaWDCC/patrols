@@ -8,6 +8,7 @@ import { Form,
     FormItem, 
     FormLabel, 
     FormMessage } from '@components/ui/form';
+import { useForm } from 'react-hook-form';
 
 const userDetailsSchema = z.object({
     name: z.string(),
@@ -82,91 +83,99 @@ export default function Profile() {
 
     //if (!loading) {
         return (
-            <div className='text-center flex-col min-h-screen'>
-                <div className='bg-[#eef6ff] h-24 mb-4'>
-                    <h1 className='pt-12 font-bold text-left pl-8 text-2xl'>
+            <div className='text-center flex-col min-h-screen flex'>
+                <div className='bg-[#eef6ff] h-28 mb-4'>
+                    <h1 className='pt-16 font-bold text-left pl-8 text-2xl'>
                         Profile
                     </h1>
                 </div>
-                <Form>
+                <div>
+                    <Form>
                     <FormItem>
-                        <label htmlFor="name">Name:</label>
-                        <input
-                            type="text"
-                            id="name"
-                            name="name"
-                            value={currentUserDetails?.name}
-                            disabled
-                        />
+                        <label htmlFor="name">Name: </label>
+                            <input
+                                type="text"
+                                id="name"
+                                name="name"
+                                value={currentUserDetails?.name}
+                                readOnly={!editable}
+                                className='bg-gray-200 rounded-md px-3 py-2 input-field'
+                            />
                     </FormItem>
-                    <FormItem>
-                        <label htmlFor="name">CPNZ ID: </label>
-                        <input
-                            type="text"
-                            id="cpnzId"
-                            name="cpnzId"
-                            value={currentUserDetails?.id}
-                            disabled
-                        />
-                    </FormItem>
-                    <FormItem>
-                        <label htmlFor="email">Email:</label>
-                        <input
-                            type="email"
-                            id="email"
-                            name="email"
-                            disabled={!editable}
-                            value={email}
-                            onChange={(e) => setEmail(e.target.value)}
-                        />
-                    </FormItem>
-                    <FormItem>
-                        <label htmlFor="password">Password:</label>
-                        <input
-                            type="password"
-                            id="password"
-                            name="password"
-                            disabled={!editable}
-                            value={password}
-                            onChange={(e) => setPassword(e.target.value)}
-                        />
-                    </FormItem>
-                    {editable && (
                         <FormItem>
-                            <label htmlFor="confirmPassword">
-                                Confirm Password:
-                            </label>
+                            <label htmlFor="name">CPNZ ID: </label>
+                            <input
+                                type="text"
+                                id="cpnzId"
+                                name="cpnzId"
+                                value={currentUserDetails?.id}
+                                disabled
+                                className='bg-gray-200 rounded-md px-3 py-2'
+                            />
+                        </FormItem>
+                        <FormItem>
+                            <label htmlFor="email">Email: </label>
+                            <input
+                                type="email"
+                                id="email"
+                                name="email"
+                                disabled={!editable}
+                                value={email}
+                                onChange={(e) => setEmail(e.target.value)}
+                                className='bg-gray-200 rounded-md px-3 py-2'
+                            />
+                        </FormItem>
+                        <FormItem>
+                            <label htmlFor="password">Password: </label>
                             <input
                                 type="password"
-                                id="confirmPassword"
-                                name="confirmPassword"
-                                value={confirmPassword}
-                                onChange={(e) => setConfirmPassword(e.target.value)}
+                                id="password"
+                                name="password"
+                                disabled={!editable}
+                                value={password}
+                                onChange={(e) => setPassword(e.target.value)}
+                                className='bg-gray-200 rounded-md px-3 py-2'
                             />
-                            {errorMessage && <p>{errorMessage}</p>}
                         </FormItem>
-                    )}
-                    <FormItem>
-                        <label htmlFor="vehicles">Vehicles:</label>
-                        <input
-                            type="text"
-                            id="vehicles"
-                            name="vehicles"
-                            disabled={!editable}
-                            defaultValue={currentUserDetails?.vehicles}
-                        />
-                    </FormItem>
-                    {!editable ? (
-                        <Button onClick={handleEdit} className='bg-cpnz-blue-900'>Edit</Button>
-                    ) : (
-                        <Button
-                            onClick={handleSave}
-                            disabled={password != confirmPassword}
-                        >
-                            Save
-                        </Button>
-                    )}
-                    </Form>
+                        {editable && (
+                            <FormItem>
+                                <label htmlFor="confirmPassword">
+                                    Confirm Password: </label>
+                                <input
+                                    type="password"
+                                    id="confirmPassword"
+                                    name="confirmPassword"
+                                    value={confirmPassword}
+                                    onChange={(e) => setConfirmPassword(e.target.value)}
+                                    className='bg-gray-200 rounded-md px-3 py-2'
+                                />
+                                {errorMessage && <p>{errorMessage}</p>}
+                            </FormItem>
+                        )}
+                        <FormItem>
+                            <label htmlFor="vehicles">Vehicles: </label>
+                            <input
+                                type="text"
+                                id="vehicles"
+                                name="vehicles"
+                                disabled={!editable}
+                                defaultValue={currentUserDetails?.vehicles}
+                                className='bg-gray-200 rounded-md px-3 py-2'
+                            />
+                        </FormItem>
+                        {!editable ? (
+                            <Button onClick={handleEdit} className='bg-cpnz-blue-900 mt-4 hover:bg-cpnz-blue-800'>Edit</Button>
+                        ) : (
+                            <Button
+                                onClick={handleSave}
+                                disabled={password != confirmPassword}
+                                className='bg-cpnz-blue-900 mt-4'
+                            >
+                                Save
+                            </Button>
+                        )}
+                        </Form>
+                    </div>
             </div>
         );
     }
