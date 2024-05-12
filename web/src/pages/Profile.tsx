@@ -88,7 +88,8 @@ export default function Profile() {
                         Profile
                     </h1>
                 </div>
-                    <div>
+                <Form>
+                    <FormItem>
                         <label htmlFor="name">Name:</label>
                         <input
                             type="text"
@@ -97,8 +98,8 @@ export default function Profile() {
                             value={currentUserDetails?.name}
                             disabled
                         />
-                    </div>
-                    <div>
+                    </FormItem>
+                    <FormItem>
                         <label htmlFor="name">CPNZ ID: </label>
                         <input
                             type="text"
@@ -107,8 +108,8 @@ export default function Profile() {
                             value={currentUserDetails?.id}
                             disabled
                         />
-                    </div>
-                    <div>
+                    </FormItem>
+                    <FormItem>
                         <label htmlFor="email">Email:</label>
                         <input
                             type="email"
@@ -118,8 +119,8 @@ export default function Profile() {
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
                         />
-                    </div>
-                    <div>
+                    </FormItem>
+                    <FormItem>
                         <label htmlFor="password">Password:</label>
                         <input
                             type="password"
@@ -129,9 +130,9 @@ export default function Profile() {
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
                         />
-                    </div>
+                    </FormItem>
                     {editable && (
-                        <div>
+                        <FormItem>
                             <label htmlFor="confirmPassword">
                                 Confirm Password:
                             </label>
@@ -143,9 +144,9 @@ export default function Profile() {
                                 onChange={(e) => setConfirmPassword(e.target.value)}
                             />
                             {errorMessage && <p>{errorMessage}</p>}
-                        </div>
+                        </FormItem>
                     )}
-                    <div>
+                    <FormItem>
                         <label htmlFor="vehicles">Vehicles:</label>
                         <input
                             type="text"
@@ -154,7 +155,7 @@ export default function Profile() {
                             disabled={!editable}
                             defaultValue={currentUserDetails?.vehicles}
                         />
-                    </div>
+                    </FormItem>
                     {!editable ? (
                         <Button onClick={handleEdit} className='bg-cpnz-blue-900'>Edit</Button>
                     ) : (
@@ -165,6 +166,7 @@ export default function Profile() {
                             Save
                         </Button>
                     )}
+                    </Form>
             </div>
         );
     }
