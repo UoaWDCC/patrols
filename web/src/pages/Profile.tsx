@@ -1,6 +1,13 @@
 import axios from 'axios';
 import { useState, useEffect } from 'react';
 import { z } from 'zod';
+import { Button } from '@components/ui/button';
+import { Form, 
+    FormControl, 
+    FormField, 
+    FormItem, 
+    FormLabel, 
+    FormMessage } from '@components/ui/form';
 
 const userDetailsSchema = z.object({
     name: z.string(),
@@ -73,87 +80,92 @@ export default function Profile() {
         setEditable(false);
     };
 
-    if (!loading) {
+    //if (!loading) {
         return (
-            <div>
-                <div>
-                    <label htmlFor="name">Name:</label>
-                    <input
-                        type="text"
-                        id="name"
-                        name="name"
-                        value={currentUserDetails?.name}
-                        disabled
-                    />
+            <div className='text-center flex-col min-h-screen'>
+                <div className='bg-[#eef6ff] h-24 mb-4'>
+                    <h1 className='pt-12 font-bold text-left pl-8 text-2xl'>
+                        Profile
+                    </h1>
                 </div>
-                <div>
-                    <label htmlFor="name">CPNZ ID: </label>
-                    <input
-                        type="text"
-                        id="cpnzId"
-                        name="cpnzId"
-                        value={currentUserDetails?.id}
-                        disabled
-                    />
-                </div>
-                <div>
-                    <label htmlFor="email">Email:</label>
-                    <input
-                        type="email"
-                        id="email"
-                        name="email"
-                        disabled={!editable}
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
-                    />
-                </div>
-                <div>
-                    <label htmlFor="password">Password:</label>
-                    <input
-                        type="password"
-                        id="password"
-                        name="password"
-                        disabled={!editable}
-                        value={password}
-                        onChange={(e) => setPassword(e.target.value)}
-                    />
-                </div>
-                {editable && (
                     <div>
-                        <label htmlFor="confirmPassword">
-                            Confirm Password:
-                        </label>
+                        <label htmlFor="name">Name:</label>
+                        <input
+                            type="text"
+                            id="name"
+                            name="name"
+                            value={currentUserDetails?.name}
+                            disabled
+                        />
+                    </div>
+                    <div>
+                        <label htmlFor="name">CPNZ ID: </label>
+                        <input
+                            type="text"
+                            id="cpnzId"
+                            name="cpnzId"
+                            value={currentUserDetails?.id}
+                            disabled
+                        />
+                    </div>
+                    <div>
+                        <label htmlFor="email">Email:</label>
+                        <input
+                            type="email"
+                            id="email"
+                            name="email"
+                            disabled={!editable}
+                            value={email}
+                            onChange={(e) => setEmail(e.target.value)}
+                        />
+                    </div>
+                    <div>
+                        <label htmlFor="password">Password:</label>
                         <input
                             type="password"
-                            id="confirmPassword"
-                            name="confirmPassword"
-                            value={confirmPassword}
-                            onChange={(e) => setConfirmPassword(e.target.value)}
+                            id="password"
+                            name="password"
+                            disabled={!editable}
+                            value={password}
+                            onChange={(e) => setPassword(e.target.value)}
                         />
-                        {errorMessage && <p>{errorMessage}</p>}
                     </div>
-                )}
-                <div>
-                    <label htmlFor="vehicles">Vehicles:</label>
-                    <input
-                        type="text"
-                        id="vehicles"
-                        name="vehicles"
-                        disabled={!editable}
-                        defaultValue={currentUserDetails?.vehicles}
-                    />
-                </div>
-                {!editable ? (
-                    <button onClick={handleEdit}>Edit</button>
-                ) : (
-                    <button
-                        onClick={handleSave}
-                        disabled={password != confirmPassword}
-                    >
-                        Save
-                    </button>
-                )}
+                    {editable && (
+                        <div>
+                            <label htmlFor="confirmPassword">
+                                Confirm Password:
+                            </label>
+                            <input
+                                type="password"
+                                id="confirmPassword"
+                                name="confirmPassword"
+                                value={confirmPassword}
+                                onChange={(e) => setConfirmPassword(e.target.value)}
+                            />
+                            {errorMessage && <p>{errorMessage}</p>}
+                        </div>
+                    )}
+                    <div>
+                        <label htmlFor="vehicles">Vehicles:</label>
+                        <input
+                            type="text"
+                            id="vehicles"
+                            name="vehicles"
+                            disabled={!editable}
+                            defaultValue={currentUserDetails?.vehicles}
+                        />
+                    </div>
+                    {!editable ? (
+                        <Button onClick={handleEdit} className='bg-cpnz-blue-900'>Edit</Button>
+                    ) : (
+                        <Button
+                            onClick={handleSave}
+                            disabled={password != confirmPassword}
+                        >
+                            Save
+                        </Button>
+                    )}
             </div>
         );
     }
-}
+//}

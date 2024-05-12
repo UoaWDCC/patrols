@@ -23,9 +23,9 @@ const router = createBrowserRouter([
     {
         path: '/home',
         element: (
-            <ProtectedRoute>
+            //<ProtectedRoute>
                 <Home />
-            </ProtectedRoute>
+            //</ProtectedRoute>
         ),
     },
     {
@@ -63,9 +63,9 @@ const router = createBrowserRouter([
     {
         path: '/profile',
         element: (
-            <ProtectedRoute>
+            //<ProtectedRoute>
                 <Profile />
-            </ProtectedRoute>
+            //</ProtectedRoute>
         ),
     },
     {
