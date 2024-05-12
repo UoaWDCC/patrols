@@ -8,7 +8,6 @@ import { Form,
     FormItem, 
     FormLabel, 
     FormMessage } from '@components/ui/form';
-import { useForm } from 'react-hook-form';
 
 const userDetailsSchema = z.object({
     name: z.string(),
@@ -91,17 +90,17 @@ export default function Profile() {
                 </div>
                 <div>
                     <Form>
-                    <FormItem>
-                        <label htmlFor="name">Name: </label>
-                            <input
-                                type="text"
-                                id="name"
-                                name="name"
-                                value={currentUserDetails?.name}
-                                readOnly={!editable}
-                                className='bg-gray-200 rounded-md px-3 py-2 input-field'
-                            />
-                    </FormItem>
+                        <FormItem>
+                            <label htmlFor="name">Name: </label>
+                                <input
+                                    type="text"
+                                    id="name"
+                                    name="name"
+                                    value={currentUserDetails?.name}
+                                    readOnly={!editable}
+                                    className='bg-gray-200 rounded-md px-3 py-2 input-field'
+                                />
+                        </FormItem>
                         <FormItem>
                             <label htmlFor="name">CPNZ ID: </label>
                             <input
@@ -174,8 +173,8 @@ export default function Profile() {
                                 Save
                             </Button>
                         )}
-                        </Form>
-                    </div>
+                    </Form>
+                </div>
             </div>
         );
     }
