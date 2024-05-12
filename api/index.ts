@@ -1,20 +1,15 @@
 import express, { json } from 'express';
 import cors from 'cors';
-import { connect } from 'mongoose';
 import { config } from 'dotenv';
-import patrolDb from './db/Patrols';
 
 // Import Routers
 import helloRoutes from './routes/hello';
 import authLoginRoute from './routes/auth/login';
 import reportRoutes from './routes/report';
-import { Prisma } from '@prisma/client';
+import userRoutes from './routes/UserRoutes';
 
 const app = express();
 config();
-
-// const databaseUrl: string = process.env.DATABASE_URL!;
-// connect(databaseUrl);
 
 app.use(express.json());
 app.use(cors());
@@ -24,7 +19,8 @@ app.use(express.urlencoded({ extended: false }));
 // Routes
 app.use('/hello', helloRoutes);
 app.use('/auth', authLoginRoute);
-app.use('/report', reportRoutes)
+app.use('/report', reportRoutes);
+app.use('/user', userRoutes);
 
 /**
  * This block of code is temporary, need to find a way to link it succinctly with express,

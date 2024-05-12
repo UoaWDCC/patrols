@@ -18,9 +18,12 @@ model Patrols{
   password String
   email String @unique
   name String
-  role String @default("Patrol")
-  vehicles Vehicles[]
-  reports Reports[]
+  mobile String
+  role Role @default(patrol)
+  vehicles Vehicles[] @relation("belongToPatrol")
+  reports Reports[] @relation("writtenByPatrol")
+  shifts Shifts[] @relation("logByPatrol")
+  amendments Amendment[] @relation("submittedByPatrol")
   supervisorID Int? @unique
   supervisor Patrols? @relation("patrolSupervisor", fields: [supervisorID], references: [id])
   patrol Patrols? @relation("patrolSupervisor")
@@ -33,7 +36,9 @@ model Vehicles{
   make String
   model String
   patrolID Int
-  patrols Patrols @relation(fields: [patrolID], references: [id])
+  patrols Patrols @relation("belongToPatrol", fields: [patrolID], references: [id])
+  shifts Shifts[] @relation("isInShift")
+  inAmendment Amendment[] @relation("isInAmendment")
 }
 
 model Reports{
@@ -43,12 +48,60 @@ model Reports{
   location String
   patrolID Int
   reportIncidentType String
-  patrols Patrols @relation(fields: [patrolID], references: [id])
-  incident IncidentType @relation(fields: [reportIncidentType], references: [incidentType])
+  patrols Patrols @relation("writtenByPatrol", fields: [patrolID], references: [id])
+  incident IncidentType @relation("isIncidentOfType",fields: [reportIncidentType], references: [incidentType])
 }
 
 model IncidentType{
   incidentType String @id @unique
   description String
-  reports Reports[]
+  reports Reports[] @relation("isIncidentOfType")
+}
+
+model Shifts {
+  id Int @default(autoincrement())
+  type logType 
+  logAt DateTime @default(now())
+  expectedHours Decimal?
+  actualHours Decimal?
+  policeStationBase String
+  cpCallSign String
+  logPatrolId Int
+  patrols Patrols @relation("logByPatrol", fields: [logPatrolId], references: [id])
+  otherPatrolsName String
+  vehicleId Int
+  vehicles Vehicles @relation("isInShift", fields: [vehicleId], references: [id])
+  hasLiveryOrSignage Boolean
+  hasPoliceRadio Boolean
+  hasAmendment Amendment[] @relation("belongToShift")
+  @@id([id, type])
+}
+
+model Amendment {
+  id Int @id @unique @default(autoincrement())
+  amendmentMadeAt DateTime @default(now())
+  shiftHoursChange Decimal?
+  policeStationBase String?
+  cpCallSign String?
+  amendmentPatrolId Int
+  patrols Patrols @relation("submittedByPatrol", fields: [amendmentPatrolId], references: [id])
+  otherPatrolsName String?
+  vehicleId Int
+  vehicles Vehicles @relation("isInAmendment", fields: [vehicleId], references: [id])
+  hasLiveryOrSignage Boolean?
+  hasPoliceRadio Boolean?
+  shiftId Int
+  shiftType logType @default(logOn)
+  logOn Shifts @relation("belongToShift", fields: [shiftId, shiftType], references: [id, type])
+}
+
+enum Role {
+  patrol
+  lead
+  admin
+}
+
+enum logType {
+  logOn
+  logOff
 }
