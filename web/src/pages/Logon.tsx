@@ -12,7 +12,7 @@ import {
   FormLabel,
 } from "@components/ui/form";
 import cogwheelIcon from "../assets/images/cogwheel.png";
-import userIcon from "../assets/images/cogwheel.png";
+import userIcon from "../assets/images/gorilla.png";
 
 export default function Logon() {
   const navigate = useNavigate();
@@ -56,7 +56,11 @@ export default function Logon() {
       <div className="max-w-7xl w-full">
         <div className="bg-[#EEF6FF] px-8 py-10 flex items-center justify-between">
           <div className="flex items-center">
-            <img src={userIcon} alt="User Icon" className="w-10 h-10 mr-4" />
+            <img
+              src={userIcon}
+              alt="User Icon"
+              className="w-16 h-16 mr-4 rounded-full"
+            />
             <h2 className="text-2xl font-bold">Welcome back, XXXXXX</h2>
           </div>
           <div className="flex items-center">
