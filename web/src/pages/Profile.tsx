@@ -100,7 +100,7 @@ export default function Profile() {
                                     value={currentUserDetails?.name}
                                     readOnly={!editable}
                                     disabled
-                                    className='bg-gray-200 rounded-md px-3 py-2'
+                                    className='bg-white rounded-md px-3 py-2'
                                 />
                         </FormItem>
                         <FormItem>
@@ -111,7 +111,7 @@ export default function Profile() {
                                 name="cpnzId"
                                 value={currentUserDetails?.id}
                                 disabled
-                                className='bg-gray-200 rounded-md px-3 py-2'
+                                className='bg-white rounded-md px-3 py-2'
                             />
                         </FormItem>
                         <FormItem>
@@ -123,7 +123,7 @@ export default function Profile() {
                                 disabled={!editable}
                                 value={email}
                                 onChange={(e) => setEmail(e.target.value)}
-                                className='bg-gray-200 rounded-md px-3 py-2'
+                                className='bg-white rounded-md px-3 py-2'
                             />
                         </FormItem>
                         <FormItem>
@@ -135,7 +135,7 @@ export default function Profile() {
                                 disabled={!editable}
                                 value={password}
                                 onChange={(e) => setPassword(e.target.value)}
-                                className='bg-gray-200 rounded-md px-3 py-2'
+                                className='bg-white rounded-md px-3 py-2'
                             />
                         </FormItem>
                         {editable && (
@@ -148,7 +148,7 @@ export default function Profile() {
                                     name="confirmPassword"
                                     value={confirmPassword}
                                     onChange={(e) => setConfirmPassword(e.target.value)}
-                                    className='bg-gray-200 rounded-md px-3 py-2'
+                                    className='bg-white rounded-md px-3 py-2'
                                 />
                                 {errorMessage && <p>{errorMessage}</p>}
                             </FormItem>
@@ -161,7 +161,7 @@ export default function Profile() {
                                 name="vehicles"
                                 disabled={!editable}
                                 defaultValue={currentUserDetails?.vehicles}
-                                className='bg-gray-200 rounded-md px-3 py-2'
+                                className='bg-white rounded-md px-3 py-2'
                             />
                         </FormItem>
                         </div>
