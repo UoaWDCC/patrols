@@ -76,7 +76,7 @@ export const getAllReportForLead = async (req: Request, res: Response) => {
         const patrolLead = await prisma.patrols.findUnique({where: {id: Number(patrolLeadId)}});
 
         if (!patrolLead) {
-            return res.status(404).json({error: 'No such patrol'})
+            return res.status(404).json({error: 'No such patrol lead'})
         } else if (patrolLead.role !== 'lead') {
             return res.status(401).json({error: 'You are not authorized to view this report'})
         }
