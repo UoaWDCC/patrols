@@ -33,12 +33,6 @@ export default function Home() {
                         <FaCog className="text-md text-gray-400 cursor-pointer" />
                     </div>
                     <p className="text-gray-600">Finish your report?</p>
-                    <button
-                        onClick={handleReport}
-                        className="bg-[#334D92] w-full mx-auto px-6 py-4 mb-6 rounded-lg text-md font-semibold flex items-center justify-center transition-all duration-300 hover:bg-[#243B73] text-white shadow-sm hover:shadow-lg"
-                    >
-                    Write a report
-                    </button>
                 </div>
 
                 <button

@@ -35,9 +35,10 @@ const router = createBrowserRouter([
     {
         path: '/LogHome',
         element: (
-            <ProtectedRoute>
-                <LogHome />
-            </ProtectedRoute>
+            // <ProtectedRoute>
+            //     <LogHome />
+            // </ProtectedRoute>
+            <LogHome />
         ),
     },
     {

@@ -7,7 +7,7 @@ export default function ReportFormObservation() {
     // Function to navigate to the next form page
     const handleNextPage = () => {
         // Navigate to the next form page or submit the form
-        navigate('/report-form-submit');
+        navigate('/LogHome');
     };
 
     // Function to navigate to the previous form page

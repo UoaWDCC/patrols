@@ -13,7 +13,7 @@ export default function ReportForm() {
     // Function to navigate to the previous form page
     const handlePreviousPage = () => {
         // Navigate to the previous form page
-        navigate('/Home');
+        navigate('/LogHome');
     };
 
     return (

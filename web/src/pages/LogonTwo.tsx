@@ -38,7 +38,7 @@ export default function LogonTwo() {
     // Function to navigate to the previous form page
     const handleSubmitPage = () => {
         // Navigate to the previous form page
-        navigate('/Report');
+        navigate('/LogHome');
     };
 
     return (
@@ -106,7 +106,7 @@ export default function LogonTwo() {
                                             onClick={handleSubmitPage}
                                             className="bg-[#334D92] px-4 py-2 rounded-lg text-white font-semibold flex items-center hover:bg-[#243B73]"
                                         >
-                                            Next
+                                            Submit
                                             <FaChevronRight className="ml-2" />
                                         </button>
                                     </div>
