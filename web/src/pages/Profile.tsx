@@ -9,6 +9,7 @@ import { Form,
     FormLabel, 
     FormMessage } from '@components/ui/form';
 import placeholder from '../assets/images/placeholder.png'
+import { Input } from '@components/ui/input';
 
 const userDetailsSchema = z.object({
     name: z.string(),
@@ -99,75 +100,75 @@ export default function Profile() {
                         <div className='bg-[#eef6ff] py-6 mx-8 mt-10 space-y-5 text-left pl-7 rounded-md'>
                         <FormItem className='flex flex-col pr-8'>
                             <label htmlFor="name" className='font-semibold'>Name: </label>
-                                <input
+                                <Input
                                     type="text"
                                     id="name"
                                     name="name"
                                     value={currentUserDetails?.name}
                                     readOnly={!editable}
                                     disabled
-                                    className='bg-white rounded-md px-3 py-2 w-auto'
+                                    className='rounded-md px-3 py-2 w-auto'
                                 />
                         </FormItem>
                         <FormItem className='flex flex-col pr-8'>
                             <label htmlFor="cpnzId" className='font-semibold'>CPNZ ID: </label>
-                            <input
+                            <Input
                                 type="text"
                                 id="cpnzId"
                                 name="cpnzId"
                                 value={currentUserDetails?.id}
                                 disabled
-                                className='bg-white rounded-md px-3 py-2'
+                                className='rounded-md px-3 py-2'
                             />
                         </FormItem>
                         <FormItem className='flex flex-col pr-8'>
                             <label htmlFor="email" className='font-semibold'>Email: </label>
-                            <input
+                            <Input
                                 type="email"
                                 id="email"
                                 name="email"
                                 disabled={!editable}
                                 value={email}
                                 onChange={(e) => setEmail(e.target.value)}
-                                className='bg-white rounded-md px-3 py-2'
+                                className='rounded-md px-3 py-2'
                             />
                         </FormItem>
                         <FormItem className='flex flex-col pr-8'>
                             <label htmlFor="password" className='font-semibold'>Password: </label>
-                            <input
+                            <Input
                                 type="password"
                                 id="password"
                                 name="password"
                                 disabled={!editable}
                                 value={password}
                                 onChange={(e) => setPassword(e.target.value)}
-                                className='bg-white rounded-md px-3 py-2'
+                                className='rounded-md px-3 py-2'
                             />
                         </FormItem>
                         {editable && (
                             <FormItem className='flex flex-col pr-8'>
                                 <label htmlFor="confirmPassword" className='font-semibold'>
                                     Confirm Password: </label>
-                                <input
+                                <Input
                                     type="password"
                                     id="confirmPassword"
                                     name="confirmPassword"
                                     value={confirmPassword}
                                     onChange={(e) => setConfirmPassword(e.target.value)}
-                                    className='bg-white rounded-md px-3 py-2'
+                                    className='rounded-md px-3 py-2'
                                 />
                                 {errorMessage && <p>{errorMessage}</p>}
                             </FormItem>
                         )}
                         <FormItem className='flex flex-col pr-8'>
                             <label htmlFor="vehicles" className='font-semibold'>Vehicles: </label>
-                            <input
+                            <Input
                                 type="text"
                                 id="vehicles"
                                 name="vehicles"
                                 disabled={!editable}
                                 defaultValue={currentUserDetails?.vehicles}
-                                className='bg-white rounded-md px-3 py-2'
+                                className='rounded-md px-3 py-2'
                             />
                         </FormItem>
                         </div>
