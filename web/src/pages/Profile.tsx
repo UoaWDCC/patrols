@@ -90,6 +90,7 @@ export default function Profile() {
                 </div>
                 <div>
                     <Form>
+                        <div className='bg-[#eef6ff] py-4 mx-8 mt-10 space-y-5 text-left pl-7 rounded-md'>
                         <FormItem>
                             <label htmlFor="name">Name: </label>
                                 <input
@@ -98,11 +99,12 @@ export default function Profile() {
                                     name="name"
                                     value={currentUserDetails?.name}
                                     readOnly={!editable}
-                                    className='bg-gray-200 rounded-md px-3 py-2 input-field'
+                                    disabled
+                                    className='bg-gray-200 rounded-md px-3 py-2'
                                 />
                         </FormItem>
                         <FormItem>
-                            <label htmlFor="name">CPNZ ID: </label>
+                            <label htmlFor="cpnzId">CPNZ ID: </label>
                             <input
                                 type="text"
                                 id="cpnzId"
@@ -162,17 +164,20 @@ export default function Profile() {
                                 className='bg-gray-200 rounded-md px-3 py-2'
                             />
                         </FormItem>
-                        {!editable ? (
-                            <Button onClick={handleEdit} className='bg-cpnz-blue-900 mt-4 hover:bg-cpnz-blue-800'>Edit</Button>
-                        ) : (
-                            <Button
-                                onClick={handleSave}
-                                disabled={password != confirmPassword}
-                                className='bg-cpnz-blue-900 mt-4'
-                            >
-                                Save
-                            </Button>
-                        )}
+                        </div>
+                        <div className=''>
+                            {!editable ? (
+                                <Button onClick={handleEdit} className='bg-cpnz-blue-900 mt-4 hover:bg-cpnz-blue-800 w-32'>Edit</Button>
+                            ) : (
+                                <Button
+                                    onClick={handleSave}
+                                    disabled={password != confirmPassword}
+                                    className='bg-cpnz-blue-900 mt-4'
+                                >
+                                    Save
+                                </Button>
+                            )}
+                        </div>
                     </Form>
                 </div>
             </div>
