@@ -8,6 +8,7 @@ import { Form,
     FormItem, 
     FormLabel, 
     FormMessage } from '@components/ui/form';
+import placeholder from '../assets/images/placeholder.png'
 
 const userDetailsSchema = z.object({
     name: z.string(),
@@ -83,10 +84,15 @@ export default function Profile() {
     //if (!loading) {
         return (
             <div className='text-center flex-col min-h-screen flex'>
-                <div className='bg-[#eef6ff] h-28 mb-4'>
-                    <h1 className='pt-16 font-bold text-left pl-8 text-2xl'>
-                        Profile
-                    </h1>
+                <div className='bg-[#eef6ff] h-28 mb-4 flex items-center justify-start pl-8 pt-4'>
+                    <div className="">
+                        <img src={placeholder} alt="placeholder" className="rounded-full w-12 h-12"/>
+                    </div>
+                    <div>
+                        <h1 className='font-bold text-left pl-4 text-2xl'>
+                            Profile
+                        </h1>
+                    </div>
                 </div>
                 <div>
                     <Form>
