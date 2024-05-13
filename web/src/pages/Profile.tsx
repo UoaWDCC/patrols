@@ -90,9 +90,9 @@ export default function Profile() {
                 </div>
                 <div>
                     <Form>
-                        <div className='bg-[#eef6ff] py-4 mx-8 mt-10 space-y-5 text-left pl-7 rounded-md'>
-                        <FormItem>
-                            <label htmlFor="name">Name: </label>
+                        <div className='bg-[#eef6ff] py-6 mx-8 mt-10 space-y-5 text-left pl-7 rounded-md'>
+                        <FormItem className='flex flex-col pr-8'>
+                            <label htmlFor="name" className='font-semibold'>Name: </label>
                                 <input
                                     type="text"
                                     id="name"
@@ -100,11 +100,11 @@ export default function Profile() {
                                     value={currentUserDetails?.name}
                                     readOnly={!editable}
                                     disabled
-                                    className='bg-white rounded-md px-3 py-2'
+                                    className='bg-white rounded-md px-3 py-2 w-auto'
                                 />
                         </FormItem>
-                        <FormItem>
-                            <label htmlFor="cpnzId">CPNZ ID: </label>
+                        <FormItem className='flex flex-col pr-8'>
+                            <label htmlFor="cpnzId" className='font-semibold'>CPNZ ID: </label>
                             <input
                                 type="text"
                                 id="cpnzId"
@@ -114,8 +114,8 @@ export default function Profile() {
                                 className='bg-white rounded-md px-3 py-2'
                             />
                         </FormItem>
-                        <FormItem>
-                            <label htmlFor="email">Email: </label>
+                        <FormItem className='flex flex-col pr-8'>
+                            <label htmlFor="email" className='font-semibold'>Email: </label>
                             <input
                                 type="email"
                                 id="email"
@@ -126,8 +126,8 @@ export default function Profile() {
                                 className='bg-white rounded-md px-3 py-2'
                             />
                         </FormItem>
-                        <FormItem>
-                            <label htmlFor="password">Password: </label>
+                        <FormItem className='flex flex-col pr-8'>
+                            <label htmlFor="password" className='font-semibold'>Password: </label>
                             <input
                                 type="password"
                                 id="password"
@@ -139,8 +139,8 @@ export default function Profile() {
                             />
                         </FormItem>
                         {editable && (
-                            <FormItem>
-                                <label htmlFor="confirmPassword">
+                            <FormItem className='flex flex-col pr-8'>
+                                <label htmlFor="confirmPassword" className='font-semibold'>
                                     Confirm Password: </label>
                                 <input
                                     type="password"
@@ -153,8 +153,8 @@ export default function Profile() {
                                 {errorMessage && <p>{errorMessage}</p>}
                             </FormItem>
                         )}
-                        <FormItem>
-                            <label htmlFor="vehicles">Vehicles: </label>
+                        <FormItem className='flex flex-col pr-8'>
+                            <label htmlFor="vehicles" className='font-semibold'>Vehicles: </label>
                             <input
                                 type="text"
                                 id="vehicles"
@@ -165,9 +165,9 @@ export default function Profile() {
                             />
                         </FormItem>
                         </div>
-                        <div className=''>
+                        <div className='py-4'>
                             {!editable ? (
-                                <Button onClick={handleEdit} className='bg-cpnz-blue-900 mt-4 hover:bg-cpnz-blue-800 w-32'>Edit</Button>
+                                <Button onClick={handleEdit} className='bg-cpnz-blue-900 mt-4 hover:bg-cpnz-blue-800'>Edit</Button>
                             ) : (
                                 <Button
                                     onClick={handleSave}
