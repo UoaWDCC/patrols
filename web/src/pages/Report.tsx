@@ -10,6 +10,12 @@ export default function ReportForm() {
         navigate('/ReportTwo');
     };
 
+    // Function to navigate to the previous form page
+    const handlePreviousPage = () => {
+        // Navigate to the previous form page
+        navigate('/Home');
+    };
+
     return (
         <div className="text-center min-h-screen relative bg-[#FFFFFF] max-w-3xl mx-auto">
             <div className="bg-[#1E3A8A] py-6 flex justify-between items-center px-4 rounded-b-3xl">
@@ -94,6 +100,13 @@ export default function ReportForm() {
 
                 <div className="flex justify-between">
                     <button
+                        onClick={handlePreviousPage}
+                        className="bg-[#334D92] px-4 py-2 rounded-lg text-white font-semibold flex items-center hover:bg-[#243B73]"
+                    >
+                        <FaChevronLeft className="mr-2" />
+                        Previous
+                    </button>
+                    <button
                         onClick={handleNextPage}
                         className="bg-[#334D92] px-4 py-2 rounded-lg text-white font-semibold flex items-center hover:bg-[#243B73]"
                     >
@@ -101,14 +114,6 @@ export default function ReportForm() {
                         <FaChevronRight className="ml-2" />
                     </button>
                 </div>
-            </div>
-            
-            <div>
-                <Link to="/">
-                    <button className="flex items-center gap-4 border-b-2 border-green-200 hover:border-green-500 px-8 py-4 transition-all duration-300  shadow-sm hover:shadow-lg">
-                        <FaChevronLeft size={12} /> Back
-                    </button>
-                </Link>
             </div>
         </div>
     );

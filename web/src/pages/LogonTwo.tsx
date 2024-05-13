@@ -1,5 +1,5 @@
-import { Link } from "react-router-dom";
-import { FaChevronLeft } from "react-icons/fa";
+import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
+import { Link, useNavigate } from 'react-router-dom';
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -17,6 +17,8 @@ import {
 import imageCpnzLogo from '../assets/images/cpnz_logo.png';
 
 export default function LogonTwo() {
+    const navigate = useNavigate();
+
     const formSchema = z.object({
         vehicleChecklist: z.string(),
     });
@@ -31,6 +33,12 @@ export default function LogonTwo() {
     const onSubmit = (data: z.infer<typeof formSchema>) => {
         // Handle form submission
         console.log(data);
+    };
+
+    // Function to navigate to the previous form page
+    const handleSubmitPage = () => {
+        // Navigate to the previous form page
+        navigate('/Report');
     };
 
     return (
@@ -94,7 +102,13 @@ export default function LogonTwo() {
                                                 <FaChevronLeft size={12} /> Back
                                             </button>
                                         </Link>
-                                        <Button type="submit">Next Page</Button>
+                                        <button
+                                            onClick={handleSubmitPage}
+                                            className="bg-[#334D92] px-4 py-2 rounded-lg text-white font-semibold flex items-center hover:bg-[#243B73]"
+                                        >
+                                            Next
+                                            <FaChevronRight className="ml-2" />
+                                        </button>
                                     </div>
                                 </form>
                             </Form>

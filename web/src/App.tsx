@@ -70,17 +70,19 @@ const router = createBrowserRouter([
     {
         path: '/logon',
         element: (
-            <ProtectedRoute>
-                <Logon />
-            </ProtectedRoute>
+            // <ProtectedRoute>
+            //     <Logon />
+            // </ProtectedRoute>
+            <Logon />
         ),
     },
     {
         path: '/logon-two',
         element: (
-            <ProtectedRoute>
-                <LogonTwo />
-            </ProtectedRoute>
+            // <ProtectedRoute>
+            //     <LogonTwo />
+            // </ProtectedRoute>
+            <LogonTwo />
         ),
     },
     {
