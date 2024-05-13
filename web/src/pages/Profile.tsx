@@ -98,92 +98,92 @@ export default function Profile() {
                 <div>
                     <Form>
                         <div className='bg-[#eef6ff] py-6 mx-8 mt-10 space-y-5 text-left pl-7 rounded-md'>
-                        <FormItem className='flex flex-col pr-8'>
-                            <label htmlFor="name" className='font-semibold'>Name: </label>
+                            <FormItem className='flex flex-col pr-8'>
+                                <label htmlFor="name" className='font-semibold'>Name: </label>
+                                    <Input
+                                        type="text"
+                                        id="name"
+                                        name="name"
+                                        value={currentUserDetails?.name}
+                                        readOnly={!editable}
+                                        disabled
+                                        className='rounded-md px-3 py-2 w-auto'
+                                    />
+                            </FormItem>
+                            <FormItem className='flex flex-col pr-8'>
+                                <label htmlFor="cpnzId" className='font-semibold'>CPNZ ID: </label>
                                 <Input
                                     type="text"
-                                    id="name"
-                                    name="name"
-                                    value={currentUserDetails?.name}
-                                    readOnly={!editable}
+                                    id="cpnzId"
+                                    name="cpnzId"
+                                    value={currentUserDetails?.id}
                                     disabled
-                                    className='rounded-md px-3 py-2 w-auto'
-                                />
-                        </FormItem>
-                        <FormItem className='flex flex-col pr-8'>
-                            <label htmlFor="cpnzId" className='font-semibold'>CPNZ ID: </label>
-                            <Input
-                                type="text"
-                                id="cpnzId"
-                                name="cpnzId"
-                                value={currentUserDetails?.id}
-                                disabled
-                                className='rounded-md px-3 py-2'
-                            />
-                        </FormItem>
-                        <FormItem className='flex flex-col pr-8'>
-                            <label htmlFor="email" className='font-semibold'>Email: </label>
-                            <Input
-                                type="email"
-                                id="email"
-                                name="email"
-                                disabled={!editable}
-                                value={email}
-                                onChange={(e) => setEmail(e.target.value)}
-                                className='rounded-md px-3 py-2'
-                            />
-                        </FormItem>
-                        <FormItem className='flex flex-col pr-8'>
-                            <label htmlFor="password" className='font-semibold'>Password: </label>
-                            <Input
-                                type="password"
-                                id="password"
-                                name="password"
-                                disabled={!editable}
-                                value={password}
-                                onChange={(e) => setPassword(e.target.value)}
-                                className='rounded-md px-3 py-2'
-                            />
-                        </FormItem>
-                        {editable && (
-                            <FormItem className='flex flex-col pr-8'>
-                                <label htmlFor="confirmPassword" className='font-semibold'>
-                                    Confirm Password: </label>
-                                <Input
-                                    type="password"
-                                    id="confirmPassword"
-                                    name="confirmPassword"
-                                    value={confirmPassword}
-                                    onChange={(e) => setConfirmPassword(e.target.value)}
                                     className='rounded-md px-3 py-2'
                                 />
-                                {errorMessage && <p>{errorMessage}</p>}
                             </FormItem>
-                        )}
-                        <FormItem className='flex flex-col pr-8'>
-                            <label htmlFor="vehicles" className='font-semibold'>Vehicles: </label>
-                            <Input
-                                type="text"
-                                id="vehicles"
-                                name="vehicles"
-                                disabled={!editable}
-                                defaultValue={currentUserDetails?.vehicles}
-                                className='rounded-md px-3 py-2'
-                            />
-                        </FormItem>
-                        </div>
-                        <div className='py-4'>
-                            {!editable ? (
-                                <Button onClick={handleEdit} className='bg-cpnz-blue-900 mt-4 hover:bg-cpnz-blue-800'>Edit</Button>
-                            ) : (
-                                <Button
-                                    onClick={handleSave}
-                                    disabled={password != confirmPassword}
-                                    className='bg-cpnz-blue-900 mt-4'
-                                >
-                                    Save
-                                </Button>
+                            <FormItem className='flex flex-col pr-8'>
+                                <label htmlFor="email" className='font-semibold'>Email: </label>
+                                <Input
+                                    type="email"
+                                    id="email"
+                                    name="email"
+                                    disabled={!editable}
+                                    value={email}
+                                    onChange={(e) => setEmail(e.target.value)}
+                                    className='rounded-md px-3 py-2'
+                                />
+                            </FormItem>
+                            <FormItem className='flex flex-col pr-8'>
+                                <label htmlFor="password" className='font-semibold'>Password: </label>
+                                <Input
+                                    type="password"
+                                    id="password"
+                                    name="password"
+                                    disabled={!editable}
+                                    value={password}
+                                    onChange={(e) => setPassword(e.target.value)}
+                                    className='rounded-md px-3 py-2'
+                                />
+                            </FormItem>
+                            {editable && (
+                                <FormItem className='flex flex-col pr-8'>
+                                    <label htmlFor="confirmPassword" className='font-semibold'>
+                                        Confirm Password: </label>
+                                    <Input
+                                        type="password"
+                                        id="confirmPassword"
+                                        name="confirmPassword"
+                                        value={confirmPassword}
+                                        onChange={(e) => setConfirmPassword(e.target.value)}
+                                        className='rounded-md px-3 py-2'
+                                    />
+                                    {errorMessage && <p>{errorMessage}</p>}
+                                </FormItem>
                             )}
+                            <FormItem className='flex flex-col pr-8'>
+                                <label htmlFor="vehicles" className='font-semibold'>Vehicles: </label>
+                                <Input
+                                    type="text"
+                                    id="vehicles"
+                                    name="vehicles"
+                                    disabled={!editable}
+                                    defaultValue={currentUserDetails?.vehicles}
+                                    className='rounded-md px-3 py-2'
+                                />
+                            </FormItem>
+                            <div>
+                                {!editable ? (
+                                    <Button onClick={handleEdit} className='bg-cpnz-blue-900 mt-4 hover:bg-cpnz-blue-800'>Edit</Button>
+                                ) : (
+                                    <Button
+                                        onClick={handleSave}
+                                        disabled={password != confirmPassword}
+                                        className='bg-cpnz-blue-900 mt-4'
+                                    >
+                                        Save
+                                    </Button>
+                                )}
+                            </div>
                         </div>
                     </Form>
                 </div>
