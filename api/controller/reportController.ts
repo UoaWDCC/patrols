@@ -70,6 +70,27 @@ export const deleteReport = async (req: Request, res: Response) => {
     }
 }
 
+export const getAllReportForLead = async (req: Request, res: Response) => {
+    try {
+        const { id } = req.params;
+        const patrolLead = await prisma.patrols.findUnique({
+            where: {
+                id: Number(id)
+            }
+        });
+
+        if (!patrolLead) {
+            return res.status(404).json({error: 'There is no such patrol'})
+        } else if (patrolLead.role !== 'lead') {
+            return res.status(401).json({error: 'You are not authorized to view this report'})
+        }
+    } catch (error : any) {
+        res.status(400).json({error: error.message})
+    }
+
+
+}
+
 // async function main() {
 //     const report = await prisma.report.findMany();
 //     console.log(report);
