@@ -72,18 +72,28 @@ export const deleteReport = async (req: Request, res: Response) => {
 
 export const getAllReportForLead = async (req: Request, res: Response) => {
     try {
-        const { id } = req.params;
-        const patrolLead = await prisma.patrols.findUnique({
-            where: {
-                id: Number(id)
-            }
-        });
+        const { patrolLeadId } = req.params;
+        const patrolLead = await prisma.patrols.findUnique({where: {id: Number(patrolLeadId)}});
 
         if (!patrolLead) {
-            return res.status(404).json({error: 'There is no such patrol'})
+            return res.status(404).json({error: 'No such patrol'})
         } else if (patrolLead.role !== 'lead') {
             return res.status(401).json({error: 'You are not authorized to view this report'})
         }
+
+        const assignedPatrols = await prisma.patrols.findMany({where: {supervisorID: Number(patrolLeadId)}});
+        if (!assignedPatrols) {
+            return res.status(404).json({error: 'No assigned patrols'})
+        }
+        const assignedPatrolIds = assignedPatrols.map(patrol => patrol.id);
+        
+        const reports = await prisma.reports.findMany({where: {id: Number(assignedPatrolIds)}});
+        if (!reports) {
+            return res.status(404).json({error: 'No reports for assigned patrols'})
+        }
+
+        res.status(200).json({reports, message: 'All reports for assigned patrols generated for leads'});
+        
     } catch (error : any) {
         res.status(400).json({error: error.message})
     }
