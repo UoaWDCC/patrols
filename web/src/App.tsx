@@ -11,6 +11,7 @@ import AuthProvider from "./providers/AuthProvider";
 import ProtectedRoute from "@components/ProtectedRoute";
 import ReportFormIntel from "@pages/ReportTwo";
 import ReportFormObservation from "@pages/ReportThree";
+import Profile from "@pages/Profile";
 
 const router = createBrowserRouter([
   {
@@ -82,6 +83,14 @@ const router = createBrowserRouter([
     element: (
       <ProtectedRoute>
         <ReportFormObservation />
+      </ProtectedRoute>
+    ),
+  },
+  {
+    path: "/profile",
+    element: (
+      <ProtectedRoute>
+        <Profile />
       </ProtectedRoute>
     ),
   },
