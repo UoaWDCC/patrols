@@ -173,12 +173,12 @@ export default function Profile() {
                             </FormItem>
                             <div>
                                 {!editable ? (
-                                    <Button onClick={handleEdit} className='bg-cpnz-blue-900 mt-4 hover:bg-cpnz-blue-800'>Edit</Button>
+                                    <Button onClick={handleEdit} className='bg-cpnz-blue-900 mt-4 w-28'>Edit</Button>
                                 ) : (
                                     <Button
                                         onClick={handleSave}
                                         disabled={password != confirmPassword}
-                                        className='bg-cpnz-blue-900 mt-4'
+                                        className='bg-cpnz-blue-900 mt-4 w-28'
                                     >
                                         Save
                                     </Button>
