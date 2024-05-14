@@ -1,5 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import { FaCog, FaClipboardList, FaCogs, FaPlus } from "react-icons/fa";
+import { useAuth } from "../hooks/useAuth";
+import { Button } from "@components/ui/button";
 
 export default function Home() {
   const navigate = useNavigate();
@@ -7,6 +9,12 @@ export default function Home() {
   // Function to navigate to the logon page when new report button is clicked
   const handleNewReport = () => {
     navigate("/logon");
+  };
+
+  const { signOut } = useAuth();
+
+  const handleSignOut = () => {
+    signOut(); // Calls the signOut function when the sign out button is clicked
   };
 
   return (
@@ -69,6 +77,15 @@ export default function Home() {
             </div>
           </div>
         </div>
+      </div>
+
+      <div>
+        <Button
+          onClick={handleSignOut}
+          className="bg-cpnz-blue-900 text-md hover:bg-cpnz-blue-800"
+        >
+          Sign Out
+        </Button>
       </div>
     </div>
   );
