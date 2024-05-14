@@ -1,5 +1,4 @@
-import { Link, useNavigate } from "react-router-dom";
-import { FaChevronLeft } from "react-icons/fa";
+import { useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -8,365 +7,342 @@ import { Input } from "@components/ui/input";
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
   FormMessage,
 } from "@components/ui/form";
-import imageCpnzLogo from "../assets/images/cpnz_logo.png";
+import userIcon from "../assets/images/gorilla.png";
+import { FaCog } from "react-icons/fa";
 
 export default function Logon() {
   const navigate = useNavigate();
+
   const formSchema = z.object({
-    //Gonna also have to check whether the Event Number is even a number.
-    eventNo: z
-      .string()
-      .max(8, { message: "Event Number must be 8 digits." })
-      .min(8, {
-        message: "Event Number must be 8 digits.",
-      })
-      .regex(/^[0-9]*$/, {
-        message: "Event Number must only contain numbers.",
-      }),
-    patrolVehicle: z.string().refine((value) => value !== "", {
-      message: "Please select a patrol vehicle.",
+    shiftTime: z.string(),
+    policeStationBase: z.string().nonempty("Police Station Base is required"),
+    cpCallSign: z.string().nonempty("CP Call Sign is required"),
+    patrol1Name: z.string().nonempty("Patrol 1 Name is required"),
+    patrol1Number: z.string().nonempty("Patrol 1 Mobile Number is required"),
+    patrol2Name: z.string(),
+    patrol2Number: z.string(),
+    vehicle: z.string().refine((value) => value !== "", {
+      message: "Please select a vehicle",
     }),
-    reg: z.string(),
-    colour: z.string(),
-    livery: z.string(),
-    callSign: z.string(),
-    vehicleWof: z.string().refine((value) => value !== "", {
-      message: "Please select an option.",
-    }),
-    vehicleRegistration: z.string().refine((value) => value !== "", {
-      message: "Please select an option.",
-    }),
-    vehicleSafety: z.string().refine((value) => value !== "", {
-      message: "Please select an option.",
-    }),
-    vehicleDamage: z.string(),
+    liveryOrSignage: z.string().nonempty("Livery or Signage is required"),
+    havePoliceRadio: z.string().nonempty("Police Radio is required"),
   });
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      eventNo: "",
-      patrolVehicle: "",
-      reg: "",
-      colour: "",
-      livery: "",
-      callSign: "",
-      vehicleWof: "",
-      vehicleRegistration: "",
-      vehicleSafety: "",
-      vehicleDamage: "",
+      shiftTime: "",
+      policeStationBase: "",
+      cpCallSign: "",
+      patrol1Name: "",
+      patrol1Number: "",
+      patrol2Name: "",
+      patrol2Number: "",
+      vehicle: "",
+      liveryOrSignage: "",
+      havePoliceRadio: "",
     },
   });
 
-  const handleVehicleChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-    const selectedVehicle = event.target.value;
-    let reg = "";
-    let colour = "";
-    let livery = "";
-    let callSign = "";
-
-    if (selectedVehicle === "") {
-      // Set initial values to an empty string when no vehicle is selected
-      reg = "";
-      colour = "";
-      livery = "";
-      callSign = "";
-    } else if (selectedVehicle === "HAVAL Jolion") {
-      reg = "QHK6";
-      colour = "WHITE";
-      livery = "YES";
-      callSign = "CSCP";
-    } else if (selectedVehicle === "HAVAL H2") {
-      reg = "LTB442";
-      colour = "WHITE";
-      livery = "YES";
-      callSign = "CSCP2";
-    }
-
-    form.setValue("patrolVehicle", selectedVehicle);
-    form.setValue("reg", reg);
-    form.setValue("colour", colour);
-    form.setValue("livery", livery);
-    form.setValue("callSign", callSign);
-  };
-
   const onSubmit = (data: z.infer<typeof formSchema>) => {
-    const formErrors = form.formState.errors;
-
-    // Check if there are any form errors
-    if (Object.keys(formErrors).length === 0) {
-      console.log(data);
-      navigate("/logon-two");
-    } else {
-      // There are errors, do not navigate
-      console.log("Please fix the errors before proceeding.");
-    }
+    console.log(data);
+    navigate("/LogHome");
   };
 
   return (
-    <div className="min-h-screen bg-[#BFBFBF] flex items-center justify-center">
-      <div className="max-w-7xl">
-        <div className="bg-[#E9EFF2] inline-block">
-          {/*Title and Logo*/}
-          <div className="flex items-center justify-center px-12 py-4">
+    <div className="min-h-screen bg-white flex items-center justify-center">
+      <div className="max-w-7xl w-full">
+        <div className="bg-[#EEF6FF] px-8 py-6 flex items-center justify-between">
+          <div className="flex items-center">
             <img
-              src={imageCpnzLogo}
-              alt="CPNZ Logo"
-              className="h-32 w-auto mr-4 inline"
+              src={userIcon}
+              alt="User Icon"
+              className="w-16 h-16 mr-4 rounded-full"
             />
-            <h1 className="text-3xl font-bold inline">
-              SHIFT REPORT - WDCC COMMUNITY PATROL
-            </h1>
+            <h2 className="text-2xl font-bold">Welcome back, XXXXXX</h2>
           </div>
-
-          <div className="w-full px-14 py-6">
-            <div className="flex flex-col justify-between">
-              {/*Form to enter the Event Number*/}
-              <Form {...form}>
-                <form
-                  onSubmit={form.handleSubmit(onSubmit)}
-                  className="space-y-8"
-                >
-                  <div>
+          <button className="flex items-center">
+            <span className="mr-2 text-lg font-semibold">Settings</span>
+            <FaCog className="text-2xl text-gray-400 cursor-pointer hover:text-gray-200 transition-colors duration-300" />
+          </button>
+        </div>
+        <div className="bg-white p-8">
+          <h3 className="text-3xl font-bold mb-8 text-center">
+            Shift Log-on Form
+          </h3>
+          <Form {...form}>
+            <form onSubmit={form.handleSubmit(onSubmit)}>
+              <div className="grid grid-cols-2 gap-4">
+                <FormField
+                  control={form.control}
+                  name="shiftTime"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Shift Time</FormLabel>
+                      <FormControl>
+                        <div className="relative">
+                          <Input
+                            type="datetime-local"
+                            {...field}
+                            className="w-full pl-10"
+                            placeholder="Select date and time"
+                          />
+                          <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                            <svg
+                              className="w-5 h-5 text-gray-500"
+                              fill="currentColor"
+                              viewBox="0 0 20 20"
+                              xmlns="http://www.w3.org/2000/svg"
+                            >
+                              <path
+                                fillRule="evenodd"
+                                d="M6 2C5.44772 2 5 2.44772 5 3V4H4C2.89543 4 2 4.89543 2 6V16C2 17.1046 2.89543 18 4 18H16C17.1046 18 18 17.1046 18 16V6C18 4.89543 17.1046 4 16 4H15V3C15 2.44772 14.5523 2 14 2C13.4477 2 13 2.44772 13 3V4H7V3C7 2.44772 6.55228 2 6 2ZM6 7C5.44772 7 5 7.44772 5 8C5 8.55228 5.44772 9 6 9H14C14.5523 9 15 8.55228 15 8C15 7.44772 14.5523 7 14 7H6Z"
+                                clipRule="evenodd"
+                              />
+                            </svg>
+                          </div>
+                        </div>
+                      </FormControl>
+                    </FormItem>
+                  )}
+                />
+                <div></div>
+                <FormField
+                  control={form.control}
+                  name="policeStationBase"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Police Station Base</FormLabel>
+                      <FormControl>
+                        <Input
+                          {...field}
+                          className="w-full"
+                          placeholder="Base"
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="cpCallSign"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>CP Call Sign</FormLabel>
+                      <FormControl>
+                        <Input
+                          {...field}
+                          className="w-full"
+                          placeholder="Call Sign"
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <div className="col-span-2 mt-6">
+                  <h4 className="text-2xl font-semibold mb-2">Patrol 1</h4>
+                  <div className="grid grid-cols-2 gap-4">
                     <FormField
                       control={form.control}
-                      name="eventNo"
+                      name="patrol1Name"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel className="block mb-1">
-                            Enter your Event No. (P0 XXXXXXXXX)
-                          </FormLabel>
+                          <FormLabel>Name</FormLabel>
                           <FormControl>
                             <Input
-                              placeholder="Only enter the 8 digits after the P0"
                               {...field}
-                              className="w-60"
-                              maxLength={8}
+                              className="w-full"
+                              placeholder="Name"
                             />
                           </FormControl>
-                          <FormDescription className="text-xs italic text-black">
-                            Obtain Event Number from Comm's
-                          </FormDescription>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    <FormField
+                      control={form.control}
+                      name="patrol1Number"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Mobile Number</FormLabel>
+                          <FormControl>
+                            <Input
+                              {...field}
+                              className="w-full"
+                              placeholder="Number"
+                            />
+                          </FormControl>
                           <FormMessage />
                         </FormItem>
                       )}
                     />
                   </div>
-
-                  {/*Patrol Vehicle Selection*/}
-                  <div>
-                    <h2 className="text-lg font-bold">
-                      Patrol Vehicle Compulsory Check-List (before shift starts)
-                    </h2>
-                    <p className="text-xs mb-6 italic">
-                      Driver is responsible for ensuring vehicle is LEGAL & SAFE
-                      to drive
-                    </p>
-                    <div className="flex space-x-4 mb-4">
-                      <FormField
-                        control={form.control}
-                        name="patrolVehicle"
-                        render={({ field }) => (
-                          <>
-                            <FormItem>
-                              <FormLabel className="block mb-2">
-                                Select Patrol Vehicle
-                              </FormLabel>
-                              <select
-                                {...field}
-                                className="w-60 px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                onChange={handleVehicleChange}
-                              >
-                                <option value="" disabled>
-                                  Select a vehicle
-                                </option>
-                                <option value="HAVAL Jolion">
-                                  HAVAL Jolion
-                                </option>
-                                <option value="HAVAL H2">HAVAL H2</option>
-                              </select>
-                              <FormMessage />
-                            </FormItem>
-                          </>
-                        )}
-                      />
-
-                      {/*Patrol Vehicle Details*/}
-                      <FormField
-                        control={form.control}
-                        name="reg"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>Reg.</FormLabel>
-                            <FormControl>
-                              <Input {...field} className="w-20" />
-                            </FormControl>
-                          </FormItem>
-                        )}
-                      />
-                      <FormField
-                        control={form.control}
-                        name="colour"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>Colour</FormLabel>
-                            <FormControl>
-                              <Input {...field} className="w-20" />
-                            </FormControl>
-                          </FormItem>
-                        )}
-                      />
-                      <FormField
-                        control={form.control}
-                        name="livery"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>Livery?</FormLabel>
-                            <FormControl>
-                              <Input {...field} className="w-20" />
-                            </FormControl>
-                          </FormItem>
-                        )}
-                      />
-                      <FormField
-                        control={form.control}
-                        name="callSign"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>Call Sign</FormLabel>
-                            <FormControl>
-                              <Input {...field} className="w-20" />
-                            </FormControl>
-                          </FormItem>
-                        )}
-                      />
-                    </div>
-                    {/*Patrol Vehicle Condition*/}
-                    <div className="flex space-x-4">
-                      <FormField
-                        control={form.control}
-                        name="vehicleWof"
-                        render={({ field }) => (
-                          <>
-                            <FormItem>
-                              <FormLabel className="block">
-                                Vehicle has current WOF?
-                              </FormLabel>
-                              <select
-                                {...field}
-                                className="w-60 px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                              >
-                                <option value="" disabled>
-                                  Select
-                                </option>
-                                <option value="Yes">Yes</option>
-                                <option value="No">No</option>
-                              </select>
-                              <FormMessage />
-                            </FormItem>
-                          </>
-                        )}
-                      />
-
-                      <FormField
-                        control={form.control}
-                        name="vehicleRegistration"
-                        render={({ field }) => (
-                          <>
-                            <FormItem>
-                              <FormLabel className="block">
-                                Vehicle has current Registration?
-                              </FormLabel>
-                              <select
-                                {...field}
-                                className="w-60 px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                              >
-                                <option value="" disabled>
-                                  Select
-                                </option>
-                                <option value="Yes">Yes</option>
-                                <option value="No">No</option>
-                              </select>
-                              <FormMessage />
-                            </FormItem>
-                          </>
-                        )}
-                      />
-
-                      <FormField
-                        control={form.control}
-                        name="vehicleSafety"
-                        render={({ field }) => (
-                          <>
-                            <FormItem>
-                              <FormLabel className="block">
-                                Is vehicle safe to drive? (e.g. good tyres etc)?
-                              </FormLabel>
-                              <select
-                                {...field}
-                                className="w-60 px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                              >
-                                <option value="" disabled>
-                                  Select
-                                </option>
-                                <option value="Yes">Yes</option>
-                                <option value="No">No</option>
-                              </select>
-                              <FormMessage />
-                            </FormItem>
-                          </>
-                        )}
-                      />
-                    </div>
-                  </div>
-
-                  <div>
+                </div>
+                <div className="col-span-2">
+                  <h4 className="text-2xl font-semibold mb-2">Patrol 2</h4>
+                  <div className="grid grid-cols-2 gap-4">
                     <FormField
                       control={form.control}
-                      name="vehicleDamage"
+                      name="patrol2Name"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel className="block mb-1">
-                            Please record any visible damage before starting
-                            your shift (if applicable)
-                          </FormLabel>
+                          <FormLabel>Name</FormLabel>
                           <FormControl>
                             <Input
-                              placeholder="Check condition of tyres, Lighting, external damage etc"
                               {...field}
-                              className="max-w-screen-xl"
+                              className="w-full"
+                              placeholder="Name"
                             />
                           </FormControl>
-                          <FormDescription className="text-xs italic text-black">
-                            e.g. small dent on lower left hand passenger door,
-                            by B Pillar, behind decal
-                          </FormDescription>
-                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    <FormField
+                      control={form.control}
+                      name="patrol2Number"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Mobile Number</FormLabel>
+                          <FormControl>
+                            <Input
+                              {...field}
+                              className="w-full"
+                              placeholder="Number"
+                            />
+                          </FormControl>
                         </FormItem>
                       )}
                     />
                   </div>
-
-                  <div className="flex justify-end items-center space-x-4">
-                    <Link to="/home">
-                      <button className="flex items-center gap-2 px-4 py-2 rounded-lg transition-all duration-300 hover:bg-green-600 hover:text-white shadow-sm hover:shadow-lg">
-                        <FaChevronLeft size={12} /> Back
+                </div>
+                <div className="col-span-2 mt-2">
+                  <button
+                    type="button"
+                    className="px-4 py-2 bg-white text-black border-2 border-[#83E960] rounded-md font-semibold underline hover:bg-[#83E960]"
+                  >
+                    Add more Patrol
+                  </button>
+                </div>
+                <div className="col-span-2 mt-6">
+                  <h4 className="text-2xl font-semibold mb-2">Vehicle</h4>
+                  <div className="grid grid-cols-2 gap-4 items-center">
+                    <FormField
+                      control={form.control}
+                      name="vehicle"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormControl>
+                            <select
+                              {...field}
+                              className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                              onChange={(e) => {
+                                field.onChange(e);
+                              }}
+                            >
+                              <option value="" disabled>
+                                Select an option
+                              </option>
+                              <option value="vehicle1">Vehicle 1</option>
+                              <option value="vehicle2">Vehicle 2</option>
+                            </select>
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    <div className="flex items-center justify-start">
+                      <span className="mr-4 font-bold">OR</span>
+                      <button
+                        type="button"
+                        className="px-4 py-2 bg-white text-black border-2 border-[#83E960] rounded-md font-semibold underline hover:bg-[#83E960]"
+                      >
+                        Add new vehicle
                       </button>
-                    </Link>
-                    <Button type="button" onClick={form.handleSubmit(onSubmit)}>
-                      Next Page
-                    </Button>
+                    </div>
                   </div>
-                </form>
-              </Form>
-            </div>
-          </div>
+                </div>
+                <FormField
+                  control={form.control}
+                  name="liveryOrSignage"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Livery or Signage?</FormLabel>
+                      <FormControl>
+                        <div className="flex items-center space-x-4">
+                          <label className="flex items-center">
+                            <input
+                              type="radio"
+                              {...field}
+                              value="Yes"
+                              className="mr-2"
+                            />
+                            Yes
+                          </label>
+                          <label className="flex items-center">
+                            <input
+                              type="radio"
+                              {...field}
+                              value="No"
+                              className="mr-2"
+                            />
+                            No
+                          </label>
+                        </div>
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="havePoliceRadio"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Do you have a Police Radio</FormLabel>
+                      <FormControl>
+                        <div className="flex items-center space-x-4">
+                          <label className="flex items-center">
+                            <input
+                              type="radio"
+                              {...field}
+                              value="Yes"
+                              className="mr-2"
+                            />
+                            Yes
+                          </label>
+                          <label className="flex items-center">
+                            <input
+                              type="radio"
+                              {...field}
+                              value="No"
+                              className="mr-2"
+                            />
+                            No
+                          </label>
+                        </div>
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+              <div className="mt-8">
+                <Button
+                  type="submit"
+                  className="w-full bg-[#83E960] text-black hover:bg-[#6ec253]"
+                >
+                  Submit
+                </Button>
+              </div>
+            </form>
+          </Form>
         </div>
       </div>
     </div>
