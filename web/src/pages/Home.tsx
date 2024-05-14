@@ -2,9 +2,40 @@ import { useNavigate } from "react-router-dom";
 import { FaCog, FaClipboardList, FaCogs, FaPlus } from "react-icons/fa";
 import { useAuth } from "../hooks/useAuth";
 import { Button } from "@components/ui/button";
+import { useEffect, useState } from "react";
+import axios from "axios";
+import { z } from "zod";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@components/ui/dialog";
+import { userDetailsSchema } from "../schemas";
+
+const reportsDetailsSchema = z.object({
+  message: z.string(),
+  reports: z.array(
+    z.object({
+      id: z.number(),
+      title: z.string(),
+      createdAt: z.string(),
+      location: z.string(),
+      patrolID: z.number(),
+      reportIncidentType: z.string(),
+    })
+  ),
+});
+
+type reportsDetails = z.infer<typeof reportsDetailsSchema>;
 
 export default function Home() {
   const navigate = useNavigate();
+  const { user } = useAuth();
+  const [data, setData] = useState<reportsDetails>();
+  const [id, setId] = useState<number>();
 
   // Function to navigate to the logon page when new report button is clicked
   const handleNewReport = () => {
@@ -16,6 +47,34 @@ export default function Home() {
   const handleSignOut = () => {
     signOut(); // Calls the signOut function when the sign out button is clicked
   };
+
+  useEffect(() => {
+    const getPatrolLeadID = async () => {
+      const response = await axios.get(
+        `${import.meta.env.VITE_API_URL}/user/getUserDetails`
+      );
+
+      const userDetails = userDetailsSchema.parse(response.data);
+      setId(Number(userDetails.id));
+    };
+
+    getPatrolLeadID();
+  });
+
+  useEffect(() => {
+    const getAllReports = async () => {
+      const response = await axios.get(
+        `${import.meta.env.VITE_API_URL}/report/lead/${id}`
+      );
+
+      const reportsData = reportsDetailsSchema.parse(response.data);
+      setData(reportsData);
+    };
+
+    if (id !== undefined) {
+      getAllReports();
+    }
+  }, [id]);
 
   return (
     <div className="text-center min-h-screen relative bg-[#FFFFFF] max-w-3xl mx-auto">
@@ -61,11 +120,40 @@ export default function Home() {
 
         <div className="grid grid-cols-2 gap-4">
           <div className="bg-[#ECEDFF] text-black p-4 rounded-lg flex items-center hover:bg-[#808080] transition-colors duration-300">
-            <FaClipboardList className="mr-4 text-2xl" />
-            <div className="text-left">
-              <h3 className="text-base font-semibold">Past Reports</h3>
-              <p className="text-xs">View reports in the past.</p>
-            </div>
+            <Dialog>
+              <DialogTrigger className="flex items-center">
+                <FaClipboardList className="mr-4 text-2xl" />
+                <div className="text-left">
+                  <h3 className="text-base font-semibold">Past Reports</h3>
+                  <p className="text-xs">View reports in the past.</p>
+                </div>
+              </DialogTrigger>
+              <DialogContent className="p-8 max-h-[700px] overflow-y-auto">
+                <DialogHeader>
+                  <DialogTitle className="text-center text-subheading pb-12">
+                    All Reports
+                  </DialogTitle>
+                  <DialogDescription>
+                    {data == null ? (
+                      <div>No reports found</div>
+                    ) : (
+                      <div className="flex flex-col w-full gap-8">
+                        {data.reports.map((d) => (
+                          <div
+                            key={d.id}
+                            className="flex-1 border-2 border-zinc-400 rounded-lg shadow-md px-6 py-4"
+                          >
+                            <h3 className="text-lg font-semibold">{d.title}</h3>
+                            <p>Location: {d.location}</p>
+                            <p>Type: {d.reportIncidentType}</p>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </DialogDescription>
+                </DialogHeader>
+              </DialogContent>
+            </Dialog>
           </div>
           <div className="bg-[#ECEDFF] text-black p-4 rounded-lg flex items-center hover:bg-[#808080] transition-colors duration-300">
             <FaCogs className="mr-4 text-2xl" />
