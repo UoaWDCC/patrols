@@ -82,7 +82,7 @@ export default function Profile() {
         setEditable(false);
     };
 
-    //if (!loading) {
+    if (!loading) {
         return (
             <div className='text-center flex-col min-h-screen flex'>
                 <div className='bg-[#eef6ff] h-28 mb-4 flex items-center justify-start pl-8 pt-4'>
@@ -190,4 +190,4 @@ export default function Profile() {
             </div>
         );
     }
-//}
+}
