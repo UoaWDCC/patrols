@@ -1,5 +1,7 @@
 import { Link, useNavigate } from 'react-router-dom';
 import { FaCog, FaClipboardList, FaCogs, FaPlus } from 'react-icons/fa';
+import { useAuth } from '../hooks/useAuth';
+import { Button } from '@components/ui/button';
 
 export default function Home() {
     const navigate = useNavigate();
@@ -8,6 +10,12 @@ export default function Home() {
     const handleNewReport = () => {
         navigate('/logon');
     };
+
+    const { signOut } = useAuth();
+
+    const handleSignOut = () => {
+        signOut(); // Calls the signOut function when the sign out button is clicked
+    }
 
     return (
         <div className="text-center min-h-screen relative bg-[#E6F0FF]">
@@ -47,6 +55,11 @@ export default function Home() {
                             </h3>
                         </div>
                     </div>
+                </div>
+                <div>
+                    <Button onClick={handleSignOut} className='bg-cpnz-blue-900 h-12 hover:bg-cpnz-blue-800'>
+                        Sign Out
+                    </Button>
                 </div>
             </div>
         </div>
