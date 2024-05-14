@@ -1,30 +1,32 @@
-import { Link, useNavigate } from 'react-router-dom';
-import { FaCog, FaClipboardList } from 'react-icons/fa';
+import { useNavigate } from "react-router-dom";
+import { FaCog, FaClipboardList } from "react-icons/fa";
 
 export default function ReportSummary() {
   const navigate = useNavigate();
 
   // Function to navigate to the new report page
   const handleNewReport = () => {
-    navigate('/Report');
+    navigate("/Report");
   };
 
   // Function to navigate to the past reports page
   const handlePastReports = () => {
-    navigate('/past-reports');
+    navigate("/past-reports");
   };
 
   // Function to handle log-off
   const handleLogOff = () => {
     // Perform log-off actions
-    navigate('/login');
+    navigate("/login");
   };
 
   return (
     <div className="text-center min-h-screen relative bg-[#FFFFFF] max-w-3xl mx-auto">
       <div className="bg-[#ECEDFF] py-6 flex justify-between items-center px-4 rounded-b-3xl">
         <div>
-          <h1 className="text-xl font-bold text-black mx-4">Welcome back, XXXXXXX</h1>
+          <h1 className="text-xl font-bold text-black mx-4">
+            Welcome back, XXXXXXX
+          </h1>
         </div>
         <FaCog className="text-2xl text-black cursor-pointer hover:text-gray-200 transition-colors duration-300" />
       </div>
@@ -37,19 +39,19 @@ export default function ReportSummary() {
           </div>
         </div>
         <div className="bg-white px-4 py-2 mb-6 flex flex-col items-center">
-            <button
+          <button
             onClick={handleNewReport}
-            className="bg-[#EEEEEE] mx-autoo px-6 py-20 mb-4 rounded-lg shadow-lg mb-6 text-lg font-semibold text-black hover:bg-[#0F1363] hover:shadow-xl hover:text-white transition-all duration-300"
-            style={{ width: '500px' }}
-            >
+            className="bg-[#EEEEEE] mx-autoo px-6 py-20 rounded-lg shadow-lg mb-6 text-lg font-semibold text-black hover:bg-[#0F1363] hover:shadow-xl hover:text-white transition-all duration-300"
+            style={{ width: "500px" }}
+          >
             Start a New Report
-            </button>
-            <button
+          </button>
+          <button
             onClick={handlePastReports}
             className="bg-white w-800 mx-auto px-6 py-4 rounded-lg text-base font-semibold text-black shadow-sm hover:shadow-lg border-2 border-black"
-            >
+          >
             Past Reports
-            </button>
+          </button>
         </div>
         <div className="mt-8">
           <button
