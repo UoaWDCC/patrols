@@ -72,25 +72,32 @@ export const deleteReport = async (req: Request, res: Response) => {
 
 export const getAllReportForLead = async (req: Request, res: Response) => {
     try {
+        console.log(req.params.id)
         // Get the patrol request parameters
-        const { patrolLeadId } = req.params;
-        const patrolLead = await prisma.patrols.findUnique({where: {id: Number(patrolLeadId)}});
+        const patrolLeadId = req.params.id;
+        // const patrolLead = await prisma.patrols.findFirst(
+        //     {where: {id: Number(patrolLeadId)},
+                    
+        // });
+        // console.log(patrolLead)
 
-        if (!patrolLead) { // Check if patrol exists
-            return res.status(404).json({error: 'No such patrol lead'})
-        } else if (patrolLead.role !== 'lead') { // Check if patrol is a lead
-            return res.status(401).json({error: 'You are not authorized to view this report'})
-        }
+        // if (!patrolLead) { // Check if patrol exists
+        //     return res.status(404).json({error: 'No such patrol lead'})
+        // } 
+        // else if (patrolLead.role !== 'lead') { // Check if patrol is a lead
+        //     return res.status(401).json({error: 'You are not authorized to view this report'})
+        // }
 
         // Get all the patrols assigned to the patrol lead
-        const assignedPatrols = await prisma.patrols.findMany({where: {supervisorID: Number(patrolLeadId)}});
-        if (!assignedPatrols) { // Check if there is any assigned patrols
-            return res.status(404).json({error: 'No assigned patrols'})
+        const assignedPatrol = await prisma.patrols.findUnique({where: {supervisorID: Number(patrolLeadId)}, select:{id: true, reports: true}});
+        if (!assignedPatrol) { // Check if there is any assigned patrols
+            return res.status(404).json({error: 'No assigned patrol'})
         }
-        const assignedPatrolIds = assignedPatrols.map(patrol => patrol.id); // Get the IDs of the assigned patrols
+        console.log(assignedPatrol.id, assignedPatrol.reports);
         
         // Get all the reports for the assigned patrols
-        const reports = await prisma.reports.findMany({where: {id: Number(assignedPatrolIds)}});
+        const reports = await prisma.reports.findMany({where: {patrolID: Number(assignedPatrol.id)}});
+        console.log(reports)
         if (!reports) { // Check if there is any reports for the assigned patrols
             return res.status(404).json({error: 'No reports for assigned patrols'})
         }
