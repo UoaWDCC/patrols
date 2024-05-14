@@ -51,7 +51,7 @@ export default function Logon() {
 
   const onSubmit = (data: z.infer<typeof formSchema>) => {
     console.log(data);
-    navigate("/logon-two");
+    navigate("/LogHome");
   };
 
   return (
@@ -59,7 +59,11 @@ export default function Logon() {
       <div className="max-w-7xl w-full">
         <div className="bg-[#EEF6FF] px-8 py-6 flex items-center justify-between">
           <div className="flex items-center">
-            <img src={userIcon} alt="User Icon" className="w-10 h-10 mr-4" />
+            <img
+              src={userIcon}
+              alt="User Icon"
+              className="w-16 h-16 mr-4 rounded-full"
+            />
             <h2 className="text-2xl font-bold">Welcome back, XXXXXX</h2>
           </div>
           <button className="flex items-center">
@@ -218,6 +222,14 @@ export default function Logon() {
                     />
                   </div>
                 </div>
+                <div className="col-span-2 mt-2">
+                  <button
+                    type="button"
+                    className="px-4 py-2 bg-white text-black border-2 border-[#83E960] rounded-md font-semibold underline hover:bg-[#83E960]"
+                  >
+                    Add more Patrol
+                  </button>
+                </div>
                 <div className="col-span-2 mt-6">
                   <h4 className="text-2xl font-semibold mb-2">Vehicle</h4>
                   <div className="grid grid-cols-2 gap-4 items-center">
@@ -245,11 +257,11 @@ export default function Logon() {
                         </FormItem>
                       )}
                     />
-                    <div className="flex items-center justify-center">
-                      <span className="mr-2 font-bold">OR</span>
+                    <div className="flex items-center justify-start">
+                      <span className="mr-4 font-bold">OR</span>
                       <button
                         type="button"
-                        className="px-4 py-2 bg-white text-black border-2 border-[#038400] rounded-md font-semibold underline hover:bg-[#038400]"
+                        className="px-4 py-2 bg-white text-black border-2 border-[#83E960] rounded-md font-semibold underline hover:bg-[#83E960]"
                       >
                         Add new vehicle
                       </button>
@@ -324,7 +336,7 @@ export default function Logon() {
               <div className="mt-8">
                 <Button
                   type="submit"
-                  className="w-full bg-[#83E960] text-black"
+                  className="w-full bg-[#83E960] text-black hover:bg-[#6ec253]"
                 >
                   Submit
                 </Button>
