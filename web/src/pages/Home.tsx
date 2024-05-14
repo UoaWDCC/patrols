@@ -2,9 +2,21 @@ import { Link, useNavigate } from 'react-router-dom';
 import { FaCog, FaClipboardList, FaCogs, FaPlus } from 'react-icons/fa';
 import { useAuth } from '../hooks/useAuth';
 import { Button } from '@components/ui/button';
+import { useEffect, useState } from 'react';
+import axios from 'axios';
+import { z } from 'zod';
+
+const reportsDetailsSchema = z.object({
+    message: z.string(),
+    reports: z.array(z.string()),
+});
+
+type reportsDetails = z.infer<typeof reportsDetailsSchema>;
 
 export default function Home() {
     const navigate = useNavigate();
+    const { user } = useAuth();
+    const [data, setData] = useState<reportsDetails>();
 
     // Function to navigate to the logon page when new report button is clicked
     const handleNewReport = () => {
@@ -16,6 +28,19 @@ export default function Home() {
     const handleSignOut = () => {
         signOut(); // Calls the signOut function when the sign out button is clicked
     }
+
+    useEffect(() => {
+        const getAllReports = async () => {
+            const response = await axios.get(
+                `${import.meta.env.VITE_API_URL}/report/lead/${user?.id}`
+            );
+        
+            const reportsData = reportsDetailsSchema.parse(response.data);
+            setData(reportsData);
+        };
+
+        getAllReports();
+    }, [])
 
     return (
         <div className="text-center min-h-screen relative bg-[#E6F0FF]">
