@@ -1,4 +1,4 @@
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -12,7 +12,6 @@ import {
   FormLabel,
   FormMessage,
 } from "@components/ui/form";
-import cogwheelIcon from "../assets/images/cogwheel.png";
 import userIcon from "../assets/images/gorilla.png";
 import { FaCog } from "react-icons/fa";
 
