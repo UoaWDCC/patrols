@@ -9,7 +9,7 @@ import { Form,
 import { Input } from '@components/ui/input';
 import cpnzLogo from '../assets/logo/cpnzLogo.png';
 import { supabaseClient } from '../auth-client/SupabaseClient';
-import { useNavigate, Navigate, Link } from 'react-router-dom';
+import { useNavigate, Navigate } from 'react-router-dom';
 import { useState, FormEvent } from 'react';
 import axios from 'axios';
 import { z } from 'zod';
@@ -164,11 +164,6 @@ export default function Login() {
                         >
                             Log In
                         </Button>
-                        <Link to="/home">
-                            <Button className="bg-[#0f1363] w-full flex">
-                                Go to Home
-                            </Button>
-                        </Link>
                     </form>
                 </Form>
             </div>

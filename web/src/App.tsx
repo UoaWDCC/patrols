@@ -17,73 +17,65 @@ const router = createBrowserRouter([
     {
         path: '/',
         element: (
-            // <ProtectedRoute>
-            //     <Home />
-            // </ProtectedRoute>
-            <Home />
+            <ProtectedRoute>
+                <Home />
+            </ProtectedRoute>
         ),
     },
     {
         path: '/home',
         element: (
-            // <ProtectedRoute>
-            //     <Home />
-            // </ProtectedRoute>
-            <Home />
+            <ProtectedRoute>
+                <Home />
+            </ProtectedRoute>
         ),
     },
     {
         path: '/LogHome',
         element: (
-            // <ProtectedRoute>
-            //     <LogHome />
-            // </ProtectedRoute>
-            <LogHome />
+            <ProtectedRoute>
+                <LogHome />
+            </ProtectedRoute>
         ),
     },
     {
         path: '/Report',
         element: (
-            // <ProtectedRoute>
-            //     <Report />
-            // </ProtectedRoute>
-            <Report />
+            <ProtectedRoute>
+                <Report />
+            </ProtectedRoute>
         ),
     },
     {
         path: '/ReportTwo',
         element: (
-            // <ProtectedRoute>
-            //     <ReportTwo />
-            // </ProtectedRoute>
-            <ReportTwo />
+            <ProtectedRoute>
+                <ReportTwo />
+            </ProtectedRoute>
         ),
     },
     {
         path: '/ReportThree',
         element: (
-            // <ProtectedRoute>
-            //     <ReportTwo />
-            // </ProtectedRoute>
-            <ReportThree />
+            <ProtectedRoute>
+                <ReportTwo />
+            </ProtectedRoute>
         ),
     },
     {
         path: '/logon',
         element: (
-            // <ProtectedRoute>
-            //     <Logon />
-            // </ProtectedRoute>
-            <Logon />
+            <ProtectedRoute>
+                <Logon />
+            </ProtectedRoute>
         ),
     },
     {
         path: '/logon-two',
         element: (
-            // <ProtectedRoute>
-            //     <LogonTwo />
-            // </ProtectedRoute>
-            <LogonTwo />
+            <ProtectedRoute>
+                <LogonTwo />
+            </ProtectedRoute>
         ),
     },
     {
