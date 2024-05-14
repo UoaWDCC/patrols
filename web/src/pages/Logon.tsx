@@ -14,6 +14,7 @@ import {
 } from "@components/ui/form";
 import cogwheelIcon from "../assets/images/cogwheel.png";
 import userIcon from "../assets/images/gorilla.png";
+import { FaCog } from "react-icons/fa";
 
 export default function Logon() {
   const navigate = useNavigate();
@@ -68,7 +69,7 @@ export default function Logon() {
           </div>
           <button className="flex items-center">
             <span className="mr-2 text-lg font-semibold">Settings</span>
-            <img src={cogwheelIcon} alt="Settings" className="w-6 h-6" />
+            <FaCog className="text-2xl text-gray-400 cursor-pointer hover:text-gray-200 transition-colors duration-300" />
           </button>
         </div>
         <div className="bg-white p-8">
