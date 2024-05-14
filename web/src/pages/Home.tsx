@@ -5,10 +5,27 @@ import { Button } from '@components/ui/button';
 import { useEffect, useState } from 'react';
 import axios from 'axios';
 import { z } from 'zod';
+import { 
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogHeader,
+    DialogTitle,
+    DialogTrigger,
+} from '@components/ui/dialog';
+import { userDetailsSchema } from '../schemas';
+
 
 const reportsDetailsSchema = z.object({
     message: z.string(),
-    reports: z.array(z.string()),
+    reports: z.array(z.object({
+        id: z.number(),
+        title: z.string(),
+        createdAt: z.string(),
+        location: z.string(),
+        patrolID: z.number(),
+        reportIncidentType: z.string() 
+    })),
 });
 
 type reportsDetails = z.infer<typeof reportsDetailsSchema>;
@@ -17,6 +34,7 @@ export default function Home() {
     const navigate = useNavigate();
     const { user } = useAuth();
     const [data, setData] = useState<reportsDetails>();
+    const [id, setId] = useState<number>();
 
     // Function to navigate to the logon page when new report button is clicked
     const handleNewReport = () => {
@@ -30,17 +48,32 @@ export default function Home() {
     }
 
     useEffect(() => {
+        const getPatrolLeadID = async () => {
+            const response = await axios.get(
+                `${import.meta.env.VITE_API_URL}/user/getUserDetails`
+            );
+        
+            const userDetails = userDetailsSchema.parse(response.data);
+            setId(Number(userDetails.id))
+        };
+
+        getPatrolLeadID();
+    })
+
+    useEffect(() => {
         const getAllReports = async () => {
             const response = await axios.get(
-                `${import.meta.env.VITE_API_URL}/report/lead/${user?.id}`
+                `${import.meta.env.VITE_API_URL}/report/lead/${id}`
             );
         
             const reportsData = reportsDetailsSchema.parse(response.data);
             setData(reportsData);
         };
 
-        getAllReports();
-    }, [])
+        if (id !== undefined) {
+            getAllReports()
+        }
+    }, [id])
 
     return (
         <div className="text-center min-h-screen relative bg-[#E6F0FF]">
@@ -64,14 +97,33 @@ export default function Home() {
                     <FaPlus className="mr-2" /> Log a new report
                 </button>
                 <div className="grid grid-cols-2 mb-8 mt-8 gap-6">
-                    <div className="bg-[#969696] text-white text-center p-8 rounded-lg flex items-center hover:bg-[#808080] transition-colors duration-300">
-                        <FaClipboardList className="mr-12" />
-                        <div>
-                            <h3 className="text-lg font-semibold">
-                                Past Reports
-                            </h3>
-                        </div>
-                    </div>
+                    <Dialog>              
+                        <DialogTrigger className='text-lg font-semibold bg-[#969696] text-white text-center p-8 rounded-lg flex items-center hover:bg-[#808080] transition-colors duration-300'>
+                        <FaClipboardList className="mr-12" />Past Reports</DialogTrigger>
+                        <DialogContent className='p-8'>
+                            <DialogHeader>
+                            <DialogTitle className='text-center text-subheading pb-12'>All Reports</DialogTitle>
+                            <DialogDescription>
+                                {data == null ? 
+                                    <div>
+                                        No reports found
+                                    </div> : 
+                                    <div className='flex flex-col w-full gap-8'>
+                                        {data.reports.map((d) => (
+                                            <div key={d.id} className='flex-1 border-2 border-zinc-400 rounded-lg shadow-md px-6 py-4'>
+                                                <h3 className='text-lg font-semibold'>
+                                                    {d.title}
+                                                </h3>
+                                                <p>Location: {d.location}</p>
+                                                <p>Type: {d.reportIncidentType}</p>
+                                            </div>
+                                        ))}
+                                    </div>
+                                }
+                            </DialogDescription>
+                            </DialogHeader>
+                        </DialogContent>
+                    </Dialog>
                     <div className="bg-[#969696] text-white p-6 rounded-lg flex items-center hover:bg-[#808080] transition-colors duration-300">
                         <FaCogs className="mr-12" />
                         <div>
