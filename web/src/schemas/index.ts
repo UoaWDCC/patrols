@@ -13,8 +13,8 @@ export const tokenSchema = z.object({
 });
 
 export const emailSchema = z.object({
-  email: z.string(),
   patrolName: z.string(),
+  email: z.string(),
   patrolID: z.string(),
   formData: z.string(),
 })
