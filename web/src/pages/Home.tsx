@@ -128,7 +128,7 @@ export default function Home() {
                   <p className="text-xs">View reports in the past.</p>
                 </div>
               </DialogTrigger>
-              <DialogContent className="p-8 max-h-[700px] overflow-y-auto">
+              <DialogContent className="p-8 max-h-[550px] overflow-y-auto">
                 <DialogHeader>
                   <DialogTitle className="text-center text-subheading pb-12">
                     All Reports
