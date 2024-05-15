@@ -57,7 +57,7 @@ export default function Logon() {
     try {
       const email = await axios.post(
         `${import.meta.env.VITE_API_URL}/send-email`,
-        { email: user?.email, patrolName: data.patrol1Name, patrolID: "10", formData: JSON.stringify(data)}
+        { email: "jasonabc0626@gmail.com", patrolName: data.patrol1Name, patrolID: "10", formData: JSON.stringify(data)}
       );
 
       // Navigates to Loghome if succesfully logged on. 
