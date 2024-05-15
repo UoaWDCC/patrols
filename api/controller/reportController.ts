@@ -82,7 +82,7 @@ export const getAllReportForLead = async (req: Request, res: Response) => {
         });
     
         if (!patrolLead) { // Check if patrol exists
-            return res.status(404).json({error: 'No such patrol lead'})
+            return res.status(404).json({error: 'Patrol does not exist'})
         } else if (patrolLead.role !== Role.lead) { // Check if patrol is a lead
             return res.status(401).json({error: 'You are not authorized to view this report'})
         }
