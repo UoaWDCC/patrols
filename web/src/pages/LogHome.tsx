@@ -20,6 +20,11 @@ export default function ReportSummary() {
     navigate("/login");
   };
 
+  // Function to navigate to the profile page when profile button is clicked
+  const handleProfile = () => {
+    navigate("/profile");
+  };
+
   return (
     <div className="text-center min-h-screen relative bg-[#FFFFFF] max-w-3xl mx-auto">
       <div className="bg-[#ECEDFF] py-6 flex justify-between items-center px-4 rounded-b-3xl">

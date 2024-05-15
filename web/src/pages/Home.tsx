@@ -42,6 +42,11 @@ export default function Home() {
     navigate("/logon");
   };
 
+  // Function to navigate to the profile page when profile button is clicked
+  const handleProfile = () => {
+    navigate("/profile");
+  };
+
   const { signOut } = useAuth();
 
   const handleSignOut = () => {
@@ -168,10 +173,10 @@ export default function Home() {
         </div>
       </div>
 
-      <div>
+      <div className="space-x-2">
         <Button
           onClick={handleSignOut}
-          className="bg-cpnz-blue-900 text-md hover:bg-cpnz-blue-800"
+          className="bg-cpnz-blue-900 text-md font-semibold hover:bg-cpnz-blue-800"
         >
           Sign Out
         </Button>
