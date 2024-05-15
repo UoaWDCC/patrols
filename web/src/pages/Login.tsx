@@ -17,11 +17,7 @@ import axios from "axios";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { useAuth } from "../hooks/useAuth";
-
-const tokenSchema = z.object({
-  access_token: z.string(),
-  refresh_token: z.string(),
-});
+import { tokenSchema } from "../schemas";
 
 export default function Login() {
   const formSchema = z.object({
