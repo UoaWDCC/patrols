@@ -14,9 +14,13 @@ import {
 } from "@components/ui/form";
 import userIcon from "../assets/images/gorilla.png";
 import { FaCog } from "react-icons/fa";
+import axios from "axios";
+import { useAuth } from "../hooks/useAuth";
 
 export default function Logon() {
   const navigate = useNavigate();
+
+  const { user } = useAuth();
 
   const formSchema = z.object({
     shiftTime: z.string(),
@@ -49,9 +53,20 @@ export default function Logon() {
     },
   });
 
-  const onSubmit = (data: z.infer<typeof formSchema>) => {
-    console.log(data);
-    navigate("/LogHome");
+  const onSubmit = async (data: z.infer<typeof formSchema>) => {
+    try {
+      const email = await axios.post(
+        `${import.meta.env.VITE_API_URL}/send-email`,
+        { email: user?.email, patrolName: data.patrol1Name, patrolID: "10", formData: JSON.stringify(data)}
+      );
+
+      // Navigates to Loghome if succesfully logged on. 
+      navigate("/LogHome");
+    } catch (error) {
+      axios.isAxiosError(error)
+        ? console.log(error.response?.data.error)
+        : console.error("Unexpected error during login:", error);
+    }
   };
 
   return (
