@@ -7,9 +7,10 @@ interface ChildrenType extends PropsWithChildren {}
 
 export default function AuthProvider({ children }: ChildrenType) {
     const [user, setUser] = useState<User>();
+    const [loading, setLoading] = useState<boolean>(true);
 
     useEffect(() => {
-        const getUserData = async function () {
+        const getSessionData = async function () {
             const {
                 data: { session },
                 error,
@@ -18,15 +19,17 @@ export default function AuthProvider({ children }: ChildrenType) {
                 console.log(`Error: ${error}`);
             }
             setUser(session?.user);
+            setLoading(false);
         };
 
         const { data: listener } = supabaseClient.auth.onAuthStateChange(
             function (_event, session) {
                 setUser(session?.user);
+                setLoading(false);
             }
         );
 
-        getUserData();
+        getSessionData();
 
         return () => {
             listener?.subscription.unsubscribe();
@@ -39,6 +42,8 @@ export default function AuthProvider({ children }: ChildrenType) {
     };
 
     return (
-        <AuthContext.Provider value={value}>{children}</AuthContext.Provider>
+        <AuthContext.Provider value={value}>
+            {!loading && children}
+        </AuthContext.Provider>
     );
 }

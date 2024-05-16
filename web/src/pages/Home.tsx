@@ -1,102 +1,181 @@
-// import { useQuery } from "@tanstack/react-query";
-// import QueryKeys from "@utils/queryKeys";
-// import axios from "axios";
-// import { useParams } from "react-router";
-// import urls from "@utils/urls";
-
-import { Link } from "react-router-dom";
-
-import { zodResolver } from "@hookform/resolvers/zod"
-import { useForm } from "react-hook-form"
-import { z } from "zod"
- 
+import { useNavigate } from "react-router-dom";
+import { FaCog, FaClipboardList, FaCogs, FaPlus } from "react-icons/fa";
+import { useAuth } from "../hooks/useAuth";
 import { Button } from "@components/ui/button";
+import { useEffect, useState } from "react";
+import axios from "axios";
+import { z } from "zod";
 import {
-  Form,
-  FormControl,
-  FormDescription,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@components/ui/form"
-import { Input } from "@components/ui/input"
- 
-const formSchema = z.object({
-  username: z.string().min(2, {
-    message: "Username must be at least 2 characters.",
-  }),
-})
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@components/ui/dialog";
+import { userDetailsSchema } from "../schemas";
+
+const reportsDetailsSchema = z.object({
+  message: z.string(),
+  reports: z.array(
+    z.object({
+      id: z.number(),
+      title: z.string(),
+      createdAt: z.string(),
+      location: z.string(),
+      patrolID: z.number(),
+      reportIncidentType: z.string(),
+    })
+  ),
+});
+
+type reportsDetails = z.infer<typeof reportsDetailsSchema>;
 
 export default function Home() {
-  // const { name } = useParams();
+  const navigate = useNavigate();
+  const { user } = useAuth();
+  const [data, setData] = useState<reportsDetails>();
+  const [id, setId] = useState<number>();
 
-  // const { data, isLoading, isError, error } = useQuery({
-  //   queryKey: [QueryKeys.GetIntro, name],
-  //   queryFn: async () => {
-  //     const { data } = await axios(`/hello/${name}`, {
-  //       method: 'get',
-  //       baseURL: urls.apiUrl,
-  //     });
-  //     return data;
-  //   },
-  // });
+  // Function to navigate to the logon page when new report button is clicked
+  const handleNewReport = () => {
+    navigate("/logon");
+  };
 
-  // if (isLoading) {
-  //   return <div className="loading loading-spinner" />;
-  // }
-  // if (isError) {
-  //   return <div>Error: {error.name}</div>;
-  // }
-  // return <div>{data}</div>;
+  const { signOut } = useAuth();
 
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
-    defaultValues: {
-      username: ""
+  const handleSignOut = () => {
+    signOut(); // Calls the signOut function when the sign out button is clicked
+  };
+
+  useEffect(() => {
+    const getPatrolLeadID = async () => {
+      const response = await axios.get(
+        `${import.meta.env.VITE_API_URL}/user/getUserDetails`
+      );
+
+      const userDetails = userDetailsSchema.parse(response.data);
+      setId(Number(userDetails.id));
+    };
+
+    getPatrolLeadID();
+  });
+
+  useEffect(() => {
+    const getAllReports = async () => {
+      const response = await axios.get(
+        `${import.meta.env.VITE_API_URL}/report/lead/${id}`
+      );
+
+      const reportsData = reportsDetailsSchema.parse(response.data);
+      setData(reportsData);
+    };
+
+    if (id !== undefined) {
+      getAllReports();
     }
-  })
-
-  const onSubmit = (e: any) => {
-    e.preventDefault();
-  }
+  }, [id]);
 
   return (
-    <div className="text-center h-[80vh] pt-24 flex flex-col justify-between items-center">
-      <div>
-        <h1 className="text-5xl font-bold mb-6">Hello World</h1>
-        <h3>Welcome to CPNZ progressive web app</h3>
+    <div className="text-center min-h-screen relative bg-[#FFFFFF] max-w-3xl mx-auto">
+      <div className="bg-[#ECEDFF] py-6 flex justify-between items-center px-4 rounded-b-3xl">
+        <div className="px-8">
+          <h1 className="text-xl font-bold text-black">
+            Welcome back, XXXXXXX
+          </h1>
+        </div>
+        <FaCog className="text-2xl text-gray-400 cursor-pointer hover:text-gray-200 transition-colors duration-300" />
       </div>
 
-      <div>
-        <Link to="/report">
-          <button className="bg-green-100 px-8 py-4 rounded-lg transition-all duration-300 hover:bg-green-600 hover:text-white shadow-sm hover:shadow-lg">
-            Report
+      <div className="max-w-800 mx-auto px-8 my-8">
+        <div className="bg-[#ECEDFF] p-4 rounded-lg shadow-md mb-6">
+          <h2 className="text-md font-semibold">Draft report detected</h2>
+          <p className="text-gray-600">Finish your report?</p>
+        </div>
+        <div className="bg-[#0F1363] px-4 py-2 rounded-lg shadow-md mb-6">
+          <h2 className="text-sm font-bold text-white ml-10 mt-3 text-left">
+            {" "}
+            Log on to start a new shift
+          </h2>
+          <p className="text-white text-xs ml-10 text-left my-3">
+            Create a new report from scratch or select a template.
+          </p>
+          <button
+            onClick={handleNewReport}
+            className="bg-white w-full mx-auto px-6 py-4 mb-3 rounded-lg text-md font-semibold flex items-center justify-center transition-all duration-300 text-black shadow-sm hover:shadow-lg"
+          >
+            <FaPlus className="mr-2" /> Start a New Shift
           </button>
-        </Link>
+        </div>
+
+        <div className="bg-[#ECEDFF] p-4 rounded-lg shadow-md mb-6">
+          <h2 className="text-md font-semibold mb-2">Patrol vehicles</h2>
+          <p className="text-gray-600 mb-4">
+            Create a new report from scratch or select a template.
+          </p>
+          <button className="bg-white w-full mx-auto px-6 py-3 rounded-lg text-md font-semibold text-black shadow-sm hover:shadow-lg">
+            View and Update Patrol Vehicles
+          </button>
+        </div>
+
+        <div className="grid grid-cols-2 gap-4">
+          <div className="bg-[#ECEDFF] text-black p-4 rounded-lg flex items-center hover:bg-[#808080] transition-colors duration-300">
+            <Dialog>
+              <DialogTrigger className="flex items-center">
+                <FaClipboardList className="mr-4 text-2xl" />
+                <div className="text-left">
+                  <h3 className="text-base font-semibold">Past Reports</h3>
+                  <p className="text-xs">View reports in the past.</p>
+                </div>
+              </DialogTrigger>
+              <DialogContent className="p-8 max-h-[550px] overflow-y-auto">
+                <DialogHeader>
+                  <DialogTitle className="text-center text-subheading pb-12">
+                    All Reports
+                  </DialogTitle>
+                  <DialogDescription>
+                    {data == null ? (
+                      <div>No reports found</div>
+                    ) : (
+                      <div className="flex flex-col w-full gap-8">
+                        {data.reports.map((d) => (
+                          <div
+                            key={d.id}
+                            className="flex-1 border-2 border-zinc-400 rounded-lg shadow-md px-6 py-4 hover:bg-zinc-200 transition-all cursor-pointer"
+                          >
+                            <h3 className="text-lg font-semibold text-cpnz-blue-900 ">{d.title}</h3>
+                            <p><strong>Location</strong>: {d.location}</p>
+                            <p><strong>Type:</strong> {d.reportIncidentType}</p>
+                            <p><strong>Patrol ID:</strong> {d.patrolID}</p>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </DialogDescription>
+                </DialogHeader>
+              </DialogContent>
+            </Dialog>
+          </div>
+          <div className="bg-[#ECEDFF] text-black p-4 rounded-lg flex items-center hover:bg-[#808080] transition-colors duration-300">
+            <FaCogs className="mr-4 text-2xl" />
+            <div className="text-left">
+              <h3 className="text-md font-semibold">Report Settings</h3>
+              <p className="text-xs">
+                Modify report templates including templates.
+              </p>
+            </div>
+          </div>
+        </div>
       </div>
 
-      <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-          <FormField
-            control={form.control}
-            name="username"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Username</FormLabel>
-                <FormControl>
-                  <Input placeholder="shadcn" {...field} />
-                </FormControl>
-                <FormDescription>
-                  This is your public display name.
-                </FormDescription>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <Button type="submit">Submit</Button>
-        </form>
-      </Form>
+      <div>
+        <Button
+          onClick={handleSignOut}
+          className="bg-cpnz-blue-900 text-md hover:bg-cpnz-blue-800"
+        >
+          Sign Out
+        </Button>
+      </div>
     </div>
   );
 }

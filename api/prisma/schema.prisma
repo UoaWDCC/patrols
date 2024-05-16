@@ -1,9 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -13,42 +7,712 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Patrols{
-  id Int @id @unique @default(autoincrement())
-  password String
-  email String @unique
-  name String
-  role String @default("Patrol")
-  vehicles Vehicles[]
-  reports Reports[]
-  supervisorID Int? @unique
-  supervisor Patrols? @relation("patrolSupervisor", fields: [supervisorID], references: [id])
-  patrol Patrols? @relation("patrolSupervisor")
+model Patrols {
+  id           Int         @id @unique @default(autoincrement())
+  password     String
+  email        String      @unique
+  name         String
+  supervisorID Int?        @unique
+  role         Role        @default(patrol)
+  mobile       String
+  amendments   Amendment[] @relation("submittedByPatrol")
+  supervisor   Patrols?    @relation("patrolSupervisor", fields: [supervisorID], references: [id])
+  patrol       Patrols?    @relation("patrolSupervisor")
+  reports      Reports[]   @relation("writtenByPatrol")
+  shifts       Shifts[]    @relation("logByPatrol")
+  vehicles     Vehicles[]  @relation("belongToPatrol")
 }
 
-model Vehicles{
-  id Int @id @unique @default(autoincrement())
-  numberPlate String @unique
+model Vehicles {
+  id           Int         @id @unique @default(autoincrement())
+  numberPlate  String      @unique
   registration String
-  make String
-  model String
-  patrolID Int
-  patrols Patrols @relation(fields: [patrolID], references: [id])
+  make         String
+  model        String
+  patrolID     Int
+  inAmendment  Amendment[] @relation("isInAmendment")
+  shifts       Shifts[]    @relation("isInShift")
+  patrols      Patrols     @relation("belongToPatrol", fields: [patrolID], references: [id])
 }
 
-model Reports{
-  id Int @id @unique @default(autoincrement())
-  title String
-  createdAt DateTime @default(now())
-  location String
-  patrolID Int
+model Reports {
+  id                 Int          @id @unique @default(autoincrement())
+  title              String
+  createdAt          DateTime     @default(now())
+  location           String
+  patrolID           Int
   reportIncidentType String
-  patrols Patrols @relation(fields: [patrolID], references: [id])
-  incident IncidentType @relation(fields: [reportIncidentType], references: [incidentType])
+  patrols            Patrols      @relation("writtenByPatrol", fields: [patrolID], references: [id])
+  incident           IncidentType @relation("isIncidentOfType", fields: [reportIncidentType], references: [incidentType])
 }
 
-model IncidentType{
-  incidentType String @id @unique
+model IncidentType {
+  incidentType String    @id @unique
+  description  String
+  reports      Reports[] @relation("isIncidentOfType")
+}
+
+model Shifts {
+  id                 Int         @default(autoincrement())
+  type               logType
+  expectedHours      Decimal?
+  actualHours        Decimal?
+  policeStationBase  String
+  cpCallSign         String
+  logPatrolId        Int
+  otherPatrolsName   String
+  vehicleId          Int
+  hasLiveryOrSignage Boolean
+  hasPoliceRadio     Boolean
+  logAt              DateTime    @default(now())
+  hasAmendment       Amendment[] @relation("belongToShift")
+  patrols            Patrols     @relation("logByPatrol", fields: [logPatrolId], references: [id])
+  vehicles           Vehicles    @relation("isInShift", fields: [vehicleId], references: [id])
+
+  @@id([id, type])
+}
+
+model Amendment {
+  id                 Int      @id @unique @default(autoincrement())
+  shiftHoursChange   Decimal?
+  policeStationBase  String?
+  cpCallSign         String?
+  amendmentPatrolId  Int
+  vehicleId          Int
+  hasLiveryOrSignage Boolean?
+  hasPoliceRadio     Boolean?
+  amendmentMadeAt    DateTime @default(now())
+  otherPatrolsName   String?
+  shiftId            Int
+  shiftType          logType  @default(logOn)
+  patrols            Patrols  @relation("submittedByPatrol", fields: [amendmentPatrolId], references: [id])
+  logOn              Shifts   @relation("belongToShift", fields: [shiftId, shiftType], references: [id, type])
+  vehicles           Vehicles @relation("isInAmendment", fields: [vehicleId], references: [id])
+}
+
+model amendments_dev {
+  id          BigInt    @id
+  created_at  DateTime? @db.Timestamptz(6)
+  updated_at  DateTime? @db.Timestamptz(6)
+  content     String
+  subject     String
+  member_id   BigInt
+  user_id     BigInt
+  patrol_id   BigInt
+  district_id BigInt
+  status      String
+}
+
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+model amendments_prod {
+  id          BigInt    @id(map: "amendments_pkey")
+  created_at  DateTime? @db.Timestamptz(6)
+  updated_at  DateTime? @db.Timestamptz(6)
+  content     String
+  subject     String
+  member_id   BigInt
+  user_id     BigInt
+  patrol_id   BigInt
+  district_id BigInt
+  status      String
+}
+
+model district_stats_dev {
+  id                BigInt    @id
+  created_at        DateTime? @db.Timestamptz(6)
+  updated_at        DateTime? @db.Timestamptz(6)
+  district_id       BigInt
+  year              BigInt
+  month             BigInt
+  vehicle_related   Int?      @db.SmallInt
+  property_related  Int?      @db.SmallInt
+  damaged_property  Int?      @db.SmallInt
+  disorder_related  Int?      @db.SmallInt
+  people_related    Int?      @db.SmallInt
+  special_service   Int?      @db.SmallInt
+  kms_travelled     Float?
+  patrol_hours      Float?
+  camera_hours      Float?
+  training          Float?
+  administration    Float?
+  submitter_cpnz_id BigInt
+}
+
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+model district_stats_prod {
+  id                BigInt    @id(map: "district_stats_pkey")
+  created_at        DateTime? @db.Timestamptz(6)
+  updated_at        DateTime? @db.Timestamptz(6)
+  district_id       BigInt
+  year              BigInt
+  month             BigInt
+  vehicle_related   Int?      @db.SmallInt
+  property_related  Int?      @db.SmallInt
+  damaged_property  Int?      @db.SmallInt
+  disorder_related  Int?      @db.SmallInt
+  people_related    Int?      @db.SmallInt
+  special_service   Int?      @db.SmallInt
+  kms_travelled     Float?
+  patrol_hours      Float?
+  camera_hours      Float?
+  training          Float?
+  administration    Float?
+  submitter_cpnz_id BigInt
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model districts_dev {
+  id         BigInt    @id
+  created_at DateTime? @db.Timestamptz(6)
+  updated_at DateTime? @db.Timestamptz(6)
+  name       String    @unique
+  email      String    @default("office@cpnz.org.nz")
+}
+
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+model districts_prod {
+  id           BigInt         @id(map: "districts_pkey")
+  created_at   DateTime?      @db.Timestamptz(6)
+  updated_at   DateTime?      @db.Timestamptz(6)
+  name         String         @unique(map: "districts_name_key")
+  email        String         @default("office@cpnz.org.nz")
+  patrols_dev  patrols_dev[]
+  patrols_prod patrols_prod[]
+}
+
+model imports_dev {
+  id                 BigInt    @id
+  created_at         DateTime? @db.Timestamp(6)
+  updated_at         DateTime? @db.Timestamp(6)
+  short_patrol_name  String
+  live_entries       String
+  list_but_no_card   String
+  cpnz_id            String
+  entry_date         String
+  current_card_count String
+  surname            String
+  first_names        String
+  known_as           String
+  dob                String
+  gender             String
+  driver_licence     String
+  vetting_date       String
+  business           String
+  home               String
+  cellular           String
+  address            String
+  suburb             String
+  city               String
+  post_code          String
+  email              String
+  patroller          String
+  coordinator        String
+  secretary          String
+  training_officer   String
+  nationality        String
+  language           String
+  skills2            String
+  skills3            String
+  skills4            String
+  skills5            String
+  skills6            String
+  patrol_name        String
+  district           String
+}
+
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+model imports_prod {
+  id                 BigInt    @id(map: "imports_pkey")
+  created_at         DateTime? @db.Timestamp(6)
+  updated_at         DateTime? @db.Timestamp(6)
+  short_patrol_name  String
+  live_entries       String
+  list_but_no_card   String
+  cpnz_id            String
+  entry_date         String
+  current_card_count String
+  surname            String
+  first_names        String
+  known_as           String
+  dob                String
+  gender             String
+  driver_licence     String
+  vetting_date       String
+  business           String
+  home               String
+  cellular           String
+  address            String
+  suburb             String
+  city               String
+  post_code          String
+  email              String
+  patroller          String
+  coordinator        String
+  secretary          String
+  training_officer   String
+  nationality        String
+  language           String
+  skills2            String
+  skills3            String
+  skills4            String
+  skills5            String
+  skills6            String
+  patrol_name        String
+  district           String
+}
+
+model logs_dev {
+  id          BigInt    @id
+  created_at  DateTime? @db.Timestamptz(6)
+  updated_at  DateTime? @db.Timestamptz(6)
+  user_id     BigInt
+  user_email  String
   description String
-  reports Reports[]
+  member_id   BigInt
+}
+
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+model logs_prod {
+  id          BigInt    @id(map: "logs_pkey")
+  created_at  DateTime? @db.Timestamptz(6)
+  updated_at  DateTime? @db.Timestamptz(6)
+  user_id     BigInt
+  user_email  String
+  description String
+  member_id   BigInt
+}
+
+model member_documents_dev {
+  id            BigInt       @id
+  created_at    DateTime?    @db.Timestamptz(6)
+  updated_at    DateTime?    @db.Timestamptz(6)
+  member_id     BigInt
+  original_name String
+  unique_id     String       @unique
+  members_prod  members_prod @relation(fields: [member_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+}
+
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+model member_documents_prod {
+  id            BigInt       @id(map: "member_documents_pkey")
+  created_at    DateTime?    @db.Timestamptz(6)
+  updated_at    DateTime?    @db.Timestamptz(6)
+  member_id     BigInt
+  original_name String
+  unique_id     String       @unique(map: "member_documents_unique_id_key")
+  members_prod  members_prod @relation(fields: [member_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "member_documents_member_id_fkey")
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model members_dev {
+  id                               BigInt       @id
+  created_at                       DateTime?    @db.Timestamptz(6)
+  updated_at                       DateTime?    @db.Timestamptz(6)
+  active_member                    Int          @db.SmallInt
+  patrol_id                        BigInt
+  district_id                      BigInt
+  cpnz_id                          BigInt
+  surname                          String
+  first_names                      String
+  known_as                         String?
+  date_of_birth                    String
+  gender                           String
+  nationality                      String
+  driver_licence_number            String
+  vetting_date                     String?
+  business_phone                   String?
+  home_phone                       String?
+  mobile_phone                     String?
+  address_line_1                   String
+  suburb                           String
+  city                             String
+  post_code                        String
+  email                            String?
+  patroller                        Int          @db.SmallInt
+  officer                          Int          @db.SmallInt
+  officer_type                     String
+  languages                        String?
+  skills                           String?
+  notes                            String?
+  photo_id                         String
+  constabulary                     Int          @default(1) @db.SmallInt
+  qi                               String?
+  status                           String       @default("active")
+  officer_patroller                Int?         @db.SmallInt
+  officer_patrol_leader_1          Int?         @db.SmallInt
+  officer_patrol_leader_2          Int?         @db.SmallInt
+  officer_secretary                Int?         @db.SmallInt
+  officer_patrol_trainer           Int?         @db.SmallInt
+  officer_avp1                     Int?         @db.SmallInt
+  officer_avp2                     Int?         @db.SmallInt
+  officer_health_and_safety        Int?         @db.SmallInt
+  officer_patrol_member_other      Int?         @db.SmallInt
+  officer_district_leader          Int?         @db.SmallInt
+  officer_district_trainer         Int?         @db.SmallInt
+  officer_district_support_officer Int?         @db.SmallInt
+  officer_district_other           Int?         @db.SmallInt
+  officer_cpnz_staff               Int?         @db.SmallInt
+  officer_probationer              Int?         @db.SmallInt
+  access_website                   Int?         @db.SmallInt
+  trained                          Int          @default(0) @db.SmallInt
+  new_nationality                  String       @default("Not known")
+  treasurer                        Int?         @db.SmallInt
+  patrols_prod                     patrols_prod @relation(fields: [patrol_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+}
+
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+model members_prod {
+  id                               BigInt                  @id(map: "members_pkey")
+  created_at                       DateTime?               @db.Timestamptz(6)
+  updated_at                       DateTime?               @db.Timestamptz(6)
+  active_member                    Int                     @db.SmallInt
+  patrol_id                        BigInt
+  district_id                      BigInt
+  cpnz_id                          BigInt
+  surname                          String
+  first_names                      String
+  known_as                         String?
+  date_of_birth                    String
+  gender                           String
+  nationality                      String
+  driver_licence_number            String
+  vetting_date                     String?
+  business_phone                   String?
+  home_phone                       String?
+  mobile_phone                     String?
+  address_line_1                   String
+  suburb                           String
+  city                             String
+  post_code                        String
+  email                            String?
+  patroller                        Int                     @db.SmallInt
+  officer                          Int                     @db.SmallInt
+  officer_type                     String
+  languages                        String?
+  skills                           String?
+  notes                            String?
+  photo_id                         String
+  constabulary                     Int                     @default(1) @db.SmallInt
+  qi                               String?
+  status                           String                  @default("active")
+  officer_patroller                Int?                    @db.SmallInt
+  officer_patrol_leader_1          Int?                    @db.SmallInt
+  officer_patrol_leader_2          Int?                    @db.SmallInt
+  officer_secretary                Int?                    @db.SmallInt
+  officer_patrol_trainer           Int?                    @db.SmallInt
+  officer_avp1                     Int?                    @db.SmallInt
+  officer_avp2                     Int?                    @db.SmallInt
+  officer_health_and_safety        Int?                    @db.SmallInt
+  officer_patrol_member_other      Int?                    @db.SmallInt
+  officer_district_leader          Int?                    @db.SmallInt
+  officer_district_trainer         Int?                    @db.SmallInt
+  officer_district_support_officer Int?                    @db.SmallInt
+  officer_district_other           Int?                    @db.SmallInt
+  officer_cpnz_staff               Int?                    @db.SmallInt
+  officer_probationer              Int?                    @db.SmallInt
+  access_website                   Int?                    @db.SmallInt
+  trained                          Int                     @default(0) @db.SmallInt
+  new_nationality                  String                  @default("Not known")
+  treasurer                        Int?                    @db.SmallInt
+  member_documents_dev             member_documents_dev[]
+  member_documents_prod            member_documents_prod[]
+  patrols_prod                     patrols_prod            @relation(fields: [patrol_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "members_patrol_id_fkey")
+}
+
+/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
+model migrations_dev {
+  migration String
+  batch     BigInt
+
+  @@ignore
+}
+
+/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+model migrations_prod {
+  migration String
+  batch     BigInt
+
+  @@ignore
+}
+
+model old_stats_migration_changes_dev {
+  id                BigInt    @id
+  created_at        DateTime? @db.Timestamp(6)
+  updated_at        DateTime? @db.Timestamp(6)
+  stats_patrol_name String
+  stats_callsign    String
+  district          BigInt
+  founded           BigInt
+  active            String
+  no_name_change    String
+  new_name          String
+}
+
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+model old_stats_migration_changes_prod {
+  id                BigInt    @id(map: "old_stats_migration_changes_pkey")
+  created_at        DateTime? @db.Timestamp(6)
+  updated_at        DateTime? @db.Timestamp(6)
+  stats_patrol_name String
+  stats_callsign    String
+  district          BigInt
+  founded           BigInt
+  active            String
+  no_name_change    String
+  new_name          String
+}
+
+model old_stats_patrol_reference_dev {
+  id              BigInt    @id
+  created_at      DateTime? @db.Timestamp(6)
+  updated_at      DateTime? @db.Timestamp(6)
+  old_stats_index BigInt
+  current_index   BigInt
+}
+
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+model old_stats_patrol_reference_prod {
+  id              BigInt    @id(map: "old_stats_patrol_reference_pkey")
+  created_at      DateTime? @db.Timestamp(6)
+  updated_at      DateTime? @db.Timestamp(6)
+  old_stats_index BigInt
+  current_index   BigInt
+}
+
+model options_dev {
+  id                    BigInt    @id(map: "options_prod_dev_pkey")
+  created_at            DateTime? @db.Timestamp(6)
+  updated_at            DateTime? @db.Timestamp(6)
+  last_issued_patrol_id BigInt
+}
+
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+model options_prod {
+  id                    BigInt    @id(map: "options_pkey")
+  created_at            DateTime? @db.Timestamp(6)
+  updated_at            DateTime? @db.Timestamp(6)
+  last_issued_patrol_id BigInt
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model password_resets_dev {
+  email      String
+  token      String    @id
+  created_at DateTime? @default(now()) @db.Timestamptz(6)
+}
+
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+model password_resets_prod {
+  email      String
+  token      String    @id(map: "password_resets_pkey")
+  created_at DateTime? @default(now()) @db.Timestamptz(6)
+}
+
+model patrol_documents_dev {
+  id            BigInt       @id
+  created_at    DateTime?    @db.Timestamptz(6)
+  updated_at    DateTime?    @db.Timestamptz(6)
+  patrol_id     BigInt
+  original_name String
+  unique_id     String       @unique
+  patrols_prod  patrols_prod @relation(fields: [patrol_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+}
+
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+model patrol_documents_prod {
+  id            BigInt       @id(map: "patrol_documents_pkey")
+  created_at    DateTime?    @db.Timestamptz(6)
+  updated_at    DateTime?    @db.Timestamptz(6)
+  patrol_id     BigInt
+  original_name String
+  unique_id     String       @unique(map: "patrol_documents_unique_id_key")
+  patrols_prod  patrols_prod @relation(fields: [patrol_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "patrol_documents_patrol_id_fkey")
+}
+
+model patrols_dev {
+  id             BigInt         @id
+  created_at     DateTime?      @db.Timestamptz(6)
+  updated_at     DateTime?      @db.Timestamptz(6)
+  name           String
+  active         Int            @db.SmallInt
+  district_id    BigInt
+  notes          String?
+  call_sign      String?
+  year_joined    String?
+  email          String         @default("office@cpnz.org.nz")
+  districts_prod districts_prod @relation(fields: [district_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+}
+
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+model patrols_prod {
+  id                    BigInt                  @id(map: "patrols_pkey")
+  created_at            DateTime?               @db.Timestamptz(6)
+  updated_at            DateTime?               @db.Timestamptz(6)
+  name                  String
+  active                Int                     @db.SmallInt
+  district_id           BigInt
+  notes                 String?
+  call_sign             String?
+  year_joined           String?
+  email                 String                  @default("office@cpnz.org.nz")
+  members_dev           members_dev[]
+  members_prod          members_prod[]
+  patrol_documents_dev  patrol_documents_dev[]
+  patrol_documents_prod patrol_documents_prod[]
+  districts_prod        districts_prod          @relation(fields: [district_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "patrols_district_id_fkey")
+  police_liaisons_dev   police_liaisons_dev[]
+  police_liaisons_prod  police_liaisons_prod[]
+}
+
+model police_liaisons_dev {
+  id           BigInt       @id
+  created_at   DateTime?    @db.Timestamptz(6)
+  updated_at   DateTime?    @db.Timestamptz(6)
+  name         String
+  patrol_id    BigInt
+  email        String
+  phone        String
+  qi           String?
+  rank         String?
+  station      String?
+  patrols_prod patrols_prod @relation(fields: [patrol_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+}
+
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+model police_liaisons_prod {
+  id           BigInt       @id(map: "police_liaisons_pkey")
+  created_at   DateTime?    @db.Timestamptz(6)
+  updated_at   DateTime?    @db.Timestamptz(6)
+  name         String
+  patrol_id    BigInt
+  email        String
+  phone        String
+  qi           String?
+  rank         String?
+  station      String?
+  patrols_prod patrols_prod @relation(fields: [patrol_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "police_liaisons_patrol_id_fkey")
+}
+
+model stats_dev {
+  id                BigInt    @id
+  created_at        DateTime? @db.Timestamptz(6)
+  updated_at        DateTime? @db.Timestamptz(6)
+  patrol_id         BigInt
+  year              Int       @db.SmallInt
+  month             Int       @db.SmallInt
+  vehicle_related   Int?      @db.SmallInt
+  property_related  Int?      @db.SmallInt
+  damaged_property  Int?      @db.SmallInt
+  disorder_related  Int?      @db.SmallInt
+  people_related    Int?      @db.SmallInt
+  special_service   Int?      @db.SmallInt
+  kms_travelled     Float?
+  patrol_hours      Float?
+  camera_hours      Float?
+  training          Float?
+  administration    Float?
+  submitter_cpnz_id BigInt
+}
+
+model stats_documents_dev {
+  id             BigInt?
+  created_at     DateTime? @db.Timestamptz(6)
+  updated_at     DateTime? @db.Timestamptz(6)
+  document_label String
+  original_name  String
+  unique_id      String    @unique
+}
+
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+model stats_documents_prod {
+  id             BigInt    @id
+  created_at     DateTime? @db.Timestamptz(6)
+  updated_at     DateTime? @db.Timestamptz(6)
+  document_label String
+  original_name  String
+  unique_id      String    @unique(map: "stats_documents_unique_id_key")
+}
+
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+model stats_prod {
+  id                BigInt    @id(map: "stats_pkey")
+  created_at        DateTime? @db.Timestamptz(6)
+  updated_at        DateTime? @db.Timestamptz(6)
+  patrol_id         BigInt
+  year              Int       @db.SmallInt
+  month             Int       @db.SmallInt
+  vehicle_related   Int?      @db.SmallInt
+  property_related  Int?      @db.SmallInt
+  damaged_property  Int?      @db.SmallInt
+  disorder_related  Int?      @db.SmallInt
+  people_related    Int?      @db.SmallInt
+  special_service   Int?      @db.SmallInt
+  kms_travelled     Float?
+  patrol_hours      Float?
+  camera_hours      Float?
+  training          Float?
+  administration    Float?
+  submitter_cpnz_id BigInt
+}
+
+model user_export_dev {
+  id         BigInt    @id
+  created_at DateTime? @db.Timestamptz(6)
+  updated_at DateTime? @db.Timestamptz(6)
+  username   String
+  password   String
+  email      String
+  first_name String
+  last_name  String
+}
+
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+model user_export_prod {
+  id         BigInt    @id(map: "user_export_pkey")
+  created_at DateTime? @db.Timestamptz(6)
+  updated_at DateTime? @db.Timestamptz(6)
+  username   String
+  password   String
+  email      String
+  first_name String
+  last_name  String
+}
+
+model users_dev {
+  id             BigInt    @id
+  email          String    @unique
+  password       String
+  access_level   String
+  member_id      BigInt
+  remember_token String?
+  created_at     DateTime? @db.Timestamptz(6)
+  updated_at     DateTime? @db.Timestamptz(6)
+  district       BigInt?
+  patrol         BigInt?
+}
+
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+model users_prod {
+  id             BigInt    @id(map: "users_pkey")
+  email          String    @unique(map: "users_email_key")
+  password       String
+  access_level   String
+  member_id      BigInt
+  remember_token String?
+  created_at     DateTime? @db.Timestamptz(6)
+  updated_at     DateTime? @db.Timestamptz(6)
+  district       BigInt?
+  patrol         BigInt?
+}
+
+enum Role {
+  patrol
+  lead
+  admin
+}
+
+enum logType {
+  logOn
+  logOff
 }
