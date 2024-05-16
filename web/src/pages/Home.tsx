@@ -184,7 +184,7 @@ export default function Home() {
         </Button>
       </div>
       <div className="bg-[#eef6ff] h-24 mt-6 flex items-center pl-12 pt-4">
-          <div className="font-semibold space-x-8 text-cpnz-blue-900 flex items-center">
+          <div className="font-semibold space-x-10 text-cpnz-blue-900 flex items-center">
             <button className="flex flex-col items-center">
               <img
               src={home}
