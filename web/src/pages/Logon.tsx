@@ -15,12 +15,9 @@ import {
 import userIcon from "../assets/images/gorilla.png";
 import { FaCog } from "react-icons/fa";
 import axios from "axios";
-import { useAuth } from "../hooks/useAuth";
 
 export default function Logon() {
   const navigate = useNavigate();
-
-  const { user } = useAuth();
 
   const formSchema = z.object({
     shiftTime: z.string(),
@@ -55,12 +52,14 @@ export default function Logon() {
 
   const onSubmit = async (data: z.infer<typeof formSchema>) => {
     try {
-      const email = await axios.post(
-        `${import.meta.env.VITE_API_URL}/send-email`,
-        { email: "jasonabc0626@gmail.com", patrolName: data.patrol1Name, patrolID: "10", formData: JSON.stringify(data)}
-      );
+      await axios.post(`${import.meta.env.VITE_API_URL}/send-email`, {
+        email: "jasonabc0626@gmail.com",
+        patrolName: data.patrol1Name,
+        patrolID: "10",
+        formData: JSON.stringify(data),
+      });
 
-      // Navigates to Loghome if succesfully logged on. 
+      // Navigates to Loghome if succesfully logged on.
       navigate("/LogHome");
     } catch (error) {
       axios.isAxiosError(error)
