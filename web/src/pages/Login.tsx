@@ -21,62 +21,62 @@ import { tokenSchema } from "../schemas";
 
 export default function Login() {
   const formSchema = z.object({
-    cpnzID: z.string(),
-    password: z
-      .string()
-      .min(3, { message: "Password must be at least 3 characters" }),
+      email: z.string(),
+      password: z
+          .string()
+          .min(3, { message: 'Password must be at least 3 characters' }),
   });
 
   const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
-    defaultValues: {
-      cpnzID: "",
-      password: "",
-    },
+      resolver: zodResolver(formSchema),
+      defaultValues: {
+          email: '',
+          password: '',
+      },
   });
 
   const navigate = useNavigate();
-  const [loginId, setLoginId] = useState<string>("");
-  const [password, setPassword] = useState<string>("");
+  const [email, setEmail] = useState<string>('');
+  const [password, setPassword] = useState<string>('');
   const { user } = useAuth();
 
   // Prevent access to login page if user is authenticated
   if (user) {
-    return <Navigate to={"/home"} />;
+      return <Navigate to={'/home'} />;
   }
 
   const onSubmit = async (e: FormEvent<HTMLFormElement>) => {
-    e.preventDefault(); // Prevents form data being reset when incorrect details entered
+      e.preventDefault(); // Prevents form data being reset when incorrect details entered
 
-    try {
-      const session = await axios.post(
-        `${import.meta.env.VITE_API_URL}/auth/login`,
-        { id: loginId, password: password }
-      );
+      try {
+          const session = await axios.post(
+              `${import.meta.env.VITE_API_URL}/auth/login`,
+              { email: email, password: password }
+          );
 
-      const { access_token: accessToken, refresh_token: refreshToken } =
-        tokenSchema.parse(session.data.session);
+          const { access_token: accessToken, refresh_token: refreshToken } =
+              tokenSchema.parse(session.data.session);
 
-      if (!accessToken || !refreshToken) {
-        throw new Error("Missing access token or refresh token");
+          if (!accessToken || !refreshToken) {
+              throw new Error('Missing access token or refresh token');
+          }
+
+          const { error: sessionError } = await supabaseClient.auth.setSession({
+              access_token: accessToken,
+              refresh_token: refreshToken,
+          });
+
+          if (sessionError) {
+              throw new Error('Unable to set session');
+          }
+
+          // Navigates to home upon successful login. Can be changed to any route
+          navigate('/home');
+      } catch (error) {
+          axios.isAxiosError(error)
+              ? console.log(error.response?.data.error)
+              : console.error('Unexpected error during login:', error);
       }
-
-      const { error: sessionError } = await supabaseClient.auth.setSession({
-        access_token: accessToken,
-        refresh_token: refreshToken,
-      });
-
-      if (sessionError) {
-        throw new Error("Unable to set session");
-      }
-
-      // Navigates to home upon successful login. Can be changed to any route
-      navigate("/home");
-    } catch (error) {
-      axios.isAxiosError(error)
-        ? console.log(error.response?.data.error)
-        : console.error("Unexpected error during login:", error);
-    }
   };
 
   return (
@@ -103,7 +103,7 @@ export default function Login() {
                   <form onSubmit={onSubmit} className="space-y-5">
                       <FormField
                           control={form.control}
-                          name="cpnzID"
+                          name="email"
                           render={({ field }) => (
                               <FormItem>
                                   <FormLabel className="text-base">
@@ -114,9 +114,9 @@ export default function Login() {
                                           placeholder="example@example.com"
                                           {...field}
                                           onChange={(e) =>
-                                              setLoginId(e.target.value)
+                                              setEmail(e.target.value)
                                           }
-                                          value={loginId}
+                                          value={email}
                                           className="w-80"
                                       />
                                   </FormControl>
