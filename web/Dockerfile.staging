@@ -28,12 +28,13 @@ RUN yarn install --frozen-lockfile --production=false
 COPY --link . .
 
 # Mounting secrets
-RUN --mount=type=secret,id=VITE_SUPABASE_URL \
-    VITE_SUPABASE_URL="$(cat /run/secrets/VITE_SUPABASE_URL)" \ 
+RUN --mount=type=secret,id=VITE_SUPABASE_KEY \
+    VITE_SUPABASE_KEY="$(cat /run/secrets/VITE_SUPABASE_KEY)" \ 
     yarn run build
 
 # Set build time environment variables
 ENV VITE_API_URL="https://wdcc-patrols-api-staging.fly.dev"
+ENV VITE_SUPABASE_URL="https://uwfsywtrderpzyneshop.supabase.co"
 
 # Build application
 # RUN 
