@@ -80,75 +80,90 @@ export default function Login() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col justify-items-center items-center bg-[#eff6ff]">
-      <div>
-        <img src={cpnzLogo} alt="cpnz logo" className="pt-16" />
+      <div className="min-h-screen flex flex-col justify-items-center items-center bg-[#eff6ff]">
+          <div>
+              <img src={cpnzLogo} alt="cpnz logo" className="pt-16" />
+          </div>
+          <div className="text-center mt-8 px-10">
+              <h3 className="font-bold px-10">
+                  One sentence description/opening about the community patrols
+                  app
+              </h3>
+          </div>
+          <div>
+              <h2 className="text-2xl tracking-[0.25px] leading-[28.8px] mb-5 mt-10 text-center">
+                  Log In
+              </h2>
+              <p className="text-xs text-muted-foreground">
+                  Please contact XXX if you do not have your login details.
+              </p>
+          </div>
+          <div className="pt-14">
+              <Form {...form}>
+                  <form onSubmit={onSubmit} className="space-y-5">
+                      <FormField
+                          control={form.control}
+                          name="cpnzID"
+                          render={({ field }) => (
+                              <FormItem>
+                                  <FormLabel className="text-base">
+                                      Email
+                                  </FormLabel>
+                                  <FormControl>
+                                      <Input
+                                          placeholder="example@example.com"
+                                          {...field}
+                                          onChange={(e) =>
+                                              setLoginId(e.target.value)
+                                          }
+                                          value={loginId}
+                                          className="w-80"
+                                      />
+                                  </FormControl>
+                                  <FormMessage />
+                              </FormItem>
+                          )}
+                      />
+                      <FormField
+                          control={form.control}
+                          name="password"
+                          render={({ field }) => (
+                              <FormItem>
+                                  <FormLabel className="text-base">
+                                      Password
+                                  </FormLabel>
+                                  <FormControl>
+                                      <Input
+                                          type="password"
+                                          placeholder="Password"
+                                          {...field}
+                                          value={password}
+                                          onChange={(e) =>
+                                              setPassword(e.target.value)
+                                          }
+                                      />
+                                  </FormControl>
+                                  <FormMessage />
+                              </FormItem>
+                          )}
+                      />
+                      <div className="text-center">
+                          <a
+                              href="#"
+                              className="text-xs underline text-muted-foreground"
+                          >
+                              Forgot your password?
+                          </a>
+                      </div>
+                      <Button
+                          type="submit"
+                          className="bg-[#0f1363] w-full flex"
+                      >
+                          Log In
+                      </Button>
+                  </form>
+              </Form>
+          </div>
       </div>
-      <div className="text-center mt-8 px-10">
-        <h3 className="font-bold px-10">
-          One sentence description/opening about the community patrols app
-        </h3>
-      </div>
-      <div>
-        <h2 className="text-2xl tracking-[0.25px] leading-[28.8px] mb-5 mt-10 text-center">
-          Log In
-        </h2>
-        <p className="text-xs text-muted-foreground">
-          Please contact XXX if you do not have your login details.
-        </p>
-      </div>
-      <div className="pt-14">
-        <Form {...form}>
-          <form onSubmit={onSubmit} className="space-y-5">
-            <FormField
-              control={form.control}
-              name="cpnzID"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel className="text-base">CPNZ ID</FormLabel>
-                  <FormControl>
-                    <Input
-                      placeholder="ID"
-                      {...field}
-                      onChange={(e) => setLoginId(e.target.value)}
-                      value={loginId}
-                      className="w-80"
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="password"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel className="text-base">Password</FormLabel>
-                  <FormControl>
-                    <Input
-                      type="password"
-                      placeholder="Password"
-                      {...field}
-                      value={password}
-                      onChange={(e) => setPassword(e.target.value)}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <div className="text-center">
-              <a href="#" className="text-xs underline text-muted-foreground">
-                Forgot your password?
-              </a>
-            </div>
-            <Button type="submit" className="bg-[#0f1363] w-full flex">
-              Log In
-            </Button>
-          </form>
-        </Form>
-      </div>
-    </div>
   );
 }
