@@ -175,7 +175,7 @@ export default function Home() {
         </div>
       </div>
 
-      <div className="space-x-2">
+      <div>
         <Button
           onClick={handleSignOut}
           className="bg-cpnz-blue-900 text-md font-semibold hover:bg-cpnz-blue-800"
@@ -183,13 +183,13 @@ export default function Home() {
           Sign Out
         </Button>
       </div>
-      <div className="bg-[#eef6ff] h-24 mt-8 flex items-center pl-10 pt-4">
+      <div className="bg-[#eef6ff] h-24 mt-6 flex items-center pl-12 pt-4">
           <div className="font-semibold space-x-8 text-cpnz-blue-900">
             <button>
               <img
               src={home}
               alt="home"
-              className="w-8 h-8 items-center object-center"
+              className="w-8 h-8"
               />
               Home
             </button>
