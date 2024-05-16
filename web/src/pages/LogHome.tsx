@@ -29,7 +29,7 @@ export default function ReportSummary() {
 
   return (
     <div className="text-center min-h-screen relative bg-[#FFFFFF] max-w-3xl mx-auto">
-      <div className="bg-[#ECEDFF] py-6 flex justify-between items-center px-4 rounded-b-3xl">
+      <div className="bg-[#EEF6FF] py-6 flex justify-between items-center px-4 rounded-b-3xl">
         <div>
           <h1 className="text-xl font-bold text-black mx-4">
             Welcome back, XXXXXXX
@@ -38,7 +38,7 @@ export default function ReportSummary() {
         <FaCog className="text-2xl text-black cursor-pointer hover:text-gray-200 transition-colors duration-300" />
       </div>
       <div className="max-w-800 mx-auto px-4 my-8">
-        <div className="bg-[#ECEDFF] p-4 rounded-lg shadow-md mb-6 flex items-center">
+        <div className="bg-[#EEF6FF] p-4 rounded-lg shadow-md mb-6 flex items-center">
           <FaClipboardList className="mr-4 text-2xl" />
           <div>
             <h2 className="text-md font-semibold">Draft report detected</h2>
@@ -69,7 +69,7 @@ export default function ReportSummary() {
           </button>
         </div>
       </div>
-      <div className="bg-[#EEF6FF] h-24 mt-6 flex items-center pl-12 pt-4 bottom-0">
+      <div className="bg-[#EEF6FF] h-24 mt-6 flex items-center pl-12 pt-4 absolute bottom-0 max-w-3xl mx-auto w-full">
           <div className="font-semibold space-x-11 text-cpnz-blue-900 flex items-center">
             <button className="flex flex-col items-center">
               <img
