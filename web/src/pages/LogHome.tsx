@@ -37,7 +37,7 @@ export default function ReportSummary() {
         </div>
         <FaCog className="text-2xl text-black cursor-pointer hover:text-gray-200 transition-colors duration-300" />
       </div>
-      <div className="max-w-800 mx-auto px-4 my-8">
+      <div className="max-w-800 mx-auto px-8 my-8">
         <div className="bg-[#EEF6FF] p-4 rounded-lg shadow-md mb-6 flex items-center">
           <FaClipboardList className="mr-4 text-2xl" />
           <div>
