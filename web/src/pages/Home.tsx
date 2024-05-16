@@ -86,8 +86,8 @@ export default function Home() {
   return (
     <div className="text-center min-h-screen relative bg-[#FFFFFF] max-w-3xl mx-auto">
       <div className="bg-[#EEF6FF] py-6 flex justify-between items-center px-4">
-        <div className="px-8">
-          <h1 className="text-xl font-bold text-black">
+        <div>
+          <h1 className="text-xl font-bold text-black mx-4">
             Welcome back, XXXXXXX
           </h1>
         </div>

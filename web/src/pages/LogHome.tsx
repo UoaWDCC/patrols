@@ -29,7 +29,7 @@ export default function ReportSummary() {
 
   return (
     <div className="text-center min-h-screen relative bg-[#FFFFFF] max-w-3xl mx-auto">
-      <div className="bg-[#EEF6FF] py-6 flex justify-between items-center px-4 rounded-b-3xl">
+      <div className="bg-[#EEF6FF] py-6 flex justify-between items-center px-4">
         <div>
           <h1 className="text-xl font-bold text-black mx-4">
             Welcome back, XXXXXXX
