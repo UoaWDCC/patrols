@@ -33,7 +33,6 @@ type reportsDetails = z.infer<typeof reportsDetailsSchema>;
 
 export default function Home() {
   const navigate = useNavigate();
-  const { user } = useAuth();
   const [data, setData] = useState<reportsDetails>();
   const [id, setId] = useState<number>();
 
@@ -143,10 +142,18 @@ export default function Home() {
                             key={d.id}
                             className="flex-1 border-2 border-zinc-400 rounded-lg shadow-md px-6 py-4 hover:bg-zinc-200 transition-all cursor-pointer"
                           >
-                            <h3 className="text-lg font-semibold text-cpnz-blue-900 ">{d.title}</h3>
-                            <p><strong>Location</strong>: {d.location}</p>
-                            <p><strong>Type:</strong> {d.reportIncidentType}</p>
-                            <p><strong>Patrol ID:</strong> {d.patrolID}</p>
+                            <h3 className="text-lg font-semibold text-cpnz-blue-900 ">
+                              {d.title}
+                            </h3>
+                            <p>
+                              <strong>Location</strong>: {d.location}
+                            </p>
+                            <p>
+                              <strong>Type:</strong> {d.reportIncidentType}
+                            </p>
+                            <p>
+                              <strong>Patrol ID:</strong> {d.patrolID}
+                            </p>
                           </div>
                         ))}
                       </div>
