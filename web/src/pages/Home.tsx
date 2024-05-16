@@ -184,8 +184,8 @@ export default function Home() {
         </Button>
       </div>
       <div className="bg-[#eef6ff] h-24 mt-6 flex items-center pl-12 pt-4">
-          <div className="font-semibold space-x-8 text-cpnz-blue-900">
-            <button>
+          <div className="font-semibold space-x-8 text-cpnz-blue-900 flex items-center">
+            <button className="flex flex-col items-center">
               <img
               src={home}
               alt="home"
@@ -193,7 +193,7 @@ export default function Home() {
               />
               Home
             </button>
-            <button className="ml-4" onClick={handleProfile}>
+            <button className="flex flex-col items-center" onClick={handleProfile}>
               <img
                 src={profile}
                 alt="user"
