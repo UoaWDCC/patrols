@@ -1,5 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import { FaCog, FaClipboardList } from "react-icons/fa";
+import profile from "../assets/images/user.png";
+import home from "../assets/images/home.png";
 
 export default function ReportSummary() {
   const navigate = useNavigate();
@@ -67,6 +69,26 @@ export default function ReportSummary() {
           </button>
         </div>
       </div>
+      <div className="bg-[#EEF6FF] h-24 mt-6 flex items-center pl-12 pt-4 bottom-0">
+          <div className="font-semibold space-x-11 text-cpnz-blue-900 flex items-center">
+            <button className="flex flex-col items-center">
+              <img
+              src={home}
+              alt="home"
+              className="w-8 h-8"
+              />
+              Home
+            </button>
+            <button className="flex flex-col items-center" onClick={handleProfile}>
+              <img
+                src={profile}
+                alt="user"
+                className="w-8 h-8"
+              /> 
+              Profile
+            </button>
+          </div>
+        </div>
     </div>
   );
 }
