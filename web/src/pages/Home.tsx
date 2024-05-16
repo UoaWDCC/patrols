@@ -189,7 +189,7 @@ export default function Home() {
               <img
               src={home}
               alt="home"
-              className="w-8 h-8"
+              className="w-7 h-7"
               />
               Home
             </button>
@@ -197,7 +197,7 @@ export default function Home() {
               <img
                 src={profile}
                 alt="user"
-                className="w-8 h-8"
+                className="w-7 h-7"
               /> 
               Profile
             </button>
