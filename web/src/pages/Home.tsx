@@ -14,6 +14,8 @@ import {
   DialogTrigger,
 } from "@components/ui/dialog";
 import { userDetailsSchema } from "../schemas";
+import profile from "../assets/images/user.png";
+import home from "../assets/images/home.png";
 
 const reportsDetailsSchema = z.object({
   message: z.string(),
@@ -181,6 +183,26 @@ export default function Home() {
           Sign Out
         </Button>
       </div>
+      <div className="bg-[#eef6ff] h-24 mt-8 flex items-center pl-10 pt-4">
+          <div className="font-semibold space-x-8 text-cpnz-blue-900">
+            <button>
+              <img
+              src={home}
+              alt="home"
+              className="w-8 h-8 items-center object-center"
+              />
+              Home
+            </button>
+            <button className="ml-4" onClick={handleProfile}>
+              <img
+                src={profile}
+                alt="user"
+                className="w-8 h-8"
+              /> 
+              Profile
+            </button>
+          </div>
+        </div>
     </div>
   );
 }
