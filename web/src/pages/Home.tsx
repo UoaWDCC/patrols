@@ -48,17 +48,17 @@ export default function Home() {
   };
 
   useEffect(() => {
-    const getPatrolLeadID = async () => {
-      const response = await axios.get(
-        `${import.meta.env.VITE_API_URL}/user/getUserDetails`
-      );
+      const getPatrolLeadID = async () => {
+          const response = await axios.get(
+              `${import.meta.env.VITE_API_URL}/user/getUserDetails`
+          );
 
-      const userDetails = userDetailsSchema.parse(response.data);
-      setId(Number(userDetails.id));
-    };
+          const userDetails = userDetailsSchema.parse(response.data);
+          setId(Number(userDetails.id));
+      };
 
-    getPatrolLeadID();
-  });
+      getPatrolLeadID();
+  }, []);
 
   useEffect(() => {
     const getAllReports = async () => {
