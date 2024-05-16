@@ -1,111 +1,126 @@
 import type { Request, Response } from 'express';
-import { PrismaClient, Role } from '@prisma/client';
-
-const prisma = new PrismaClient();
+import prisma from '../db/database';
+import { Role } from '@prisma/client';
 
 export const getAllReport = async (req: Request, res: Response) => {
     const reports = await prisma.reports.findMany();
-    res.status(200).send(reports)
+    res.status(200).send(reports);
 };
 
 export const getSingleReport = async (req: Request, res: Response) => {
     try {
-    const { id } = req.params;
-        const report = await prisma.reports.findUnique({where: {id: Number(id)}});
+        const { id } = req.params;
+        const report = await prisma.reports.findUnique({
+            where: { id: Number(id) },
+        });
 
         if (!report) {
-            return res.status(404).json({error: 'No such report'})
+            return res.status(404).json({ error: 'No such report' });
         }
-        res.status(200).json(report)
-        
-    } catch (error : any) {
-        res.status(400).json({error: error.message})
+        res.status(200).json(report);
+    } catch (error: any) {
+        res.status(400).json({ error: error.message });
     }
-}
-  
+};
+
 export const createReport = async (req: Request, res: Response) => {
     try {
         const newReport = req.body;
-        const report = await prisma.reports.create({data: newReport});
+        const report = await prisma.reports.create({ data: newReport });
         res.status(200).json(report);
-        res.status(200).json({message: 'Report created'})
-    } catch (error : any) {
-        res.status(400).json({error: error.message})
+        res.status(200).json({ message: 'Report created' });
+    } catch (error: any) {
+        res.status(400).json({ error: error.message });
     }
-}
+};
 
 export const updateReport = async (req: Request, res: Response) => {
     try {
-    const { id } = req.params;
-    const updateData = req.body;
+        const { id } = req.params;
+        const updateData = req.body;
         const report = await prisma.reports.update({
-            where: {id: Number(id)},
+            where: { id: Number(id) },
             data: updateData,
         });
-        
+
         if (!report) {
-            return res.status(404).json({error: 'No such Report'})
+            return res.status(404).json({ error: 'No such Report' });
         }
-    res.status(200).json(report)
-    } catch (error : any) {
-        res.status(400).json({error: error.message})
+        res.status(200).json(report);
+    } catch (error: any) {
+        res.status(400).json({ error: error.message });
     }
-}
+};
 
 export const deleteReport = async (req: Request, res: Response) => {
     try {
-    const { id } = req.params;
-    
-    const report = await prisma.reports.delete({
-        where:{id: Number(id)}});
+        const { id } = req.params;
 
-    if (!report) {
-        return res.status(404).json({error: 'No such Report'})
-    }
-    res.status(200).json({report, message: 'Report deleted'})
+        const report = await prisma.reports.delete({
+            where: { id: Number(id) },
+        });
 
-    } catch (error : any) {
-        res.status(400).json({error: error.message})
+        if (!report) {
+            return res.status(404).json({ error: 'No such Report' });
+        }
+        res.status(200).json({ report, message: 'Report deleted' });
+    } catch (error: any) {
+        res.status(400).json({ error: error.message });
     }
-}
+};
 
 export const getAllReportForLead = async (req: Request, res: Response) => {
     try {
         // Get the patrol request parameters
         const patrolLeadId = req.params.id;
-        const patrolLead = await prisma.patrols.findFirst(
-            {where: {id: Number(patrolLeadId)},
+        const patrolLead = await prisma.patrols.findFirst({
+            where: { id: Number(patrolLeadId) },
             select: {
                 id: true,
-                role: true
-            }        
+                role: true,
+            },
         });
-    
-        if (!patrolLead) { // Check if patrol exists
-            return res.status(404).json({error: 'Patrol does not exist'})
-        } else if (patrolLead.role !== Role.lead) { // Check if patrol is a lead
-            return res.status(401).json({error: 'You are not authorized to view this report'})
+
+        if (!patrolLead) {
+            // Check if patrol exists
+            return res.status(404).json({ error: 'Patrol does not exist' });
+        } else if (patrolLead.role !== Role.lead) {
+            // Check if patrol is a lead
+            return res
+                .status(401)
+                .json({ error: 'You are not authorized to view this report' });
         }
 
         // Get all the patrols assigned to the patrol lead
-        const assignedPatrol = await prisma.patrols.findUnique({where: {supervisorID: Number(patrolLeadId)}, select:{id: true, reports: true}});
-        if (!assignedPatrol) { // Check if there is any assigned patrols
-            return res.status(404).json({error: 'No assigned patrol'})
+        const assignedPatrol = await prisma.patrols.findUnique({
+            where: { supervisorID: Number(patrolLeadId) },
+            select: { id: true, reports: true },
+        });
+        if (!assignedPatrol) {
+            // Check if there is any assigned patrols
+            return res.status(404).json({ error: 'No assigned patrol' });
         }
-        
+
         // Get all the reports for the assigned patrols
-        const reports = await prisma.reports.findMany({where: {patrolID: Number(assignedPatrol.id)}});
-        if (!reports) { // Check if there is any reports for the assigned patrols
-            return res.status(404).json({error: 'No reports for assigned patrols'})
+        const reports = await prisma.reports.findMany({
+            where: { patrolID: Number(assignedPatrol.id) },
+        });
+        if (!reports) {
+            // Check if there is any reports for the assigned patrols
+            return res
+                .status(404)
+                .json({ error: 'No reports for assigned patrols' });
         }
-        
+
         // Return the reports
-        res.status(200).json({reports, message: 'All reports for assigned patrols generated for leads'});
-        
-    } catch (error : any) {
-        res.status(400).json({error: error.message})
+        res.status(200).json({
+            reports,
+            message: 'All reports for assigned patrols generated for leads',
+        });
+    } catch (error: any) {
+        res.status(400).json({ error: error.message });
     }
-}
+};
 
 // async function main() {
 //     const report = await prisma.report.findMany();
