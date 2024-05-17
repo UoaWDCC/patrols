@@ -7,6 +7,7 @@ import placeholder from "../assets/images/placeholder.png";
 import { Input } from "@components/ui/input";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import car from "../assets/images/car.png";
 
 const userDetailsSchema = z.object({
   name: z.string(),
@@ -107,16 +108,16 @@ export default function Profile() {
   //if (!loading) {
     return (
       <div className="text-center flex-col min-h-screen flex max-w-3xl mx-auto">
-        <div className="bg-[#eef6ff] h-28 mb-4 flex items-center justify-start pl-8 pt-4">
-          <div className="">
+        <div className="bg-[#eef6ff] h-28 mb-4 pl-8 pt-4">
+          <div>
             <img
               src={placeholder}
               alt="placeholder"
-              className="rounded-full w-12 h-12"
+              className="rounded-full w-10 h-10"
             />
           </div>
           <div>
-            <h1 className="font-bold text-left pl-4 text-2xl">Profile</h1>
+            <h1 className="font-bold text-left pt-2 text-2xl">Profile</h1>
           </div>
         </div>
         <div className="bg-[#EEF6FF] py-6 mx-8 my-10 space-y-5 text-left pl-7 rounded-md shadow-md">
@@ -273,9 +274,18 @@ export default function Profile() {
           </Form>
         </div>
         <div className="my-6 mx-8 space-y-5 text-left pl-7">
-          <h2 className="text-2xl">
+        <div className="flex items-center justify-start">
+          <div>
+            <img
+              src={car}
+              alt="car"
+              className="w-10 h-10"
+            />
+            </div>
+          <h2 className="text-2xl pl-2">
             VEHICLE DETAILS
           </h2>
+        </div>
           <Form {...form}>
             <FormItem className="flex flex-col pr-8">
               <FormLabel htmlFor="vehicles">
