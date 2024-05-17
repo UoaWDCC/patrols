@@ -133,7 +133,7 @@ export default function Profile() {
                 disabled//={!editable}
                 value={email}
                 //onChange={(e) => setEmail(e.target.value)}
-                className="rounded-md px-3 py-2 border-[#CBD5E1]"
+                className="rounded-md border-[#CBD5E1]"
               />
             </FormItem>
             <div className="flex flex-col-2">
@@ -146,7 +146,7 @@ export default function Profile() {
                 id="cpnzId"
                 name="cpnzId"
                 disabled
-                className="rounded-md px-3 py-2 border-[#CBD5E1]"
+                className="rounded-md border-[#CBD5E1]"
               />
             </FormItem>
             <FormItem className="flex flex-col pr-8 flex-1">
@@ -159,7 +159,7 @@ export default function Profile() {
                 name="id"
                 value={currentUserDetails?.id}
                 disabled
-                className="rounded-md px-3 py-2 border-[#CBD5E1]"
+                className="rounded-md border-[#CBD5E1]"
               />
             </FormItem>
             </div>
@@ -173,7 +173,7 @@ export default function Profile() {
                 name="password"
                 value={password}
                 disabled
-                className="rounded-md px-3 py-2 border-[#CBD5E1]"
+                className="rounded-md border-[#CBD5E1]"
               />
             </FormItem>
             {editable && (
@@ -186,7 +186,7 @@ export default function Profile() {
                     id="password"
                     name="password"
                     onChange={(e) => setPassword(e.target.value)}
-                    className="rounded-md px-3 py-2 border-[#CBD5E1]"
+                    className="rounded-md border-[#CBD5E1]"
                   />
                 </FormItem>
                 <FormItem className="flex flex-col pr-8">
@@ -199,14 +199,14 @@ export default function Profile() {
                     name="confirmPassword"
                     value={confirmPassword}
                     onChange={(e) => setConfirmPassword(e.target.value)}
-                    className="rounded-md px-3 py-2 border-[#CBD5E1]" />
+                    className="rounded-md border-[#CBD5E1]" />
                   {errorMessage && <p>{errorMessage}</p>}
                 </FormItem></>
             )}
               {!editable ? (
                 <Button
                   onClick={handleEdit}
-                  className="bg-cpnz-blue-900 mt-4 px-3 py-2"
+                  className="bg-cpnz-blue-900"
                 >
                   Change Password
                 </Button>
@@ -215,7 +215,7 @@ export default function Profile() {
                   <Button
                     onClick={handleSave}
                     disabled={password != confirmPassword}
-                    className="bg-cpnz-blue-900 mt-4"
+                    className="bg-cpnz-blue-900 mt-4 w-28"
                   >
                     Save
                   </Button>
@@ -309,6 +309,7 @@ export default function Profile() {
                   type="text"
                   id="reg"
                   name="reg"
+                  //value={}
                   disabled
                   className="rounded-md px-3 py-2 border-[#CBD5E1]"
                 />
@@ -321,7 +322,7 @@ export default function Profile() {
                   type="text"
                   id="colour"
                   name="colour"
-                  value={currentUserDetails?.id}
+                  //value={}
                   disabled
                   className="rounded-md px-3 py-2 border-[#CBD5E1]"
                 />
@@ -330,14 +331,13 @@ export default function Profile() {
                 <FormLabel htmlFor="livery">
                   Livery{" "}
                 </FormLabel>
-                <Input
-                  type="text"
-                  id="livery"
-                  name="livery"
-                  value={currentUserDetails?.id}
-                  disabled
-                  className="rounded-md px-3 py-2 border-[#CBD5E1]"
-                />
+                <select
+                  className="rounded-md px-3 py-2 border border-[#CBD5E1]"
+                >
+                  <option value="" disabled>Select an option</option>
+                  <option value="yes">Yes</option>
+                  <option value="no">No</option>
+                </select>
               </FormItem>
             </div>
           </Form>
