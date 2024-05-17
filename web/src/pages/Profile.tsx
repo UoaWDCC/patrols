@@ -129,9 +129,9 @@ export default function Profile() {
                 type="email"
                 id="email"
                 name="email"
-                disabled={!editable}
+                disabled//={!editable}
                 value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                //onChange={(e) => setEmail(e.target.value)}
                 className="rounded-md px-3 py-2 border-[#CBD5E1]"
               />
             </FormItem>
@@ -175,48 +175,33 @@ export default function Profile() {
                 className="rounded-md px-3 py-2 border-[#CBD5E1]"
               />
             </FormItem>
-            <FormItem className="flex flex-col pr-8">
-              <FormLabel htmlFor="password">
-                New Password{" "}
-              </FormLabel>
-              <Input
-                type="password"
-                id="password"
-                name="password"
-                disabled={!editable}
-                onChange={(e) => setPassword(e.target.value)}
-                className="rounded-md px-3 py-2 border-[#CBD5E1]"
-              />
-            </FormItem>
             {editable && (
-              <FormItem className="flex flex-col pr-8">
-                <FormLabel htmlFor="confirmPassword" className="font-semibold">
-                  Confirm New Password{" "}
-                </FormLabel>
-                <Input
-                  type="password"
-                  id="confirmPassword"
-                  name="confirmPassword"
-                  value={confirmPassword}
-                  onChange={(e) => setConfirmPassword(e.target.value)}
-                  className="rounded-md px-3 py-2 border-[#CBD5E1]"
-                />
-                {errorMessage && <p>{errorMessage}</p>}
-              </FormItem>
+              <><FormItem>
+                  <FormLabel htmlFor="password">
+                  New Password{" "}
+                  </FormLabel>
+                  <Input
+                    type="password"
+                    id="password"
+                    name="password"
+                    onChange={(e) => setPassword(e.target.value)}
+                    className="rounded-md px-3 py-2 border-[#CBD5E1]"
+                  />
+                </FormItem>
+                <FormItem className="flex flex-col pr-8">
+                  <FormLabel htmlFor="confirmPassword" className="font-semibold">
+                    Confirm New Password{" "}
+                  </FormLabel>
+                  <Input
+                    type="password"
+                    id="confirmPassword"
+                    name="confirmPassword"
+                    value={confirmPassword}
+                    onChange={(e) => setConfirmPassword(e.target.value)}
+                    className="rounded-md px-3 py-2 border-[#CBD5E1]" />
+                  {errorMessage && <p>{errorMessage}</p>}
+                </FormItem></>
             )}
-            <FormItem className="flex flex-col pr-8">
-              <FormLabel htmlFor="vehicles">
-                Vehicles{" "}
-              </FormLabel>
-              <Input
-                type="text"
-                id="vehicles"
-                name="vehicles"
-                disabled={!editable}
-                defaultValue={currentUserDetails?.vehicles}
-                className="rounded-md px-3 py-2 border-[#CBD5E1]"
-              />
-            </FormItem>
               {!editable ? (
                 <Button
                   onClick={handleEdit}
@@ -254,7 +239,7 @@ export default function Profile() {
                 CP Call Sign{" "}
               </FormLabel>
               <Input
-                type="cpCallSign"
+                type="text"
                 id="cpCallSign"
                 name="cpCallSign"
                 disabled
@@ -266,7 +251,7 @@ export default function Profile() {
                 Patrol (Region){" "}
               </FormLabel>
               <Input
-                type="patrol"
+                type="text"
                 id="patrol"
                 name="patrol"
                 disabled
@@ -278,13 +263,73 @@ export default function Profile() {
                 Police Base Station{" "}
               </FormLabel>
               <Input
-                type="policeBase"
+                type="text"
                 id="policeBase"
                 name="policeBase"
                 disabled
                 className="rounded-md px-3 py-2 border-[#CBD5E1]"
               />
             </FormItem>
+          </Form>
+        </div>
+        <div className="my-6 mx-8 space-y-5 text-left pl-7">
+          <h2 className="text-2xl">
+            VEHICLE DETAILS
+          </h2>
+          <Form {...form}>
+            <FormItem className="flex flex-col pr-8">
+              <FormLabel htmlFor="vehicles">
+                Patrol Vehicle{" "}
+              </FormLabel>
+              <Input
+                type="text"
+                id="vehicles"
+                name="vehicles"
+                disabled={!editable}
+                defaultValue={currentUserDetails?.vehicles}
+                className="rounded-md px-3 py-2 border-[#CBD5E1]"
+              />
+            </FormItem>
+            <div className="flex flex-col-3">
+              <FormItem className="flex flex-col pr-8 flex-1">
+                <FormLabel htmlFor="reg">
+                  Reg.{" "}
+                </FormLabel>
+                <Input
+                  type="text"
+                  id="reg"
+                  name="reg"
+                  disabled
+                  className="rounded-md px-3 py-2 border-[#CBD5E1]"
+                />
+              </FormItem>
+              <FormItem className="flex flex-col pr-8 flex-1">
+                <FormLabel htmlFor="id">
+                  Colour{" "}
+                </FormLabel>
+                <Input
+                  type="text"
+                  id="colour"
+                  name="colour"
+                  value={currentUserDetails?.id}
+                  disabled
+                  className="rounded-md px-3 py-2 border-[#CBD5E1]"
+                />
+              </FormItem>
+              <FormItem className="flex flex-col pr-8 flex-1">
+                <FormLabel htmlFor="livery">
+                  Livery{" "}
+                </FormLabel>
+                <Input
+                  type="text"
+                  id="livery"
+                  name="livery"
+                  value={currentUserDetails?.id}
+                  disabled
+                  className="rounded-md px-3 py-2 border-[#CBD5E1]"
+                />
+              </FormItem>
+            </div>
           </Form>
         </div>
       </div>
