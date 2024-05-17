@@ -104,9 +104,9 @@ export default function Profile() {
     },
   });
 
-  if (!loading) {
+  //if (!loading) {
     return (
-      <div className="text-center flex-col min-h-screen flex">
+      <div className="text-center flex-col min-h-screen flex max-w-3xl mx-auto">
         <div className="bg-[#eef6ff] h-28 mb-4 flex items-center justify-start pl-8 pt-4">
           <div className="">
             <img
@@ -122,35 +122,8 @@ export default function Profile() {
         <div className="bg-[#eef6ff] py-6 mx-8 mt-10 space-y-5 text-left pl-7 rounded-md">
           <Form {...form}>
             <FormItem className="flex flex-col pr-8">
-              <FormLabel htmlFor="name" className="font-semibold">
-                Name:{" "}
-              </FormLabel>
-              <Input
-                type="text"
-                id="name"
-                name="name"
-                value={currentUserDetails?.name}
-                readOnly={!editable}
-                disabled
-                className="rounded-md px-3 py-2 w-auto"
-              />
-            </FormItem>
-            <FormItem className="flex flex-col pr-8">
-              <FormLabel htmlFor="cpnzId" className="font-semibold">
-                CPNZ ID:{" "}
-              </FormLabel>
-              <Input
-                type="text"
-                id="cpnzId"
-                name="cpnzId"
-                value={currentUserDetails?.id}
-                disabled
-                className="rounded-md px-3 py-2"
-              />
-            </FormItem>
-            <FormItem className="flex flex-col pr-8">
-              <FormLabel htmlFor="email" className="font-semibold">
-                Email:{" "}
+              <FormLabel htmlFor="email">
+                Email Address{" "}
               </FormLabel>
               <Input
                 type="email"
@@ -162,9 +135,37 @@ export default function Profile() {
                 className="rounded-md px-3 py-2"
               />
             </FormItem>
+            <div className="flex flex-col-2">
+            <FormItem className="flex flex-col pr-8 flex-1">
+              <FormLabel htmlFor="cpnzId">
+                Mobile Number{" "}
+              </FormLabel>
+              <Input
+                type="text"
+                id="cpnzId"
+                name="cpnzId"
+                value={currentUserDetails?.id}
+                disabled
+                className="rounded-md px-3 py-2"
+              />
+            </FormItem>
+            <FormItem className="flex flex-col pr-8 flex-1">
+              <FormLabel htmlFor="id">
+                ID{" "}
+              </FormLabel>
+              <Input
+                type="text"
+                id="id"
+                name="id"
+                value={currentUserDetails?.id}
+                disabled
+                className="rounded-md px-3 py-2"
+              />
+            </FormItem>
+            </div>
             <FormItem className="flex flex-col pr-8">
-              <FormLabel htmlFor="password" className="font-semibold">
-                Password:{" "}
+              <FormLabel htmlFor="password">
+                Existing Password{" "}
               </FormLabel>
               <Input
                 type="password"
@@ -179,7 +180,7 @@ export default function Profile() {
             {editable && (
               <FormItem className="flex flex-col pr-8">
                 <FormLabel htmlFor="confirmPassword" className="font-semibold">
-                  Confirm Password:{" "}
+                  Confirm Password{" "}
                 </FormLabel>
                 <Input
                   type="password"
@@ -193,8 +194,8 @@ export default function Profile() {
               </FormItem>
             )}
             <FormItem className="flex flex-col pr-8">
-              <FormLabel htmlFor="vehicles" className="font-semibold">
-                Vehicles:{" "}
+              <FormLabel htmlFor="vehicles">
+                Vehicles{" "}
               </FormLabel>
               <Input
                 type="text"
@@ -205,20 +206,19 @@ export default function Profile() {
                 className="rounded-md px-3 py-2"
               />
             </FormItem>
-            <div>
               {!editable ? (
                 <Button
                   onClick={handleEdit}
-                  className="bg-cpnz-blue-900 mt-4 w-28"
+                  className="bg-cpnz-blue-900 mt-4 flex-1"
                 >
-                  Edit
+                  Change Password
                 </Button>
               ) : (
                 <div className="flex gap-4">
                   <Button
                     onClick={handleSave}
                     disabled={password != confirmPassword}
-                    className="bg-cpnz-blue-900 mt-4 w-28"
+                    className="bg-cpnz-blue-900 mt-4"
                   >
                     Save
                   </Button>
@@ -231,10 +231,9 @@ export default function Profile() {
                   </Button>
                 </div>
               )}
-            </div>
           </Form>
         </div>
       </div>
     );
   }
-}
+//}
