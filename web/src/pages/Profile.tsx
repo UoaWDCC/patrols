@@ -120,9 +120,9 @@ export default function Profile() {
             <h1 className="font-bold text-left pt-2 text-2xl">Profile</h1>
           </div>
         </div>
-        <div className="bg-[#EEF6FF] py-6 mx-8 my-10 space-y-5 text-left pl-7 rounded-md shadow-md">
+        <div className="bg-[#EEF6FF] py-6 mx-8 my-10 space-y-5 text-left px-7 rounded-md shadow-md">
           <Form {...form}>
-            <FormItem className="flex flex-col pr-8">
+            <FormItem className="flex flex-col w-full">
               <FormLabel htmlFor="email">
                 Email Address{" "}
               </FormLabel>
@@ -136,8 +136,8 @@ export default function Profile() {
                 className="rounded-md border-[#CBD5E1]"
               />
             </FormItem>
-            <div className="flex flex-col-2">
-            <FormItem className="flex flex-col pr-8 flex-1">
+            <div className="flex flex-col-2 space-x-6">
+            <FormItem className="flex flex-col flex-1">
               <FormLabel htmlFor="cpnzId">
                 Mobile Number{" "}
               </FormLabel>
@@ -149,7 +149,7 @@ export default function Profile() {
                 className="rounded-md border-[#CBD5E1]"
               />
             </FormItem>
-            <FormItem className="flex flex-col pr-8 flex-1">
+            <FormItem className="flex flex-col flex-1">
               <FormLabel htmlFor="id">
                 ID{" "}
               </FormLabel>
@@ -163,7 +163,7 @@ export default function Profile() {
               />
             </FormItem>
             </div>
-            <FormItem className="flex flex-col pr-8 flex-1">
+            <FormItem className="flex flex-col">
               <FormLabel htmlFor="id">
                 Existing Password{" "}
               </FormLabel>
@@ -189,7 +189,7 @@ export default function Profile() {
                     className="rounded-md border-[#CBD5E1]"
                   />
                 </FormItem>
-                <FormItem className="flex flex-col pr-8">
+                <FormItem className="flex flex-col">
                   <FormLabel htmlFor="confirmPassword" className="font-semibold">
                     Confirm New Password{" "}
                   </FormLabel>
@@ -206,7 +206,7 @@ export default function Profile() {
               {!editable ? (
                 <Button
                   onClick={handleEdit}
-                  className="bg-cpnz-blue-900"
+                  className="bg-cpnz-blue-900 w-full flex"
                 >
                   Change Password
                 </Button>
@@ -230,12 +230,12 @@ export default function Profile() {
               )}
           </Form>
         </div>
-        <div className="my-6 mx-8 space-y-5 text-left pl-7">
+        <div className="my-6 mx-8 space-y-5 text-left px-8">
           <h2 className="text-2xl">
             PATROL INFORMATION
           </h2>
           <Form {...form}>
-            <FormItem className="flex flex-col pr-8">
+            <FormItem className="flex flex-col">
               <FormLabel htmlFor="cpCallSign">
                 CP Call Sign{" "}
               </FormLabel>
@@ -247,7 +247,7 @@ export default function Profile() {
                 className="rounded-md px-3 py-2 border-[#CBD5E1]"
               />
             </FormItem>
-            <FormItem className="flex flex-col pr-8">
+            <FormItem className="flex flex-col">
               <FormLabel htmlFor="patrol">
                 Patrol (Region){" "}
               </FormLabel>
@@ -259,7 +259,7 @@ export default function Profile() {
                 className="rounded-md px-3 py-2 border-[#CBD5E1]"
               />
             </FormItem>
-            <FormItem className="flex flex-col pr-8">
+            <FormItem className="flex flex-col">
               <FormLabel htmlFor="policeBase">
                 Police Base Station{" "}
               </FormLabel>
@@ -273,7 +273,7 @@ export default function Profile() {
             </FormItem>
           </Form>
         </div>
-        <div className="my-6 mx-8 space-y-5 text-left pl-7">
+        <div className="my-6 mx-8 space-y-5 text-left px-7">
         <div className="flex items-center justify-start">
           <div>
             <img
@@ -287,7 +287,7 @@ export default function Profile() {
           </h2>
         </div>
           <Form {...form}>
-            <FormItem className="flex flex-col pr-8">
+            <FormItem className="flex flex-col">
               <FormLabel htmlFor="vehicles">
                 Patrol Vehicle{" "}
               </FormLabel>
@@ -300,8 +300,8 @@ export default function Profile() {
                 className="rounded-md px-3 py-2 border-[#CBD5E1]"
               />
             </FormItem>
-            <div className="flex flex-col-3">
-              <FormItem className="flex flex-col pr-8 flex-1">
+            <div className="flex flex-col-3 space-x-6">
+              <FormItem className="flex flex-col flex-1">
                 <FormLabel htmlFor="reg">
                   Reg.{" "}
                 </FormLabel>
@@ -314,7 +314,7 @@ export default function Profile() {
                   className="rounded-md px-3 py-2 border-[#CBD5E1]"
                 />
               </FormItem>
-              <FormItem className="flex flex-col pr-8 flex-1">
+              <FormItem className="flex flex-col flex-1">
                 <FormLabel htmlFor="id">
                   Colour{" "}
                 </FormLabel>
@@ -327,7 +327,7 @@ export default function Profile() {
                   className="rounded-md px-3 py-2 border-[#CBD5E1]"
                 />
               </FormItem>
-              <FormItem className="flex flex-col pr-8 flex-1">
+              <FormItem className="flex flex-col flex-1">
                 <FormLabel htmlFor="livery">
                   Livery{" "}
                 </FormLabel>
