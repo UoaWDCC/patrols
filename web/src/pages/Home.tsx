@@ -55,16 +55,16 @@ export default function Home() {
   };
 
   useEffect(() => {
-      const getPatrolLeadID = async () => {
-          const response = await axios.get(
-              `${import.meta.env.VITE_API_URL}/user/getUserDetails`
-          );
+    const getPatrolLeadID = async () => {
+      const response = await axios.get(
+        `${import.meta.env.VITE_API_URL}/user/getUserDetails`
+      );
 
-          const userDetails = userDetailsSchema.parse(response.data);
-          setId(Number(userDetails.id));
-      };
+      const userDetails = userDetailsSchema.parse(response.data);
+      setId(Number(userDetails.id));
+    };
 
-      getPatrolLeadID();
+    getPatrolLeadID();
   }, []);
 
   useEffect(() => {
@@ -190,26 +190,6 @@ export default function Home() {
           Sign Out
         </Button>
       </div>
-      <div className="bg-[#EEF6FF] h-24 mt-6 flex items-center pl-12 pt-4">
-          <div className="font-semibold space-x-11 text-cpnz-blue-900 flex items-center">
-            <button className="flex flex-col items-center">
-              <img
-              src={home}
-              alt="home"
-              className="w-7 h-7"
-              />
-              Home
-            </button>
-            <button className="flex flex-col items-center" onClick={handleProfile}>
-              <img
-                src={profile}
-                alt="user"
-                className="w-7 h-7"
-              /> 
-              Profile
-            </button>
-          </div>
-        </div>
     </div>
   );
 }
