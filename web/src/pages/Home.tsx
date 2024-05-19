@@ -1,7 +1,5 @@
 import { useNavigate } from "react-router-dom";
 import { FaCog, FaClipboardList, FaCogs, FaPlus } from "react-icons/fa";
-import { useAuth } from "../hooks/useAuth";
-import { Button } from "@components/ui/button";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { z } from "zod";
@@ -14,8 +12,6 @@ import {
   DialogTrigger,
 } from "@components/ui/dialog";
 import { userDetailsSchema } from "../schemas";
-import profile from "../assets/images/user.png";
-import home from "../assets/images/home.png";
 
 const reportsDetailsSchema = z.object({
   message: z.string(),
@@ -41,17 +37,6 @@ export default function Home() {
   // Function to navigate to the logon page when new report button is clicked
   const handleNewReport = () => {
     navigate("/logon");
-  };
-
-  // Function to navigate to the profile page when profile button is clicked
-  const handleProfile = () => {
-    navigate("/profile");
-  };
-
-  const { signOut } = useAuth();
-
-  const handleSignOut = () => {
-    signOut(); // Calls the signOut function when the sign out button is clicked
   };
 
   useEffect(() => {
@@ -180,15 +165,6 @@ export default function Home() {
             </div>
           </div>
         </div>
-      </div>
-
-      <div>
-        <Button
-          onClick={handleSignOut}
-          className="bg-cpnz-blue-900 text-md font-semibold hover:bg-cpnz-blue-800"
-        >
-          Sign Out
-        </Button>
       </div>
     </div>
   );
