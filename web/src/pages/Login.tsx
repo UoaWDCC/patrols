@@ -17,15 +17,11 @@ import axios from "axios";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { useAuth } from "../hooks/useAuth";
-
-const tokenSchema = z.object({
-  access_token: z.string(),
-  refresh_token: z.string(),
-});
+import { tokenSchema } from "../schemas";
 
 export default function Login() {
   const formSchema = z.object({
-    cpnzID: z.string(),
+    email: z.string(),
     password: z
       .string()
       .min(3, { message: "Password must be at least 3 characters" }),
@@ -34,13 +30,13 @@ export default function Login() {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      cpnzID: "",
+      email: "",
       password: "",
     },
   });
 
   const navigate = useNavigate();
-  const [loginId, setLoginId] = useState<string>("");
+  const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const { user } = useAuth();
 
@@ -53,10 +49,14 @@ export default function Login() {
     e.preventDefault(); // Prevents form data being reset when incorrect details entered
 
     try {
+      console.log(1);
+
       const session = await axios.post(
         `${import.meta.env.VITE_API_URL}/auth/login`,
-        { id: loginId, password: password }
+        { email: email, password: password }
       );
+
+      console.log(1);
 
       const { access_token: accessToken, refresh_token: refreshToken } =
         tokenSchema.parse(session.data.session);
@@ -106,16 +106,16 @@ export default function Login() {
           <form onSubmit={onSubmit} className="space-y-5">
             <FormField
               control={form.control}
-              name="cpnzID"
+              name="email"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-base">CPNZ ID</FormLabel>
+                  <FormLabel className="text-base">Email</FormLabel>
                   <FormControl>
                     <Input
-                      placeholder="ID"
+                      placeholder="example@example.com"
                       {...field}
-                      onChange={(e) => setLoginId(e.target.value)}
-                      value={loginId}
+                      onChange={(e) => setEmail(e.target.value)}
+                      value={email}
                       className="w-80"
                     />
                   </FormControl>

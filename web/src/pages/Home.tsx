@@ -1,7 +1,5 @@
 import { useNavigate } from "react-router-dom";
 import { FaCog, FaClipboardList, FaCogs, FaPlus } from "react-icons/fa";
-import { useAuth } from "../hooks/useAuth";
-import { Button } from "@components/ui/button";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { z } from "zod";
@@ -14,6 +12,8 @@ import {
   DialogTrigger,
 } from "@components/ui/dialog";
 import { userDetailsSchema } from "../schemas";
+import SignoutButton from "@components/SignoutButton";
+import BottomNavBar from "@components/BottomNavBar";
 
 const reportsDetailsSchema = z.object({
   message: z.string(),
@@ -33,19 +33,12 @@ type reportsDetails = z.infer<typeof reportsDetailsSchema>;
 
 export default function Home() {
   const navigate = useNavigate();
-  const { user } = useAuth();
   const [data, setData] = useState<reportsDetails>();
   const [id, setId] = useState<number>();
 
   // Function to navigate to the logon page when new report button is clicked
   const handleNewReport = () => {
     navigate("/logon");
-  };
-
-  const { signOut } = useAuth();
-
-  const handleSignOut = () => {
-    signOut(); // Calls the signOut function when the sign out button is clicked
   };
 
   useEffect(() => {
@@ -59,7 +52,7 @@ export default function Home() {
     };
 
     getPatrolLeadID();
-  });
+  }, []);
 
   useEffect(() => {
     const getAllReports = async () => {
@@ -78,9 +71,9 @@ export default function Home() {
 
   return (
     <div className="text-center min-h-screen relative bg-[#FFFFFF] max-w-3xl mx-auto">
-      <div className="bg-[#ECEDFF] py-6 flex justify-between items-center px-4 rounded-b-3xl">
-        <div className="px-8">
-          <h1 className="text-xl font-bold text-black">
+      <div className="bg-[#EEF6FF] py-6 flex justify-between items-center px-4">
+        <div>
+          <h1 className="text-xl font-bold text-black mx-4">
             Welcome back, XXXXXXX
           </h1>
         </div>
@@ -88,7 +81,7 @@ export default function Home() {
       </div>
 
       <div className="max-w-800 mx-auto px-8 my-8">
-        <div className="bg-[#ECEDFF] p-4 rounded-lg shadow-md mb-6">
+        <div className="bg-[#EEF6FF] p-4 rounded-lg shadow-md mb-6">
           <h2 className="text-md font-semibold">Draft report detected</h2>
           <p className="text-gray-600">Finish your report?</p>
         </div>
@@ -108,7 +101,7 @@ export default function Home() {
           </button>
         </div>
 
-        <div className="bg-[#ECEDFF] p-4 rounded-lg shadow-md mb-6">
+        <div className="bg-[#EEF6FF] p-4 rounded-lg shadow-md mb-6">
           <h2 className="text-md font-semibold mb-2">Patrol vehicles</h2>
           <p className="text-gray-600 mb-4">
             Create a new report from scratch or select a template.
@@ -119,7 +112,7 @@ export default function Home() {
         </div>
 
         <div className="grid grid-cols-2 gap-4">
-          <div className="bg-[#ECEDFF] text-black p-4 rounded-lg flex items-center hover:bg-[#808080] transition-colors duration-300">
+          <div className="bg-[#EEF6FF] text-black p-4 rounded-lg flex items-center hover:bg-[#808080] transition-colors duration-300">
             <Dialog>
               <DialogTrigger className="flex items-center">
                 <FaClipboardList className="mr-4 text-2xl" />
@@ -128,7 +121,7 @@ export default function Home() {
                   <p className="text-xs">View reports in the past.</p>
                 </div>
               </DialogTrigger>
-              <DialogContent className="p-8 max-h-[700px] overflow-y-auto">
+              <DialogContent className="p-8 max-h-[550px] overflow-y-auto">
                 <DialogHeader>
                   <DialogTitle className="text-center text-subheading pb-12">
                     All Reports
@@ -141,11 +134,20 @@ export default function Home() {
                         {data.reports.map((d) => (
                           <div
                             key={d.id}
-                            className="flex-1 border-2 border-zinc-400 rounded-lg shadow-md px-6 py-4"
+                            className="flex-1 border-2 border-zinc-400 rounded-lg shadow-md px-6 py-4 hover:bg-zinc-200 transition-all cursor-pointer"
                           >
-                            <h3 className="text-lg font-semibold">{d.title}</h3>
-                            <p>Location: {d.location}</p>
-                            <p>Type: {d.reportIncidentType}</p>
+                            <h3 className="text-lg font-semibold text-cpnz-blue-900 ">
+                              {d.title}
+                            </h3>
+                            <p>
+                              <strong>Location</strong>: {d.location}
+                            </p>
+                            <p>
+                              <strong>Type:</strong> {d.reportIncidentType}
+                            </p>
+                            <p>
+                              <strong>Patrol ID:</strong> {d.patrolID}
+                            </p>
                           </div>
                         ))}
                       </div>
@@ -155,7 +157,7 @@ export default function Home() {
               </DialogContent>
             </Dialog>
           </div>
-          <div className="bg-[#ECEDFF] text-black p-4 rounded-lg flex items-center hover:bg-[#808080] transition-colors duration-300">
+          <div className="bg-[#EEF6FF] text-black p-4 rounded-lg flex items-center hover:bg-[#808080] transition-colors duration-300">
             <FaCogs className="mr-4 text-2xl" />
             <div className="text-left">
               <h3 className="text-md font-semibold">Report Settings</h3>
@@ -166,15 +168,8 @@ export default function Home() {
           </div>
         </div>
       </div>
-
-      <div>
-        <Button
-          onClick={handleSignOut}
-          className="bg-cpnz-blue-900 text-md hover:bg-cpnz-blue-800"
-        >
-          Sign Out
-        </Button>
-      </div>
+      <SignoutButton />
+      <BottomNavBar />
     </div>
   );
 }

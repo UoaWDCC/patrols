@@ -1,4 +1,4 @@
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -12,9 +12,10 @@ import {
   FormLabel,
   FormMessage,
 } from "@components/ui/form";
-import cogwheelIcon from "../assets/images/cogwheel.png";
 import userIcon from "../assets/images/gorilla.png";
 import { useState } from "react";
+import { FaCog } from "react-icons/fa";
+import axios from "axios";
 
 export default function Logon() {
   const navigate = useNavigate();
@@ -55,9 +56,22 @@ export default function Logon() {
     },
   });
 
-  const onSubmit = (data: z.infer<typeof formSchema>) => {
-    console.log(data);
-    navigate("/LogHome");
+  const onSubmit = async (data: z.infer<typeof formSchema>) => {
+    try {
+      await axios.post(`${import.meta.env.VITE_API_URL}/send-email`, {
+        email: "jasonabc0626@gmail.com",
+        patrolName: data.patrol1Name,
+        patrolID: "10",
+        formData: JSON.stringify(data),
+      });
+
+      // Navigates to Loghome if succesfully logged on.
+      navigate("/LogHome");
+    } catch (error) {
+      axios.isAxiosError(error)
+        ? console.log(error.response?.data.error)
+        : console.error("Unexpected error during login:", error);
+    }
   };
 
   const addGuestPatrol = () => {
@@ -82,7 +96,7 @@ export default function Logon() {
           </div>
           <button className="flex items-center">
             <span className="mr-2 text-lg font-semibold">Settings</span>
-            <img src={cogwheelIcon} alt="Settings" className="w-6 h-6" />
+            <FaCog className="text-2xl text-gray-400 cursor-pointer hover:text-gray-200 transition-colors duration-300" />
           </button>
         </div>
         <div className="bg-white p-8">
