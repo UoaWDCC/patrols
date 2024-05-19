@@ -20,15 +20,18 @@
 - React
 - Node.js
 - Express.js
+- Supabase 
+- PostgreSQL
+- Prisma
+
 
 ## Setup Runbook
 
-1.  Create a new repository with UoAWDCC as owner
-2.  Select repository template as `UoAWDCC/react-template`
+1.  Clone the repo locally: https://github.com/UoaWDCC/patrols.git
+2.  Change directory into the folder.
 
-    ![Create Repo](images/create-repo.png)
-
-3.  Clone the app to your local machine
+### Frontend
+1.  
 
 4.  In `/api/fly.production.toml` change the app name to `wdcc-app-name-api` . For example, passport will be `wdcc-passport-api`
     Then create the app on fly with this command:
