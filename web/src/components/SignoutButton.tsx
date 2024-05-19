@@ -1,7 +1,7 @@
 import { Button } from "./ui/button";
 import { useAuth } from "../hooks/useAuth";
 
-const SignouButton = () => {
+const SignoutButton = () => {
   const { signOut } = useAuth();
 
   const handleSignOut = () => {
@@ -20,4 +20,4 @@ const SignouButton = () => {
   );
 };
 
-export default SignouButton;
+export default SignoutButton;

@@ -12,7 +12,7 @@ import {
   DialogTrigger,
 } from "@components/ui/dialog";
 import { userDetailsSchema } from "../schemas";
-import SignouButton from "@components/SignouButton";
+import SignoutButton from "@components/SignoutButton";
 import BottomNavBar from "@components/BottomNavBar";
 
 const reportsDetailsSchema = z.object({
@@ -168,7 +168,7 @@ export default function Home() {
           </div>
         </div>
       </div>
-      <SignouButton />
+      <SignoutButton />
       <BottomNavBar />
     </div>
   );
