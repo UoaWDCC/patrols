@@ -83,7 +83,7 @@ export default function Logon() {
   // };
 
   return (
-    <div className="min-h-screen bg-white flex items-center justify-center">
+    <div className=" bg-white flex items-center justify-center">
       <div className="max-w-7xl w-full">
         <div className="bg-[#EEF6FF] px-8 py-6 flex items-center justify-between">
           <div className="flex items-center">
