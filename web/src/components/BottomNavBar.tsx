@@ -10,10 +10,14 @@ const BottomNavBar = () => {
     navigate("/profile");
   };
 
+  const handleHome = () => {
+    navigate("/home");
+  };
+
   return (
     <div className="bg-[#EEF6FF] h-24 mt-6 flex items-center pl-12 pt-4">
       <div className="font-semibold space-x-11 text-cpnz-blue-900 flex items-center">
-        <button className="flex flex-col items-center">
+        <button className="flex flex-col items-center" onClick={handleHome}>
           <img src={home} alt="home" className="w-7 h-7" />
           Home
         </button>
