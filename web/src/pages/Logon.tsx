@@ -78,9 +78,9 @@ export default function Logon() {
     setGuestPatrols([...guestPatrols, { name: "", number: "" }]);
   };
 
-  const removeGuestPatrol = (index: number) => {
-    setGuestPatrols(guestPatrols.filter((_, i) => i !== index));
-  };
+  // const removeGuestPatrol = (index: number) => {
+  //   setGuestPatrols(guestPatrols.filter((_, i) => i !== index));
+  // };
 
   return (
     <div className="min-h-screen bg-white flex items-center justify-center">
