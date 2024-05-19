@@ -8,6 +8,7 @@ import { Input } from "@components/ui/input";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import car from "../assets/images/car.png";
+import BottomNavBar from "@components/BottomNavBar";
 
 const userDetailsSchema = z.object({
   name: z.string(),
@@ -314,6 +315,7 @@ export default function Profile() {
         </Form>
       </div>
 
+      <BottomNavBar />
       {loading ? <></> : <></>}
     </div>
   );
