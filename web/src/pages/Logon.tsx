@@ -115,7 +115,7 @@ export default function Logon() {
                       <FormControl>
                         <div className="relative">
                           <Input
-                            type="time"
+                            type="datetime-local"
                             {...field}
                             className="w-full pl-10"
                             placeholder="Select time"
@@ -148,7 +148,7 @@ export default function Logon() {
                       <FormControl>
                         <div className="relative">
                           <Input
-                            type="time"
+                            type="datetime-local"
                             {...field}
                             className="w-full pl-10"
                             placeholder="Select time"
