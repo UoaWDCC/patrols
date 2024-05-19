@@ -27,7 +27,10 @@
 
 ## Setup Runbook
 
-1.  Clone the repo locally: https://github.com/UoaWDCC/patrols.git
+1.  Clone the repo locally
+```console
+git clone https://github.com/UoaWDCC/patrols.git
+```
 2.  Change directory into the folder.
 
 ### Frontend
