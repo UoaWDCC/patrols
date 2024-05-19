@@ -49,8 +49,6 @@ export default function Login() {
     e.preventDefault(); // Prevents form data being reset when incorrect details entered
 
     try {
-      console.log(1);
-
       const session = await axios.post(
         `${import.meta.env.VITE_API_URL}/auth/login`,
         { email: email, password: password }

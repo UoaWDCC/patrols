@@ -13,20 +13,25 @@ import {
   FormMessage,
 } from "@components/ui/form";
 import userIcon from "../assets/images/gorilla.png";
+import { useState } from "react";
 import { FaCog } from "react-icons/fa";
 import axios from "axios";
 
 export default function Logon() {
   const navigate = useNavigate();
+  const [guestPatrols, setGuestPatrols] = useState<
+    { name: string; number: string }[]
+  >([]);
 
   const formSchema = z.object({
-    shiftTime: z.string(),
+    startTime: z.string(),
+    endTime: z.string(),
     policeStationBase: z.string().nonempty("Police Station Base is required"),
     cpCallSign: z.string().nonempty("CP Call Sign is required"),
-    patrol1Name: z.string().nonempty("Patrol 1 Name is required"),
-    patrol1Number: z.string().nonempty("Patrol 1 Mobile Number is required"),
-    patrol2Name: z.string(),
-    patrol2Number: z.string(),
+    patrol: z.string().nonempty("Patrol is required"),
+    observerName: z.string().nonempty("Observer Name is required"),
+    observerNumber: z.string().nonempty("Observer Mobile Number is required"),
+    driver: z.string(),
     vehicle: z.string().refine((value) => value !== "", {
       message: "Please select a vehicle",
     }),
@@ -37,13 +42,14 @@ export default function Logon() {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      shiftTime: "",
+      startTime: "",
+      endTime: "",
       policeStationBase: "",
       cpCallSign: "",
-      patrol1Name: "",
-      patrol1Number: "",
-      patrol2Name: "",
-      patrol2Number: "",
+      patrol: "",
+      observerName: "",
+      observerNumber: "",
+      driver: "",
       vehicle: "",
       liveryOrSignage: "",
       havePoliceRadio: "",
@@ -54,7 +60,7 @@ export default function Logon() {
     try {
       await axios.post(`${import.meta.env.VITE_API_URL}/send-email`, {
         email: "jasonabc0626@gmail.com",
-        patrolName: data.patrol1Name,
+        patrolName: data.observerName,
         patrolID: "10",
         formData: JSON.stringify(data),
       });
@@ -68,8 +74,16 @@ export default function Logon() {
     }
   };
 
+  const addGuestPatrol = () => {
+    setGuestPatrols([...guestPatrols, { name: "", number: "" }]);
+  };
+
+  // const removeGuestPatrol = (index: number) => {
+  //   setGuestPatrols(guestPatrols.filter((_, i) => i !== index));
+  // };
+
   return (
-    <div className="min-h-screen bg-white flex items-center justify-center">
+    <div className=" bg-white flex items-center justify-center">
       <div className="max-w-7xl w-full">
         <div className="bg-[#EEF6FF] px-8 py-6 flex items-center justify-between">
           <div className="flex items-center">
@@ -94,17 +108,17 @@ export default function Logon() {
               <div className="grid grid-cols-2 gap-4">
                 <FormField
                   control={form.control}
-                  name="shiftTime"
+                  name="startTime"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Shift Time</FormLabel>
+                      <FormLabel>Start Time</FormLabel>
                       <FormControl>
                         <div className="relative">
                           <Input
                             type="datetime-local"
                             {...field}
                             className="w-full pl-10"
-                            placeholder="Select date and time"
+                            placeholder="Select time"
                           />
                           <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                             <svg
@@ -115,7 +129,7 @@ export default function Logon() {
                             >
                               <path
                                 fillRule="evenodd"
-                                d="M6 2C5.44772 2 5 2.44772 5 3V4H4C2.89543 4 2 4.89543 2 6V16C2 17.1046 2.89543 18 4 18H16C17.1046 18 18 17.1046 18 16V6C18 4.89543 17.1046 4 16 4H15V3C15 2.44772 14.5523 2 14 2C13.4477 2 13 2.44772 13 3V4H7V3C7 2.44772 6.55228 2 6 2ZM6 7C5.44772 7 5 7.44772 5 8C5 8.55228 5.44772 9 6 9H14C14.5523 9 15 8.55228 15 8C15 7.44772 14.5523 7 14 7H6Z"
+                                d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z"
                                 clipRule="evenodd"
                               />
                             </svg>
@@ -125,7 +139,39 @@ export default function Logon() {
                     </FormItem>
                   )}
                 />
-                <div></div>
+                <FormField
+                  control={form.control}
+                  name="endTime"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>End Time</FormLabel>
+                      <FormControl>
+                        <div className="relative">
+                          <Input
+                            type="datetime-local"
+                            {...field}
+                            className="w-full pl-10"
+                            placeholder="Select time"
+                          />
+                          <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                            <svg
+                              className="w-5 h-5 text-gray-500"
+                              fill="currentColor"
+                              viewBox="0 0 20 20"
+                              xmlns="http://www.w3.org/2000/svg"
+                            >
+                              <path
+                                fillRule="evenodd"
+                                d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z"
+                                clipRule="evenodd"
+                              />
+                            </svg>
+                          </div>
+                        </div>
+                      </FormControl>
+                    </FormItem>
+                  )}
+                />
                 <FormField
                   control={form.control}
                   name="policeStationBase"
@@ -160,12 +206,31 @@ export default function Logon() {
                     </FormItem>
                   )}
                 />
+                <FormField
+                  control={form.control}
+                  name="patrol"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Patrol</FormLabel>
+                      <FormControl>
+                        <Input
+                          {...field}
+                          className="w-full"
+                          placeholder="Area"
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
                 <div className="col-span-2 mt-6">
-                  <h4 className="text-2xl font-semibold mb-2">Patrol 1</h4>
+                  <h4 className="text-2xl font-semibold mb-2">
+                    Patrol (observer)
+                  </h4>
                   <div className="grid grid-cols-2 gap-4">
                     <FormField
                       control={form.control}
-                      name="patrol1Name"
+                      name="observerName"
                       render={({ field }) => (
                         <FormItem>
                           <FormLabel>Name</FormLabel>
@@ -182,7 +247,7 @@ export default function Logon() {
                     />
                     <FormField
                       control={form.control}
-                      name="patrol1Number"
+                      name="observerNumber"
                       render={({ field }) => (
                         <FormItem>
                           <FormLabel>Mobile Number</FormLabel>
@@ -200,48 +265,86 @@ export default function Logon() {
                   </div>
                 </div>
                 <div className="col-span-2">
-                  <h4 className="text-2xl font-semibold mb-2">Patrol 2</h4>
-                  <div className="grid grid-cols-2 gap-4">
-                    <FormField
-                      control={form.control}
-                      name="patrol2Name"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Name</FormLabel>
-                          <FormControl>
-                            <Input
-                              {...field}
-                              className="w-full"
-                              placeholder="Name"
-                            />
-                          </FormControl>
-                        </FormItem>
-                      )}
-                    />
-                    <FormField
-                      control={form.control}
-                      name="patrol2Number"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Mobile Number</FormLabel>
-                          <FormControl>
-                            <Input
-                              {...field}
-                              className="w-full"
-                              placeholder="Number"
-                            />
-                          </FormControl>
-                        </FormItem>
-                      )}
-                    />
-                  </div>
+                  <h4 className="text-2xl font-semibold mb-2">
+                    Patrol (driver)
+                  </h4>
+                  <FormField
+                    control={form.control}
+                    name="driver"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormControl>
+                          <select
+                            {...field}
+                            className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          >
+                            <option value="">Select a driver</option>
+                            <option value="driver1">Driver 1</option>
+                            <option value="driver2">Driver 2</option>
+                            {/* Add more driver options */}
+                          </select>
+                        </FormControl>
+                      </FormItem>
+                    )}
+                  />
                 </div>
+                {guestPatrols.map((_, index) => (
+                  <div key={index} className="col-span-2 mt-8">
+                    <div className="flex items-center justify-between mb-2">
+                      <h4 className="text-2xl font-semibold">Guest Patrol</h4>
+                      <button
+                        type="button"
+                        className="px-2 py-1 bg-red-500 text-white rounded-md"
+                        onClick={() => {
+                          const newGuestPatrols = [...guestPatrols];
+                          newGuestPatrols.splice(index, 1);
+                          setGuestPatrols(newGuestPatrols);
+                        }}
+                      >
+                        -
+                      </button>
+                    </div>
+                    <div className="grid grid-cols-2 gap-4">
+                      <FormItem>
+                        <FormLabel>Name</FormLabel>
+                        <FormControl>
+                          <Input
+                            className="w-full"
+                            placeholder="Name"
+                            value={guestPatrols[index].name}
+                            onChange={(e) => {
+                              const newGuestPatrols = [...guestPatrols];
+                              newGuestPatrols[index].name = e.target.value;
+                              setGuestPatrols(newGuestPatrols);
+                            }}
+                          />
+                        </FormControl>
+                      </FormItem>
+                      <FormItem>
+                        <FormLabel>Mobile Number</FormLabel>
+                        <FormControl>
+                          <Input
+                            className="w-full"
+                            placeholder="Number"
+                            value={guestPatrols[index].number}
+                            onChange={(e) => {
+                              const newGuestPatrols = [...guestPatrols];
+                              newGuestPatrols[index].number = e.target.value;
+                              setGuestPatrols(newGuestPatrols);
+                            }}
+                          />
+                        </FormControl>
+                      </FormItem>
+                    </div>
+                  </div>
+                ))}
                 <div className="col-span-2 mt-2">
                   <button
                     type="button"
-                    className="px-4 py-2 bg-white text-black border-2 border-[#83E960] rounded-md font-semibold underline hover:bg-[#83E960]"
+                    className="px-4 py-2 bg-white text-black border-2 border-[#0f1363] rounded-md font-semibold underline hover:bg-[#0f1363] hover:text-white"
+                    onClick={addGuestPatrol}
                   >
-                    Add more Patrol
+                    Add Guest Patrols
                   </button>
                 </div>
                 <div className="col-span-2 mt-6">
@@ -275,7 +378,7 @@ export default function Logon() {
                       <span className="mr-4 font-bold">OR</span>
                       <button
                         type="button"
-                        className="px-4 py-2 bg-white text-black border-2 border-[#83E960] rounded-md font-semibold underline hover:bg-[#83E960]"
+                        className="px-4 py-2 bg-white text-black border-2 border-[#0f1363] rounded-md font-semibold underline hover:bg-[#0f1363] hover:text-white"
                       >
                         Add new vehicle
                       </button>
@@ -350,7 +453,7 @@ export default function Logon() {
               <div className="mt-8">
                 <Button
                   type="submit"
-                  className="w-full bg-[#83E960] text-black hover:bg-[#6ec253]"
+                  className="w-full bg-[#0f1363] text-white hover:bg-[#0a0d4a]"
                 >
                   Submit
                 </Button>
