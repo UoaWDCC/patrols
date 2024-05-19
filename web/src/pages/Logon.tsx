@@ -291,51 +291,36 @@ export default function Logon() {
                       </button>
                     </div>
                     <div className="grid grid-cols-2 gap-4">
-                      <FormField
-                        control={form.control}
-                        name={`guestPatrolName_${index}`}
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>Name</FormLabel>
-                            <FormControl>
-                              <Input
-                                {...field}
-                                className="w-full"
-                                placeholder="Name"
-                                value={guestPatrols[index].name}
-                                onChange={(e) => {
-                                  const newGuestPatrols = [...guestPatrols];
-                                  newGuestPatrols[index].name = e.target.value;
-                                  setGuestPatrols(newGuestPatrols);
-                                }}
-                              />
-                            </FormControl>
-                          </FormItem>
-                        )}
-                      />
-                      <FormField
-                        control={form.control}
-                        name={`guestPatrolNumber_${index}`}
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>Mobile Number</FormLabel>
-                            <FormControl>
-                              <Input
-                                {...field}
-                                className="w-full"
-                                placeholder="Number"
-                                value={guestPatrols[index].number}
-                                onChange={(e) => {
-                                  const newGuestPatrols = [...guestPatrols];
-                                  newGuestPatrols[index].number =
-                                    e.target.value;
-                                  setGuestPatrols(newGuestPatrols);
-                                }}
-                              />
-                            </FormControl>
-                          </FormItem>
-                        )}
-                      />
+                      <FormItem>
+                        <FormLabel>Name</FormLabel>
+                        <FormControl>
+                          <Input
+                            className="w-full"
+                            placeholder="Name"
+                            value={guestPatrols[index].name}
+                            onChange={(e) => {
+                              const newGuestPatrols = [...guestPatrols];
+                              newGuestPatrols[index].name = e.target.value;
+                              setGuestPatrols(newGuestPatrols);
+                            }}
+                          />
+                        </FormControl>
+                      </FormItem>
+                      <FormItem>
+                        <FormLabel>Mobile Number</FormLabel>
+                        <FormControl>
+                          <Input
+                            className="w-full"
+                            placeholder="Number"
+                            value={guestPatrols[index].number}
+                            onChange={(e) => {
+                              const newGuestPatrols = [...guestPatrols];
+                              newGuestPatrols[index].number = e.target.value;
+                              setGuestPatrols(newGuestPatrols);
+                            }}
+                          />
+                        </FormControl>
+                      </FormItem>
                     </div>
                   </div>
                 ))}
