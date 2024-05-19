@@ -60,7 +60,7 @@ export default function Logon() {
     try {
       await axios.post(`${import.meta.env.VITE_API_URL}/send-email`, {
         email: "jasonabc0626@gmail.com",
-        patrolName: data.patrol1Name,
+        patrolName: data.observerName,
         patrolID: "10",
         formData: JSON.stringify(data),
       });
