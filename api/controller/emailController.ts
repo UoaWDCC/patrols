@@ -46,7 +46,7 @@ export const sendEmail = async (req: Request, res: Response) => {
 
     try {
         const data = await resend.emails.send({
-            from: `Acme <${CPNZ_APP_EMAIL}>`,
+            from: `No-Reply@CPNZ.com <${CPNZ_APP_EMAIL}>`,
             to: [`${email}`],
             subject: `Request Log On - Patrol ID: ${patrolID}`,
             html: `<strong>${patrolName}</strong> request to log on a shift with following details: <br><br> ${formData}<br><br><hr>please reply with the <strong>Event ID<strong> to <a href="mailto:cpnz123@kmail.com">CPNZ Patrol Email</a>`,
