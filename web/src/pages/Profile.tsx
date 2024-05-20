@@ -7,6 +7,8 @@ import placeholder from "../assets/images/placeholder.png";
 import { Input } from "@components/ui/input";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import car from "../assets/images/car.png";
+import BottomNavBar from "@components/BottomNavBar";
 
 const userDetailsSchema = z.object({
   name: z.string(),
@@ -104,82 +106,84 @@ export default function Profile() {
     },
   });
 
-  if (!loading) {
-    return (
-      <div className="text-center flex-col min-h-screen flex">
-        <div className="bg-[#eef6ff] h-28 mb-4 flex items-center justify-start pl-8 pt-4">
-          <div className="">
-            <img
-              src={placeholder}
-              alt="placeholder"
-              className="rounded-full w-12 h-12"
-            />
-          </div>
-          <div>
-            <h1 className="font-bold text-left pl-4 text-2xl">Profile</h1>
-          </div>
+  //if (!loading) {
+  return (
+    <div className="text-center flex-col min-h-screen flex max-w-3xl mx-auto">
+      <div className="bg-[#eef6ff] h-28 mb-4 pl-8 pt-4">
+        <div>
+          <img
+            src={placeholder}
+            alt="placeholder"
+            className="rounded-full w-10 h-10"
+          />
         </div>
-        <div className="bg-[#eef6ff] py-6 mx-8 mt-10 space-y-5 text-left pl-7 rounded-md">
-          <Form {...form}>
-            <FormItem className="flex flex-col pr-8">
-              <FormLabel htmlFor="name" className="font-semibold">
-                Name:{" "}
-              </FormLabel>
-              <Input
-                type="text"
-                id="name"
-                name="name"
-                value={currentUserDetails?.name}
-                readOnly={!editable}
-                disabled
-                className="rounded-md px-3 py-2 w-auto"
-              />
-            </FormItem>
-            <FormItem className="flex flex-col pr-8">
-              <FormLabel htmlFor="cpnzId" className="font-semibold">
-                CPNZ ID:{" "}
-              </FormLabel>
+        <div>
+          <h1 className="font-bold text-left pt-2 text-2xl">Profile</h1>
+        </div>
+      </div>
+      <div className="bg-[#EEF6FF] py-6 mx-8 my-10 space-y-5 text-left px-7 rounded-md shadow-md">
+        <Form {...form}>
+          <FormItem className="flex flex-col w-full">
+            <FormLabel htmlFor="email">Email Address </FormLabel>
+            <Input
+              type="email"
+              id="email"
+              name="email"
+              disabled //={!editable}
+              value={email}
+              //onChange={(e) => setEmail(e.target.value)}
+              className="rounded-md border-[#CBD5E1]"
+            />
+          </FormItem>
+          <div className="flex flex-col-2 space-x-6">
+            <FormItem className="flex flex-col flex-1">
+              <FormLabel htmlFor="cpnzId">Mobile Number </FormLabel>
               <Input
                 type="text"
                 id="cpnzId"
                 name="cpnzId"
+                disabled
+                className="rounded-md border-[#CBD5E1]"
+              />
+            </FormItem>
+            <FormItem className="flex flex-col flex-1">
+              <FormLabel htmlFor="id">ID </FormLabel>
+              <Input
+                type="text"
+                id="id"
+                name="id"
                 value={currentUserDetails?.id}
                 disabled
-                className="rounded-md px-3 py-2"
+                className="rounded-md border-[#CBD5E1]"
               />
             </FormItem>
-            <FormItem className="flex flex-col pr-8">
-              <FormLabel htmlFor="email" className="font-semibold">
-                Email:{" "}
-              </FormLabel>
-              <Input
-                type="email"
-                id="email"
-                name="email"
-                disabled={!editable}
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                className="rounded-md px-3 py-2"
-              />
-            </FormItem>
-            <FormItem className="flex flex-col pr-8">
-              <FormLabel htmlFor="password" className="font-semibold">
-                Password:{" "}
-              </FormLabel>
-              <Input
-                type="password"
-                id="password"
-                name="password"
-                disabled={!editable}
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                className="rounded-md px-3 py-2"
-              />
-            </FormItem>
-            {editable && (
-              <FormItem className="flex flex-col pr-8">
+          </div>
+          <FormItem className="flex flex-col">
+            <FormLabel htmlFor="id">Existing Password </FormLabel>
+            <Input
+              type="password"
+              id="password"
+              name="password"
+              value={password}
+              disabled
+              className="rounded-md border-[#CBD5E1]"
+            />
+          </FormItem>
+          {editable && (
+            <>
+              <FormItem>
+                <FormLabel htmlFor="password">New Password </FormLabel>
+                <Input
+                  type="password"
+                  id="password"
+                  name="password"
+                  onChange={(e) => setPassword(e.target.value)}
+                  className="rounded-md border-[#CBD5E1]"
+                />
+              </FormItem>
+              <FormItem className="flex flex-col">
                 <FormLabel htmlFor="confirmPassword" className="font-semibold">
-                  Confirm Password:{" "}
+                  Confirm New Password{" "}
                 </FormLabel>
                 <Input
                   type="password"
@@ -187,54 +191,133 @@ export default function Profile() {
                   name="confirmPassword"
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
-                  className="rounded-md px-3 py-2"
+                  className="rounded-md border-[#CBD5E1]"
                 />
                 {errorMessage && <p>{errorMessage}</p>}
               </FormItem>
-            )}
-            <FormItem className="flex flex-col pr-8">
-              <FormLabel htmlFor="vehicles" className="font-semibold">
-                Vehicles:{" "}
-              </FormLabel>
+            </>
+          )}
+          {!editable ? (
+            <Button
+              onClick={handleEdit}
+              className="bg-cpnz-blue-900 w-full flex"
+            >
+              Change Password
+            </Button>
+          ) : (
+            <div className="flex gap-4">
+              <Button
+                onClick={handleSave}
+                disabled={password != confirmPassword}
+                className="bg-cpnz-blue-900 mt-4 w-28"
+              >
+                Save
+              </Button>
+              <Button
+                variant={"outline"}
+                onClick={handleCancel}
+                className="border-cpnz-blue-900 mt-4 w-28"
+              >
+                Cancel
+              </Button>
+            </div>
+          )}
+        </Form>
+      </div>
+      <div className="my-6 mx-8 space-y-5 text-left px-8">
+        <h2 className="text-2xl">PATROL INFORMATION</h2>
+        <Form {...form}>
+          <FormItem className="flex flex-col">
+            <FormLabel htmlFor="cpCallSign">CP Call Sign </FormLabel>
+            <Input
+              type="text"
+              id="cpCallSign"
+              name="cpCallSign"
+              disabled
+              className="rounded-md px-3 py-2 border-[#CBD5E1]"
+            />
+          </FormItem>
+          <FormItem className="flex flex-col">
+            <FormLabel htmlFor="patrol">Patrol (Region) </FormLabel>
+            <Input
+              type="text"
+              id="patrol"
+              name="patrol"
+              disabled
+              className="rounded-md px-3 py-2 border-[#CBD5E1]"
+            />
+          </FormItem>
+          <FormItem className="flex flex-col">
+            <FormLabel htmlFor="policeBase">Police Base Station </FormLabel>
+            <Input
+              type="text"
+              id="policeBase"
+              name="policeBase"
+              disabled
+              className="rounded-md px-3 py-2 border-[#CBD5E1]"
+            />
+          </FormItem>
+        </Form>
+      </div>
+      <div className="my-6 mx-8 space-y-5 text-left px-7">
+        <div className="flex items-center justify-start">
+          <div>
+            <img src={car} alt="car" className="w-10 h-10" />
+          </div>
+          <h2 className="text-2xl pl-2">VEHICLE DETAILS</h2>
+        </div>
+        <Form {...form}>
+          <FormItem className="flex flex-col">
+            <FormLabel htmlFor="vehicles">Patrol Vehicle </FormLabel>
+            <Input
+              type="text"
+              id="vehicles"
+              name="vehicles"
+              disabled={!editable}
+              defaultValue={currentUserDetails?.vehicles}
+              className="rounded-md px-3 py-2 border-[#CBD5E1]"
+            />
+          </FormItem>
+          <div className="flex flex-col-3 space-x-6">
+            <FormItem className="flex flex-col flex-1">
+              <FormLabel htmlFor="reg">Reg. </FormLabel>
               <Input
                 type="text"
-                id="vehicles"
-                name="vehicles"
-                disabled={!editable}
-                defaultValue={currentUserDetails?.vehicles}
-                className="rounded-md px-3 py-2"
+                id="reg"
+                name="reg"
+                //value={}
+                disabled
+                className="rounded-md px-3 py-2 border-[#CBD5E1]"
               />
             </FormItem>
-            <div>
-              {!editable ? (
-                <Button
-                  onClick={handleEdit}
-                  className="bg-cpnz-blue-900 mt-4 w-28"
-                >
-                  Edit
-                </Button>
-              ) : (
-                <div className="flex gap-4">
-                  <Button
-                    onClick={handleSave}
-                    disabled={password != confirmPassword}
-                    className="bg-cpnz-blue-900 mt-4 w-28"
-                  >
-                    Save
-                  </Button>
-                  <Button
-                    variant={"outline"}
-                    onClick={handleCancel}
-                    className="border-cpnz-blue-900 mt-4 w-28"
-                  >
-                    Cancel
-                  </Button>
-                </div>
-              )}
-            </div>
-          </Form>
-        </div>
+            <FormItem className="flex flex-col flex-1">
+              <FormLabel htmlFor="id">Colour </FormLabel>
+              <Input
+                type="text"
+                id="colour"
+                name="colour"
+                //value={}
+                disabled
+                className="rounded-md px-3 py-2 border-[#CBD5E1]"
+              />
+            </FormItem>
+            <FormItem className="flex flex-col flex-1">
+              <FormLabel htmlFor="livery">Livery </FormLabel>
+              <select className="rounded-md px-3 py-2 border border-[#CBD5E1]">
+                <option value="" disabled>
+                  Select an option
+                </option>
+                <option value="yes">Yes</option>
+                <option value="no">No</option>
+              </select>
+            </FormItem>
+          </div>
+        </Form>
       </div>
-    );
-  }
+
+      <BottomNavBar />
+      {loading ? <></> : <></>}
+    </div>
+  );
 }
+//}

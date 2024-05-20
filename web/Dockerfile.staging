@@ -27,17 +27,18 @@ RUN yarn install --frozen-lockfile --production=false
 # Copy application code
 COPY --link . .
 
-# Mounting secrets
-RUN --mount=type=secret,id=VITE_SUPABASE_KEY \
-    VITE_SUPABASE_KEY="$(cat /run/secrets/VITE_SUPABASE_KEY)" \ 
-    yarn run build
+# Define arguments for build time
+ARG VITE_SUPABASE_URL
+ARG VITE_SUPABASE_KEY
 
 # Set build time environment variables
 ENV VITE_API_URL="https://wdcc-patrols-api-staging.fly.dev"
-ENV VITE_SUPABASE_URL="https://uwfsywtrderpzyneshop.supabase.co"
+ENV VITE_SUPABASE_URL=${VITE_SUPABASE_URL}
+ENV VITE_SUPABASE_KEY=${VITE_SUPABASE_KEY}
+
 
 # Build application
-# RUN 
+RUN yarn run build
 
 # Remove development dependencies
 RUN yarn install --production=true
@@ -54,4 +55,7 @@ COPY nginx.conf /etc/nginx/nginx.conf
 
 # Start the server by default, this can be overwritten at runtime
 EXPOSE 80
+
+ARG VITE_SUPABASE_KEY
+ENV VITE_SUPABASE_KEY=${VITE_SUPABASE_KEY}
 CMD [ "/usr/sbin/nginx", "-g", "daemon off;" ]

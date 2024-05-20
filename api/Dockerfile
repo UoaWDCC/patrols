@@ -27,9 +27,23 @@ RUN yarn install --frozen-lockfile
 # Copy application code
 COPY --link . .
 
+# Define arguments for build time
+ARG DATABASE_URL
+ARG SUPABASE_URL
+ARG SUPABASE_ANON_KEY
+ARG RESEND_API_KEY
+
+# Set build time environment variables
+ENV DATABASE_URL=${DATABASE_URL}
+ENV SUPABASE_URL=${SUPABASE_URL}
+ENV SUPABASE_ANON_KEY=${SUPABASE_ANON_KEY}
+ENV RESEND_API_KEY=${RESEND_API_KEY}
+
 FROM base as build
 
 COPY --from=install /app /app
+
+RUN yarn prisma generate
 
 RUN yarn run build
 
