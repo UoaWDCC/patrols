@@ -136,12 +136,11 @@ model district_stats_prod {
 
 /// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
 model districts_dev {
-  id                                                        BigInt            @id
-  created_at                                                DateTime?         @db.Timestamptz(6)
-  updated_at                                                DateTime?         @db.Timestamptz(6)
-  name                                                      Region            @unique @default(Mt_Roskill)
-  email                                                     String            @default("office@cpnz.org.nz")
-  user_export_dev_user_export_dev_districtIDTodistricts_dev user_export_dev[] @relation("user_export_dev_districtIDTodistricts_dev")
+  id         BigInt    @id
+  created_at DateTime? @db.Timestamptz(6)
+  updated_at DateTime? @db.Timestamptz(6)
+  name       Region    @unique @default(Mt_Roskill)
+  email      String    @default("office@cpnz.org.nz")
 }
 
 /// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
@@ -238,10 +237,10 @@ model imports_prod {
 
 /// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
 model members_dev {
-  id                               BigInt       @id
-  created_at                       DateTime?    @db.Timestamptz(6)
-  updated_at                       DateTime?    @db.Timestamptz(6)
-  active_member                    Int          @db.SmallInt
+  id                               BigInt        @id
+  created_at                       DateTime?     @db.Timestamptz(6)
+  updated_at                       DateTime?     @db.Timestamptz(6)
+  active_member                    Int           @db.SmallInt
   patrol_id                        BigInt
   district_id                      BigInt
   cpnz_id                          BigInt
@@ -261,36 +260,38 @@ model members_dev {
   city                             String
   post_code                        String
   email                            String?
-  patroller                        Int          @db.SmallInt
-  officer                          Int          @db.SmallInt
+  patroller                        Int           @db.SmallInt
+  officer                          Int           @db.SmallInt
   officer_type                     String
   languages                        String?
   skills                           String?
   notes                            String?
   photo_id                         String
-  constabulary                     Int          @default(1) @db.SmallInt
+  constabulary                     Int           @default(1) @db.SmallInt
   qi                               String?
-  status                           String       @default("active")
-  officer_patroller                Int?         @db.SmallInt
-  officer_patrol_leader_1          Int?         @db.SmallInt
-  officer_patrol_leader_2          Int?         @db.SmallInt
-  officer_secretary                Int?         @db.SmallInt
-  officer_patrol_trainer           Int?         @db.SmallInt
-  officer_avp1                     Int?         @db.SmallInt
-  officer_avp2                     Int?         @db.SmallInt
-  officer_health_and_safety        Int?         @db.SmallInt
-  officer_patrol_member_other      Int?         @db.SmallInt
-  officer_district_leader          Int?         @db.SmallInt
-  officer_district_trainer         Int?         @db.SmallInt
-  officer_district_support_officer Int?         @db.SmallInt
-  officer_district_other           Int?         @db.SmallInt
-  officer_cpnz_staff               Int?         @db.SmallInt
-  officer_probationer              Int?         @db.SmallInt
-  access_website                   Int?         @db.SmallInt
-  trained                          Int          @default(0) @db.SmallInt
-  new_nationality                  String       @default("Not known")
-  treasurer                        Int?         @db.SmallInt
-  patrols_prod                     patrols_prod @relation(fields: [patrol_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  status                           String        @default("active")
+  officer_patroller                Int?          @db.SmallInt
+  officer_patrol_leader_1          Int?          @db.SmallInt
+  officer_patrol_leader_2          Int?          @db.SmallInt
+  officer_secretary                Int?          @db.SmallInt
+  officer_patrol_trainer           Int?          @db.SmallInt
+  officer_avp1                     Int?          @db.SmallInt
+  officer_avp2                     Int?          @db.SmallInt
+  officer_health_and_safety        Int?          @db.SmallInt
+  officer_patrol_member_other      Int?          @db.SmallInt
+  officer_district_leader          Int?          @db.SmallInt
+  officer_district_trainer         Int?          @db.SmallInt
+  officer_district_support_officer Int?          @db.SmallInt
+  officer_district_other           Int?          @db.SmallInt
+  officer_cpnz_staff               Int?          @db.SmallInt
+  officer_probationer              Int?          @db.SmallInt
+  access_website                   Int?          @db.SmallInt
+  trained                          Int           @default(0) @db.SmallInt
+  new_nationality                  String        @default("Not known")
+  treasurer                        Int?          @db.SmallInt
+  call_sign                        Call_Sign     @default(MRCS)
+  police_station                   PoliceStation @default(Mt_Roskill_Police_Station)
+  patrols_prod                     patrols_prod  @relation(fields: [patrol_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
 }
 
 /// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
@@ -362,6 +363,7 @@ model patrols_dev {
   year_joined    String?
   email          String         @default("office@cpnz.org.nz")
   districts_prod districts_prod @relation(fields: [district_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  vehicle_dev    vehicle_dev[]
 }
 
 /// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
@@ -424,35 +426,6 @@ model stats_prod {
   submitter_cpnz_id BigInt
 }
 
-model user_export_dev {
-  id                                                      BigInt        @id
-  created_at                                              DateTime?     @default(now()) @db.Timestamptz(6)
-  updated_at                                              DateTime?     @default(now()) @db.Timestamptz(6)
-  username                                                String
-  password                                                String
-  email                                                   String        @unique
-  first_name                                              String
-  last_name                                               String
-  call_sign                                               Call_Sign     @default(MRCS)
-  police_station                                          PoliceStation @default(Mt_Roskill_Police_Station)
-  districtID                                              BigInt
-  mobile_number                                           BigInt        @default(123456789)
-  districts_dev_user_export_dev_districtIDTodistricts_dev districts_dev @relation("user_export_dev_districtIDTodistricts_dev", fields: [districtID], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  vehicle_dev                                             vehicle_dev[]
-}
-
-/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
-model user_export_prod {
-  id         BigInt    @id(map: "user_export_pkey")
-  created_at DateTime? @default(now()) @db.Timestamptz(6)
-  updated_at DateTime? @default(now()) @db.Timestamptz(6)
-  username   String
-  password   String
-  email      String
-  first_name String
-  last_name  String
-}
-
 model users_dev {
   id             BigInt    @id
   email          String    @unique
@@ -493,15 +466,16 @@ model Vehicles_Model {
 }
 
 model vehicle_dev {
-  Name               String          @id @default("")
-  created_at         DateTime        @default(now()) @db.Timestamptz(6)
+  Name               String         @id @default("")
+  created_at         DateTime       @default(now()) @db.Timestamptz(6)
   Model              String
   registrationNumber String
   colour             String?
   Livery             Boolean?
   patrolID           BigInt
-  Vehicles_Model     Vehicles_Model  @relation(fields: [Model], references: [Name], onDelete: NoAction, onUpdate: NoAction)
-  user_export_dev    user_export_dev @relation(fields: [patrolID], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  selected           Boolean        @default(false)
+  Vehicles_Model     Vehicles_Model @relation(fields: [Model], references: [Name], onDelete: NoAction, onUpdate: NoAction)
+  user_export_dev    patrols_dev    @relation(fields: [patrolID], references: [id], onDelete: NoAction, onUpdate: NoAction)
 }
 
 enum Role {
