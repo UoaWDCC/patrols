@@ -6,13 +6,13 @@ interface AuthResult {
 }
 
 async function authenticateUser(
-    email: string,
+    cpnzID: string,
     password: string
 ): Promise<AuthResult> {
     try {
         // Authenticate against Supabase
         const { data, error } = await supabase.auth.signInWithPassword({
-            email: email,
+            email: `${cpnzID}@cpnz.org.nz`,
             password: password,
         });
 
