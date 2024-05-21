@@ -259,7 +259,7 @@ model members_dev {
   suburb                           String
   city                             String
   post_code                        String
-  email                            String?
+  email                            String        @unique
   patroller                        Int           @db.SmallInt
   officer                          Int           @db.SmallInt
   officer_type                     String
@@ -454,28 +454,28 @@ model users_prod {
 }
 
 model Vehicle_Make {
-  Name           String           @id @default("")
+  name           String           @id @default("")
   Vehicles_Model Vehicles_Model[]
 }
 
 model Vehicles_Model {
-  Name         String        @id
-  ModelName    String?
-  Vehicle_Make Vehicle_Make? @relation(fields: [ModelName], references: [Name], onDelete: NoAction, onUpdate: NoAction)
+  name         String        @id
+  model_name   String?
+  Vehicle_Make Vehicle_Make? @relation(fields: [model_name], references: [name], onDelete: NoAction, onUpdate: NoAction)
   vehicle_dev  vehicle_dev[]
 }
 
 model vehicle_dev {
-  Name               String         @id @default("")
-  created_at         DateTime       @default(now()) @db.Timestamptz(6)
-  Model              String
-  registrationNumber String
-  colour             String?
-  Livery             Boolean?
-  patrolID           BigInt
-  selected           Boolean        @default(false)
-  Vehicles_Model     Vehicles_Model @relation(fields: [Model], references: [Name], onDelete: NoAction, onUpdate: NoAction)
-  user_export_dev    patrols_dev    @relation(fields: [patrolID], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  name                String         @id @default("")
+  created_at          DateTime       @default(now()) @db.Timestamptz(6)
+  model               String
+  registration_number String
+  colour              String?
+  livery              Boolean?
+  patrolID            BigInt
+  selected            Boolean        @default(false)
+  Vehicles_Model      Vehicles_Model @relation(fields: [model], references: [name], onDelete: NoAction, onUpdate: NoAction)
+  patrols_dev         patrols_dev    @relation(fields: [patrolID], references: [id], onDelete: NoAction, onUpdate: NoAction)
 }
 
 enum Role {
