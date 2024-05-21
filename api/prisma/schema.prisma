@@ -21,19 +21,7 @@ model Patrols {
   patrol       Patrols?    @relation("patrolSupervisor")
   reports      Reports[]   @relation("writtenByPatrol")
   shifts       Shifts[]    @relation("logByPatrol")
-  vehicles     Vehicles[]  @relation("belongToPatrol")
-}
-
-model Vehicles {
-  id           Int         @id @unique @default(autoincrement())
-  numberPlate  String      @unique
-  registration String
-  make         String
-  model        String
-  patrolID     Int
-  inAmendment  Amendment[] @relation("isInAmendment")
-  shifts       Shifts[]    @relation("isInShift")
-  patrols      Patrols     @relation("belongToPatrol", fields: [patrolID], references: [id])
+  Vehicles     Vehicles[]
 }
 
 model Reports {
@@ -139,7 +127,7 @@ model districts_dev {
   id         BigInt    @id
   created_at DateTime? @db.Timestamptz(6)
   updated_at DateTime? @db.Timestamptz(6)
-  name       String    @unique
+  name       Region    @unique @default(Mt_Roskill)
   email      String    @default("office@cpnz.org.nz")
 }
 
@@ -237,10 +225,10 @@ model imports_prod {
 
 /// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
 model members_dev {
-  id                               BigInt       @id
-  created_at                       DateTime?    @db.Timestamptz(6)
-  updated_at                       DateTime?    @db.Timestamptz(6)
-  active_member                    Int          @db.SmallInt
+  id                               BigInt        @id
+  created_at                       DateTime?     @db.Timestamptz(6)
+  updated_at                       DateTime?     @db.Timestamptz(6)
+  active_member                    Int           @db.SmallInt
   patrol_id                        BigInt
   district_id                      BigInt
   cpnz_id                          BigInt
@@ -259,37 +247,40 @@ model members_dev {
   suburb                           String
   city                             String
   post_code                        String
-  email                            String?
-  patroller                        Int          @db.SmallInt
-  officer                          Int          @db.SmallInt
+  email                            String        @unique
+  patroller                        Int           @db.SmallInt
+  officer                          Int           @db.SmallInt
   officer_type                     String
   languages                        String?
   skills                           String?
   notes                            String?
   photo_id                         String
-  constabulary                     Int          @default(1) @db.SmallInt
+  constabulary                     Int           @default(1) @db.SmallInt
   qi                               String?
-  status                           String       @default("active")
-  officer_patroller                Int?         @db.SmallInt
-  officer_patrol_leader_1          Int?         @db.SmallInt
-  officer_patrol_leader_2          Int?         @db.SmallInt
-  officer_secretary                Int?         @db.SmallInt
-  officer_patrol_trainer           Int?         @db.SmallInt
-  officer_avp1                     Int?         @db.SmallInt
-  officer_avp2                     Int?         @db.SmallInt
-  officer_health_and_safety        Int?         @db.SmallInt
-  officer_patrol_member_other      Int?         @db.SmallInt
-  officer_district_leader          Int?         @db.SmallInt
-  officer_district_trainer         Int?         @db.SmallInt
-  officer_district_support_officer Int?         @db.SmallInt
-  officer_district_other           Int?         @db.SmallInt
-  officer_cpnz_staff               Int?         @db.SmallInt
-  officer_probationer              Int?         @db.SmallInt
-  access_website                   Int?         @db.SmallInt
-  trained                          Int          @default(0) @db.SmallInt
-  new_nationality                  String       @default("Not known")
-  treasurer                        Int?         @db.SmallInt
-  patrols_prod                     patrols_prod @relation(fields: [patrol_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  status                           String        @default("active")
+  officer_patroller                Int?          @db.SmallInt
+  officer_patrol_leader_1          Int?          @db.SmallInt
+  officer_patrol_leader_2          Int?          @db.SmallInt
+  officer_secretary                Int?          @db.SmallInt
+  officer_patrol_trainer           Int?          @db.SmallInt
+  officer_avp1                     Int?          @db.SmallInt
+  officer_avp2                     Int?          @db.SmallInt
+  officer_health_and_safety        Int?          @db.SmallInt
+  officer_patrol_member_other      Int?          @db.SmallInt
+  officer_district_leader          Int?          @db.SmallInt
+  officer_district_trainer         Int?          @db.SmallInt
+  officer_district_support_officer Int?          @db.SmallInt
+  officer_district_other           Int?          @db.SmallInt
+  officer_cpnz_staff               Int?          @db.SmallInt
+  officer_probationer              Int?          @db.SmallInt
+  access_website                   Int?          @db.SmallInt
+  trained                          Int           @default(0) @db.SmallInt
+  new_nationality                  String        @default("Not known")
+  treasurer                        Int?          @db.SmallInt
+  call_sign                        Call_Sign     @default(MRCS)
+  police_station                   PoliceStation @default(Mt_Roskill_Police_Station)
+  password                         String
+  patrols_prod                     patrols_prod  @relation(fields: [patrol_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
 }
 
 /// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
@@ -361,6 +352,7 @@ model patrols_dev {
   year_joined    String?
   email          String         @default("office@cpnz.org.nz")
   districts_prod districts_prod @relation(fields: [district_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  vehicle_dev    vehicle_dev[]
 }
 
 /// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
@@ -423,29 +415,6 @@ model stats_prod {
   submitter_cpnz_id BigInt
 }
 
-model user_export_dev {
-  id         BigInt    @id
-  created_at DateTime? @default(now()) @db.Timestamptz(6)
-  updated_at DateTime? @default(now()) @db.Timestamptz(6)
-  username   String
-  password   String
-  email      String
-  first_name String
-  last_name  String
-}
-
-/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
-model user_export_prod {
-  id         BigInt    @id(map: "user_export_pkey")
-  created_at DateTime? @default(now()) @db.Timestamptz(6)
-  updated_at DateTime? @default(now()) @db.Timestamptz(6)
-  username   String
-  password   String
-  email      String
-  first_name String
-  last_name  String
-}
-
 model users_dev {
   id             BigInt    @id
   email          String    @unique
@@ -473,6 +442,44 @@ model users_prod {
   patrol         BigInt?
 }
 
+model vehicle_dev {
+  name                String         @id @default("")
+  created_at          DateTime       @default(now()) @db.Timestamptz(6)
+  model               String
+  registration_number String
+  colour              String?
+  livery              Boolean?
+  patrolID            BigInt
+  selected            Boolean        @default(false)
+  id                  Int            @default(2)
+  Vehicles_Model      vehicles_model @relation(fields: [model], references: [name], onDelete: NoAction, onUpdate: NoAction)
+  patrols_dev         patrols_dev    @relation(fields: [patrolID], references: [id], onDelete: NoAction, onUpdate: NoAction)
+}
+
+model vehicle_make {
+  name           String           @id(map: "Vehicle_Make_pkey") @default("")
+  vehicles_model vehicles_model[]
+}
+
+model vehicles_model {
+  name         String        @id(map: "Vehicles_Model_pkey")
+  model_name   String?
+  vehicle_dev  vehicle_dev[]
+  vehicle_make vehicle_make? @relation(fields: [model_name], references: [name], onDelete: NoAction, onUpdate: NoAction, map: "Vehicles_Model_model_name_fkey")
+}
+
+model Vehicles {
+  id           Int         @id @unique @default(autoincrement())
+  numberPlate  String      @unique
+  registration String
+  make         String
+  model        String
+  patrolID     Int
+  inAmendment  Amendment[] @relation("isInAmendment")
+  shifts       Shifts[]    @relation("isInShift")
+  Patrols      Patrols     @relation(fields: [patrolID], references: [id])
+}
+
 enum Role {
   patrol
   lead
@@ -482,4 +489,24 @@ enum Role {
 enum logType {
   logOn
   logOff
+}
+
+/// This enum is commented in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+enum PoliceStation {
+  Mt_Roskill_Police_Station @map("Mt Roskill Police Station")
+  Mt_Albert_Police_Station  @map("Mt Albert Police Station")
+}
+
+enum Call_Sign {
+  MRCS
+  MACS
+
+  @@map("Call Sign")
+}
+
+enum Region {
+  Mt_Albert  @map("Mt Albert")
+  Mt_Roskill @map("Mt Roskill")
+  Epsom
+  Howick
 }
