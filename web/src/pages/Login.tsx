@@ -150,14 +150,6 @@ export default function Login() {
                               </FormItem>
                           )}
                       />
-                      <div className="text-center">
-                          <a
-                              href="#"
-                              className="text-xs underline text-muted-foreground"
-                          >
-                              Forgot your password?
-                          </a>
-                      </div>
                       <Button
                           type="submit"
                           className="bg-[#0f1363] w-full flex"
