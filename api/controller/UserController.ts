@@ -31,7 +31,6 @@ export const getUserDetailsByEmail = async (req: Request, res: Response) => {
                 id: true,
                 email: true,
                 name: true,
-                vehicles: true,
             },
         });
 
