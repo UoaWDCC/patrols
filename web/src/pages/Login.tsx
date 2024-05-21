@@ -49,12 +49,10 @@ export default function Login() {
       e.preventDefault(); // Prevents form data being reset when incorrect details entered
 
       try {
-          const session = await axios.post(
-              `${import.meta.env.VITE_API_URL}/auth/login`,
-              { cpnzID: cpnzID, password: password }
-          );
-
-          console.log(1);
+        const session = await axios.post(
+            `${import.meta.env.VITE_API_URL}/auth/login`,
+            { cpnzID: cpnzID as string, password: password }
+        );
 
           const { access_token: accessToken, refresh_token: refreshToken } =
               tokenSchema.parse(session.data.session);
