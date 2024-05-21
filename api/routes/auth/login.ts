@@ -6,7 +6,7 @@ import { authenticateUser } from '../../auth_util/auth';
 const authRoutes = Router();
 
 const loginSchema = z.object({
-    email: z.string(),
+    cpnzID: z.string(),
     password: z.string().min(4, 'Password must be at least 4 characters long'),
 });
 
@@ -17,8 +17,8 @@ authRoutes.post('/login', async (req: Request, res: Response) => {
         return res.status(400).json({ error: parseResult.error.flatten() });
     }
 
-    const { email, password } = parseResult.data;
-    const result = await authenticateUser(email, password);
+    const { cpnzID, password } = parseResult.data;
+    const result = await authenticateUser(cpnzID, password);
 
 
     if (result.error) {
