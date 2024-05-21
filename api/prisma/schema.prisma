@@ -21,19 +21,7 @@ model Patrols {
   patrol       Patrols?    @relation("patrolSupervisor")
   reports      Reports[]   @relation("writtenByPatrol")
   shifts       Shifts[]    @relation("logByPatrol")
-  vehicles     Vehicles[]  @relation("belongToPatrol")
-}
-
-model Vehicles {
-  id           Int         @id @unique @default(autoincrement())
-  numberPlate  String      @unique
-  registration String
-  make         String
-  model        String
-  patrolID     Int
-  inAmendment  Amendment[] @relation("isInAmendment")
-  shifts       Shifts[]    @relation("isInShift")
-  patrols      Patrols     @relation("belongToPatrol", fields: [patrolID], references: [id])
+  vehicles     vehicles[]
 }
 
 model Reports {
@@ -68,7 +56,7 @@ model Shifts {
   logAt              DateTime    @default(now())
   hasAmendment       Amendment[] @relation("belongToShift")
   patrols            Patrols     @relation("logByPatrol", fields: [logPatrolId], references: [id])
-  vehicles           Vehicles    @relation("isInShift", fields: [vehicleId], references: [id])
+  vehicles           vehicles    @relation("isInShift", fields: [vehicleId], references: [id])
 
   @@id([id, type])
 }
@@ -88,7 +76,7 @@ model Amendment {
   shiftType          logType  @default(logOn)
   patrols            Patrols  @relation("submittedByPatrol", fields: [amendmentPatrolId], references: [id])
   logOn              Shifts   @relation("belongToShift", fields: [shiftId, shiftType], references: [id, type])
-  vehicles           Vehicles @relation("isInAmendment", fields: [vehicleId], references: [id])
+  vehicles           vehicles @relation("isInAmendment", fields: [vehicleId], references: [id])
 }
 
 model district_stats_dev {
@@ -453,18 +441,6 @@ model users_prod {
   patrol         BigInt?
 }
 
-model Vehicle_Make {
-  name           String           @id @default("")
-  Vehicles_Model Vehicles_Model[]
-}
-
-model Vehicles_Model {
-  name         String        @id
-  model_name   String?
-  Vehicle_Make Vehicle_Make? @relation(fields: [model_name], references: [name], onDelete: NoAction, onUpdate: NoAction)
-  vehicle_dev  vehicle_dev[]
-}
-
 model vehicle_dev {
   name                String         @id @default("")
   created_at          DateTime       @default(now()) @db.Timestamptz(6)
@@ -474,8 +450,32 @@ model vehicle_dev {
   livery              Boolean?
   patrolID            BigInt
   selected            Boolean        @default(false)
-  Vehicles_Model      Vehicles_Model @relation(fields: [model], references: [name], onDelete: NoAction, onUpdate: NoAction)
+  Vehicles_Model      vehicles_model @relation(fields: [model], references: [name], onDelete: NoAction, onUpdate: NoAction)
   patrols_dev         patrols_dev    @relation(fields: [patrolID], references: [id], onDelete: NoAction, onUpdate: NoAction)
+}
+
+model vehicle_make {
+  name           String           @id(map: "Vehicle_Make_pkey") @default("")
+  vehicles_model vehicles_model[]
+}
+
+model vehicles {
+  id           Int         @id(map: "Vehicles_pkey") @unique(map: "Vehicles_id_key") @default(autoincrement())
+  numberPlate  String      @unique(map: "Vehicles_numberPlate_key")
+  registration String
+  make         String
+  model        String
+  patrolID     Int
+  inAmendment  Amendment[] @relation("isInAmendment")
+  shifts       Shifts[]    @relation("isInShift")
+  Patrols      Patrols     @relation(fields: [patrolID], references: [id], map: "Vehicles_patrolID_fkey")
+}
+
+model vehicles_model {
+  name         String        @id(map: "Vehicles_Model_pkey")
+  model_name   String?
+  vehicle_dev  vehicle_dev[]
+  vehicle_make vehicle_make? @relation(fields: [model_name], references: [name], onDelete: NoAction, onUpdate: NoAction, map: "Vehicles_Model_model_name_fkey")
 }
 
 enum Role {
