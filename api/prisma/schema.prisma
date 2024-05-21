@@ -21,7 +21,7 @@ model Patrols {
   patrol       Patrols?    @relation("patrolSupervisor")
   reports      Reports[]   @relation("writtenByPatrol")
   shifts       Shifts[]    @relation("logByPatrol")
-  vehicles     vehicles[]
+  Vehicles     Vehicles[]
 }
 
 model Reports {
@@ -279,6 +279,7 @@ model members_dev {
   treasurer                        Int?          @db.SmallInt
   call_sign                        Call_Sign     @default(MRCS)
   police_station                   PoliceStation @default(Mt_Roskill_Police_Station)
+  password                         String
   patrols_prod                     patrols_prod  @relation(fields: [patrol_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
 }
 
@@ -450,6 +451,7 @@ model vehicle_dev {
   livery              Boolean?
   patrolID            BigInt
   selected            Boolean        @default(false)
+  id                  Int            @default(2)
   Vehicles_Model      vehicles_model @relation(fields: [model], references: [name], onDelete: NoAction, onUpdate: NoAction)
   patrols_dev         patrols_dev    @relation(fields: [patrolID], references: [id], onDelete: NoAction, onUpdate: NoAction)
 }
@@ -459,24 +461,26 @@ model vehicle_make {
   vehicles_model vehicles_model[]
 }
 
-model vehicles {
-  id           Int         @id(map: "Vehicles_pkey") @unique(map: "Vehicles_id_key") @default(autoincrement())
-  numberPlate  String      @unique(map: "Vehicles_numberPlate_key")
-  registration String
-  make         String
-  model        String
-  patrolID     Int
-  inAmendment  Amendment[] @relation("isInAmendment")
-  shifts       Shifts[]    @relation("isInShift")
-  Patrols      Patrols     @relation(fields: [patrolID], references: [id], map: "Vehicles_patrolID_fkey")
-}
-
 model vehicles_model {
   name         String        @id(map: "Vehicles_Model_pkey")
   model_name   String?
   vehicle_dev  vehicle_dev[]
   vehicle_make vehicle_make? @relation(fields: [model_name], references: [name], onDelete: NoAction, onUpdate: NoAction, map: "Vehicles_Model_model_name_fkey")
 }
+
+model Vehicles {
+  id           Int         @id @unique @default(autoincrement())
+  numberPlate  String      @unique
+  registration String
+  make         String
+  model        String
+  patrolID     Int
+  inAmendment  Amendment[] @relation("isInAmendment")
+  shifts       Shifts[]    @relation("isInShift")
+  Patrols      Patrols     @relation(fields: [patrolID], references: [id])
+  Patrols      Patrols     @relation(fields: [patrolID], references: [id], map: "Vehicles_patrolID_fkey")
+}
+
 
 enum Role {
   patrol
