@@ -3,7 +3,7 @@ import { z } from 'zod';
 import { Resend } from 'resend';
 import prisma from '../db/database';
 
-const EMAIL_API_KEY = process.env.RESEND_API_KEY
+const EMAIL_API_KEY: string = process.env.RESEND_API_KEY as string
 const trialDomain = 'onboarding@resend.dev';
 const CPNZ_APP_EMAIL = process.env.CPNZ_DOMAIN ?? trialDomain
 const resend = new Resend(EMAIL_API_KEY);
