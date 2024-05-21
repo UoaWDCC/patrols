@@ -22,6 +22,7 @@ RUN apt-get update -qq && \
 
 # Install node modules
 COPY --link package.json yarn.lock ./
+COPY prisma ./prisma/
 RUN yarn install --frozen-lockfile
 
 # Copy application code
@@ -42,8 +43,6 @@ ENV RESEND_API_KEY=${RESEND_API_KEY}
 FROM base as build
 
 COPY --from=install /app /app
-
-RUN yarn prisma generate
 
 RUN yarn run build
 
