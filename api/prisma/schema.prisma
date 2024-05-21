@@ -436,6 +436,7 @@ model user_export_dev {
   call_sign                                               Call_Sign     @default(MRCS)
   police_station                                          PoliceStation @default(Mt_Roskill_Police_Station)
   districtID                                              BigInt
+  mobile_numberr                                          BigInt        @default(123456789)
   districts_dev_user_export_dev_districtIDTodistricts_dev districts_dev @relation("user_export_dev_districtIDTodistricts_dev", fields: [districtID], references: [id], onDelete: NoAction, onUpdate: NoAction)
   vehicle_dev                                             vehicle_dev[]
 }
