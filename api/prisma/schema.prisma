@@ -437,6 +437,7 @@ model user_export_dev {
   police_station                                          PoliceStation @default(Mt_Roskill_Police_Station)
   districtID                                              BigInt
   districts_dev_user_export_dev_districtIDTodistricts_dev districts_dev @relation("user_export_dev_districtIDTodistricts_dev", fields: [districtID], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  vehicle_dev                                             vehicle_dev[]
 }
 
 /// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
@@ -476,6 +477,33 @@ model users_prod {
   updated_at     DateTime? @db.Timestamptz(6)
   district       BigInt?
   patrol         BigInt?
+}
+
+model Vehicle_Make {
+  Name           String           @id @default("")
+  Vehicles_Model Vehicles_Model[]
+  vehicle_dev    vehicle_dev[]
+}
+
+model Vehicles_Model {
+  Name         String        @id
+  ModelName    String?
+  Vehicle_Make Vehicle_Make? @relation(fields: [ModelName], references: [Name], onDelete: NoAction, onUpdate: NoAction)
+  vehicle_dev  vehicle_dev[]
+}
+
+model vehicle_dev {
+  Name               String          @id @default("")
+  created_at         DateTime        @default(now()) @db.Timestamptz(6)
+  Make               String
+  Model              String
+  registrationNumber String
+  colour             String?
+  Livery             Boolean?
+  patrolID           BigInt
+  Vehicle_Make       Vehicle_Make    @relation(fields: [Make], references: [Name], onDelete: NoAction, onUpdate: NoAction)
+  Vehicles_Model     Vehicles_Model  @relation(fields: [Model], references: [Name], onDelete: NoAction, onUpdate: NoAction)
+  user_export_dev    user_export_dev @relation(fields: [patrolID], references: [id], onDelete: NoAction, onUpdate: NoAction)
 }
 
 enum Role {
