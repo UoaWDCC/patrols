@@ -482,7 +482,6 @@ model users_prod {
 model Vehicle_Make {
   Name           String           @id @default("")
   Vehicles_Model Vehicles_Model[]
-  vehicle_dev    vehicle_dev[]
 }
 
 model Vehicles_Model {
@@ -495,13 +494,11 @@ model Vehicles_Model {
 model vehicle_dev {
   Name               String          @id @default("")
   created_at         DateTime        @default(now()) @db.Timestamptz(6)
-  Make               String
   Model              String
   registrationNumber String
   colour             String?
   Livery             Boolean?
   patrolID           BigInt
-  Vehicle_Make       Vehicle_Make    @relation(fields: [Make], references: [Name], onDelete: NoAction, onUpdate: NoAction)
   Vehicles_Model     Vehicles_Model  @relation(fields: [Model], references: [Name], onDelete: NoAction, onUpdate: NoAction)
   user_export_dev    user_export_dev @relation(fields: [patrolID], references: [id], onDelete: NoAction, onUpdate: NoAction)
 }
