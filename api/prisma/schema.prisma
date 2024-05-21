@@ -136,11 +136,12 @@ model district_stats_prod {
 
 /// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
 model districts_dev {
-  id         BigInt    @id
-  created_at DateTime? @db.Timestamptz(6)
-  updated_at DateTime? @db.Timestamptz(6)
-  name       String    @unique
-  email      String    @default("office@cpnz.org.nz")
+  id                                                        BigInt            @id
+  created_at                                                DateTime?         @db.Timestamptz(6)
+  updated_at                                                DateTime?         @db.Timestamptz(6)
+  name                                                      Region            @unique @default(Mt_Roskill)
+  email                                                     String            @default("office@cpnz.org.nz")
+  user_export_dev_user_export_dev_districtIDTodistricts_dev user_export_dev[] @relation("user_export_dev_districtIDTodistricts_dev")
 }
 
 /// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
@@ -424,14 +425,18 @@ model stats_prod {
 }
 
 model user_export_dev {
-  id         BigInt    @id
-  created_at DateTime? @default(now()) @db.Timestamptz(6)
-  updated_at DateTime? @default(now()) @db.Timestamptz(6)
-  username   String
-  password   String
-  email      String
-  first_name String
-  last_name  String
+  id                                                      BigInt        @id
+  created_at                                              DateTime?     @default(now()) @db.Timestamptz(6)
+  updated_at                                              DateTime?     @default(now()) @db.Timestamptz(6)
+  username                                                String
+  password                                                String
+  email                                                   String        @unique
+  first_name                                              String
+  last_name                                               String
+  call_sign                                               Call_Sign     @default(MRCS)
+  police_station                                          PoliceStation @default(Mt_Roskill_Police_Station)
+  districtID                                              BigInt
+  districts_dev_user_export_dev_districtIDTodistricts_dev districts_dev @relation("user_export_dev_districtIDTodistricts_dev", fields: [districtID], references: [id], onDelete: NoAction, onUpdate: NoAction)
 }
 
 /// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
@@ -482,4 +487,24 @@ enum Role {
 enum logType {
   logOn
   logOff
+}
+
+/// This enum is commented in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+enum PoliceStation {
+  Mt_Roskill_Police_Station @map("Mt Roskill Police Station")
+  Mt_Albert_Police_Station  @map("Mt Albert Police Station")
+}
+
+enum Call_Sign {
+  MRCS
+  MACS
+
+  @@map("Call Sign")
+}
+
+enum Region {
+  Mt_Albert  @map("Mt Albert")
+  Mt_Roskill @map("Mt Roskill")
+  Epsom
+  Howick
 }
