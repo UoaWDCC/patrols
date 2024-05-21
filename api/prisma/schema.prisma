@@ -56,7 +56,7 @@ model Shifts {
   logAt              DateTime    @default(now())
   hasAmendment       Amendment[] @relation("belongToShift")
   patrols            Patrols     @relation("logByPatrol", fields: [logPatrolId], references: [id])
-  vehicles           Vehicles    @relation("isInShift", fields: [vehicleId], references: [id])
+  vehicles           vehicles    @relation("isInShift", fields: [vehicleId], references: [id])
 
   @@id([id, type])
 }
@@ -76,7 +76,7 @@ model Amendment {
   shiftType          logType  @default(logOn)
   patrols            Patrols  @relation("submittedByPatrol", fields: [amendmentPatrolId], references: [id])
   logOn              Shifts   @relation("belongToShift", fields: [shiftId, shiftType], references: [id, type])
-  vehicles           Vehicles @relation("isInAmendment", fields: [vehicleId], references: [id])
+  vehicles           vehicles @relation("isInAmendment", fields: [vehicleId], references: [id])
 }
 
 model district_stats_dev {
@@ -478,7 +478,9 @@ model Vehicles {
   inAmendment  Amendment[] @relation("isInAmendment")
   shifts       Shifts[]    @relation("isInShift")
   Patrols      Patrols     @relation(fields: [patrolID], references: [id])
+  Patrols      Patrols     @relation(fields: [patrolID], references: [id], map: "Vehicles_patrolID_fkey")
 }
+
 
 enum Role {
   patrol
