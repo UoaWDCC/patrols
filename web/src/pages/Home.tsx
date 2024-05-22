@@ -48,7 +48,7 @@ export default function Home() {
       );
 
       const userDetails = userDetailsSchema.parse(response.data);
-      setId(Number(userDetails.id));
+      setId(Number(userDetails.patrol_id));
     };
 
     getPatrolLeadID();
