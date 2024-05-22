@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-export const vehiclesSchema = z.object({
+export const vehicleDetailsSchema = z.object({
   name: z.string(),
   created_at: z.string(),
   registration_number: z.string(),
@@ -17,7 +17,7 @@ export const userDetailsSchema = z.object({
   call_sign: z.string(),
   police_station: z.string(),
   patrol_id: z.string(),
-  vehicle_dev: z.array(vehiclesSchema),
+  vehicle_dev: z.array(vehicleDetailsSchema),
 });
 
 export const tokenSchema = z.object({
@@ -30,4 +30,4 @@ export const emailSchema = z.object({
   email: z.string(),
   patrolID: z.string(),
   formData: z.string(),
-})
+});
