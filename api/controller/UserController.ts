@@ -1,8 +1,6 @@
 import prisma from '../db/database';
 import supabase from '../supabase/supabase_client';
 import type { Request, Response } from 'express';
-import { z } from 'zod';
-import { PoliceStation } from '@prisma/client';
 
 function extractCPNZIDFromEmail(userEmail: string) {
     const atSymbolIndex: number = userEmail.indexOf('@');
@@ -80,39 +78,3 @@ export const getUserDetailsByCPNZID = async (req: Request, res: Response) => {
         console.error('Error:', error);
     }
 };
-
-// export const updateUserDetails = async (req: Request, res: Response) => {
-//     try {
-//         const parseResult = userDetailsSchema.safeParse(req.body);
-
-//         if (!parseResult.success) {
-//             return res.status(400).json({ error: parseResult.error.flatten() });
-//         }
-
-//         const { id, email, password } = parseResult.data;
-
-//         const { error } = await supabase.auth.updateUser({
-//             email: email,
-//             password: password,
-//         });
-
-//         if (error) {
-//             console.log(`Error updating details: ${error}`);
-//         }
-
-//         const updatedUserDetails = await prisma.patrols.update({
-//             where: {
-//                 id: id,
-//             },
-//             data: {
-//                 // email: email,
-//                 password: password,
-//                 // vehicles: vehicles,
-//             },
-//         });
-
-//         res.status(200).json(updatedUserDetails);
-//     } catch (error) {
-//         console.error('Error: ', error);
-//     }
-// };
