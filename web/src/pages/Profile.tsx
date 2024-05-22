@@ -9,6 +9,7 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import car from '../assets/images/car.png';
 import BottomNavBar from '@components/BottomNavBar';
+import { supabaseClient as supabase } from '../auth-client/SupabaseClient';
 
 const vehicleDetailsSchema = z.object({
     name: z.string(),
@@ -127,17 +128,14 @@ export default function Profile() {
         setEditable(true);
     };
 
-    const handleSave = async () => {
-        const updatedUserData = {
-            // id: currentUserDetails?.id,
+    const handlePasswordChange = async () => {
+        const { error } = await supabase.auth.updateUser({
             email: email,
             password: confirmPassword,
-            // vehicles: currentUserDetails?.vehicles,
-        };
-        await axios.patch(
-            `${import.meta.env.VITE_API_URL}/user/updateUserDetails`,
-            updatedUserData
-        );
+        });
+        if (error) {
+            console.log('Error changing password: ', error);
+        }
         setPassword('');
         setConfirmPassword('');
         setEditable(false);
@@ -320,8 +318,8 @@ export default function Profile() {
                     ) : (
                         <div className="flex gap-4">
                             <Button
-                                onClick={handleSave}
-                                disabled={password != confirmPassword}
+                                onClick={handlePasswordChange}
+                                disabled={password !== confirmPassword}
                                 className="bg-cpnz-blue-900 mt-4 w-28"
                             >
                                 Save
