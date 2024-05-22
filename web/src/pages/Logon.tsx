@@ -36,7 +36,6 @@ import { cn } from "../lib/utils";
 
 type UserDetails = z.infer<typeof userDetailsSchema>;
 type VehicleDetails = z.infer<typeof vehicleDetailsSchema>;
-type PatrolDetails = z.infer<typeof patrolDetailsSchema>;
 
 export default function Logon() {
   const [loading, setLoading] = useState(true);
@@ -113,19 +112,21 @@ export default function Logon() {
   >([]);
 
   const formSchema = z.object({
-    startTime: z.string(),
-    endTime: z.string(),
-    policeStationBase: z.string().min(1, "Police Station Base is required"),
-    cpCallSign: z.string().min(1, "CP Call Sign is required"),
-    patrol: z.string().min(1, "Patrol is required"),
-    observerName: z.string().min(1, "Observer Name is required"),
-    observerNumber: z.string().min(1, "Observer Mobile Number is required"),
-    driver: z.string(),
-    vehicle: z.string().refine((value) => value !== "", {
-      message: "Please select a vehicle",
+    startTime: z.string().refine((value) => value !== "", {
+      message: "Start time is required",
     }),
-    liveryOrSignage: z.string().min(1, "Livery or Signage is required"),
-    havePoliceRadio: z.string().min(1, "Police Radio is required"),
+    endTime: z.string().refine((value) => value !== "", {
+      message: "End time is required",
+    }),
+    policeStationBase: z.string(),
+    cpCallSign: z.string(),
+    patrol: z.string(),
+    observerName: z.string(),
+    observerNumber: z.string(),
+    driver: z.string(),
+    vehicle: z.string(),
+    liveryOrSignage: z.string(),
+    havePoliceRadio: z.string(),
   });
 
   const form = useForm<z.infer<typeof formSchema>>({
@@ -133,7 +134,7 @@ export default function Logon() {
     defaultValues: {
       startTime: "",
       endTime: "",
-      policeStationBase: currentUserDetails?.police_station,
+      policeStationBase: "",
       cpCallSign: callSign,
       patrol: patrolName,
       observerName: fullName,
@@ -265,8 +266,8 @@ export default function Logon() {
                       <FormLabel>Police Station Base</FormLabel>
                       <FormControl>
                         <Input
-                          defaultValue={policeStation}
                           className="w-full"
+                          defaultValue={policeStation}
                         />
                       </FormControl>
                       <FormMessage />
