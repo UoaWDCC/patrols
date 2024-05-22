@@ -8,20 +8,44 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model Amendment {
+  id                 Int      @id @unique @default(autoincrement())
+  shiftHoursChange   Decimal?
+  policeStationBase  String?
+  cpCallSign         String?
+  amendmentPatrolId  Int
+  vehicleId          Int
+  hasLiveryOrSignage Boolean?
+  hasPoliceRadio     Boolean?
+  amendmentMadeAt    DateTime @default(now())
+  otherPatrolsName   String?
+  shiftId            Int
+  shiftType          logType  @default(logOn)
+  Patrols            Patrols  @relation(fields: [amendmentPatrolId], references: [id])
+  Shifts             Shifts   @relation(fields: [shiftId, shiftType], references: [id, type])
+  Vehicles           Vehicles @relation(fields: [vehicleId], references: [id])
+}
+
+model IncidentType {
+  incidentType String    @id @unique
+  description  String
+  Reports      Reports[]
+}
+
 model Patrols {
-  id           Int         @id @unique @default(autoincrement())
-  password     String
-  email        String      @unique
-  name         String
-  supervisorID Int?        @unique
-  role         Role        @default(patrol)
-  mobile       String
-  amendments   Amendment[] @relation("submittedByPatrol")
-  supervisor   Patrols?    @relation("patrolSupervisor", fields: [supervisorID], references: [id])
-  patrol       Patrols?    @relation("patrolSupervisor")
-  reports      Reports[]   @relation("writtenByPatrol")
-  shifts       Shifts[]    @relation("logByPatrol")
-  Vehicles     Vehicles[]
+  id            Int         @id @unique @default(autoincrement())
+  password      String
+  email         String      @unique
+  name          String
+  supervisorID  Int?        @unique
+  role          Role        @default(patrol)
+  mobile        String
+  Amendment     Amendment[]
+  Patrols       Patrols?    @relation("PatrolsToPatrols", fields: [supervisorID], references: [id])
+  other_Patrols Patrols?    @relation("PatrolsToPatrols")
+  Reports       Reports[]
+  Shifts        Shifts[]
+  Vehicles      Vehicles[]
 }
 
 model Reports {
@@ -31,14 +55,8 @@ model Reports {
   location           String
   patrolID           Int
   reportIncidentType String
-  patrols            Patrols      @relation("writtenByPatrol", fields: [patrolID], references: [id])
-  incident           IncidentType @relation("isIncidentOfType", fields: [reportIncidentType], references: [incidentType])
-}
-
-model IncidentType {
-  incidentType String    @id @unique
-  description  String
-  reports      Reports[] @relation("isIncidentOfType")
+  Patrols            Patrols      @relation(fields: [patrolID], references: [id])
+  IncidentType       IncidentType @relation(fields: [reportIncidentType], references: [incidentType])
 }
 
 model Shifts {
@@ -54,29 +72,23 @@ model Shifts {
   hasLiveryOrSignage Boolean
   hasPoliceRadio     Boolean
   logAt              DateTime    @default(now())
-  hasAmendment       Amendment[] @relation("belongToShift")
-  patrols            Patrols     @relation("logByPatrol", fields: [logPatrolId], references: [id])
-  vehicles           vehicles    @relation("isInShift", fields: [vehicleId], references: [id])
+  Amendment          Amendment[]
+  Patrols            Patrols     @relation(fields: [logPatrolId], references: [id])
+  Vehicles           Vehicles    @relation(fields: [vehicleId], references: [id])
 
   @@id([id, type])
 }
 
-model Amendment {
-  id                 Int      @id @unique @default(autoincrement())
-  shiftHoursChange   Decimal?
-  policeStationBase  String?
-  cpCallSign         String?
-  amendmentPatrolId  Int
-  vehicleId          Int
-  hasLiveryOrSignage Boolean?
-  hasPoliceRadio     Boolean?
-  amendmentMadeAt    DateTime @default(now())
-  otherPatrolsName   String?
-  shiftId            Int
-  shiftType          logType  @default(logOn)
-  patrols            Patrols  @relation("submittedByPatrol", fields: [amendmentPatrolId], references: [id])
-  logOn              Shifts   @relation("belongToShift", fields: [shiftId, shiftType], references: [id, type])
-  vehicles           vehicles @relation("isInAmendment", fields: [vehicleId], references: [id])
+model Vehicles {
+  id           Int         @id @unique @default(autoincrement())
+  numberPlate  String      @unique
+  registration String
+  make         String
+  model        String
+  patrolID     Int
+  Amendment    Amendment[]
+  Shifts       Shifts[]
+  Patrols      Patrols     @relation(fields: [patrolID], references: [id])
 }
 
 model district_stats_dev {
@@ -452,7 +464,7 @@ model vehicle_dev {
   patrolID            BigInt
   selected            Boolean        @default(false)
   id                  Int            @default(2)
-  Vehicles_Model      vehicles_model @relation(fields: [model], references: [name], onDelete: NoAction, onUpdate: NoAction)
+  vehicles_model      vehicles_model @relation(fields: [model], references: [name], onDelete: NoAction, onUpdate: NoAction)
   patrols_dev         patrols_dev    @relation(fields: [patrolID], references: [id], onDelete: NoAction, onUpdate: NoAction)
 }
 
@@ -468,19 +480,25 @@ model vehicles_model {
   vehicle_make vehicle_make? @relation(fields: [model_name], references: [name], onDelete: NoAction, onUpdate: NoAction, map: "Vehicles_Model_model_name_fkey")
 }
 
-model Vehicles {
-  id           Int         @id @unique @default(autoincrement())
-  numberPlate  String      @unique
-  registration String
-  make         String
-  model        String
-  patrolID     Int
-  inAmendment  Amendment[] @relation("isInAmendment")
-  shifts       Shifts[]    @relation("isInShift")
-  Patrols      Patrols     @relation(fields: [patrolID], references: [id])
-  Patrols      Patrols     @relation(fields: [patrolID], references: [id], map: "Vehicles_patrolID_fkey")
+enum Call_Sign {
+  MRCS
+  MACS
+
+  @@map("Call Sign")
 }
 
+/// This enum is commented in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+enum PoliceStation {
+  Mt_Roskill_Police_Station @map("Mt Roskill Police Station")
+  Mt_Albert_Police_Station  @map("Mt Albert Police Station")
+}
+
+enum Region {
+  Mt_Albert  @map("Mt Albert")
+  Mt_Roskill @map("Mt Roskill")
+  Epsom
+  Howick
+}
 
 enum Role {
   patrol
@@ -491,24 +509,4 @@ enum Role {
 enum logType {
   logOn
   logOff
-}
-
-/// This enum is commented in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
-enum PoliceStation {
-  Mt_Roskill_Police_Station @map("Mt Roskill Police Station")
-  Mt_Albert_Police_Station  @map("Mt Albert Police Station")
-}
-
-enum Call_Sign {
-  MRCS
-  MACS
-
-  @@map("Call Sign")
-}
-
-enum Region {
-  Mt_Albert  @map("Mt Albert")
-  Mt_Roskill @map("Mt Roskill")
-  Epsom
-  Howick
 }

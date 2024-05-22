@@ -94,7 +94,7 @@ export const getAllReportForLead = async (req: Request, res: Response) => {
         // Get all the patrols assigned to the patrol lead
         const assignedPatrol = await prisma.patrols.findUnique({
             where: { supervisorID: Number(patrolLeadId) },
-            select: { id: true, reports: true },
+            select: { id: true},
         });
         if (!assignedPatrol) {
             // Check if there is any assigned patrols

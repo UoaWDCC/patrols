@@ -1,10 +1,23 @@
 import { z } from "zod";
 
-export const userDetailsSchema = z.object({
+export const vehiclesSchema = z.object({
   name: z.string(),
-  id: z.number(),
+  created_at: z.string(),
+  registration_number: z.string(),
+  colour: z.string(),
+  livery: z.boolean(),
+  selected: z.boolean(),
+});
+
+export const userDetailsSchema = z.object({
+  cpnz_id: z.string(),
   email: z.string().email(),
-  vehicles: z.array(z.string()),
+  mobile_phone: z.string(),
+  home_phone: z.string(),
+  call_sign: z.string(),
+  police_station: z.string(),
+  patrol_id: z.string(),
+  vehicle_dev: z.array(vehiclesSchema),
 });
 
 export const tokenSchema = z.object({
