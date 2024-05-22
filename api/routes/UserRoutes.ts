@@ -1,12 +1,12 @@
 import { Router } from 'express';
 import {
-    getUserDetailsByEmail,
-    updateUserDetails,
+    getUserDetailsByCPNZID,
+    // updateUserDetails,
 } from '../controller/UserController';
 
 const userRoutes = Router();
 
-userRoutes.route('/getUserDetails').get(getUserDetailsByEmail);
-userRoutes.route('/updateUserDetails').patch(updateUserDetails);
+userRoutes.route('/getUserDetails').get(getUserDetailsByCPNZID);
+// userRoutes.route('/updateUserDetails').patch(updateUserDetails);
 
 export default userRoutes;
