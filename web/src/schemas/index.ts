@@ -17,7 +17,6 @@ export const userDetailsSchema = z.object({
   call_sign: z.string(),
   police_station: z.string(),
   patrol_id: z.string(),
-  vehicle_dev: z.array(vehicleDetailsSchema),
 });
 
 export const tokenSchema = z.object({
@@ -30,4 +29,9 @@ export const emailSchema = z.object({
   email: z.string(),
   patrolID: z.string(),
   formData: z.string(),
+});
+
+export const patrolDetailsSchema = z.object({
+  name: z.string(),
+  members_dev: z.array(userDetailsSchema),
 });

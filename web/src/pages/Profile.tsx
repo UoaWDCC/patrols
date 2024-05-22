@@ -10,27 +10,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import car from "../assets/images/car.png";
 import BottomNavBar from "@components/BottomNavBar";
 import { supabaseClient as supabase } from "../auth-client/SupabaseClient";
-
-const vehicleDetailsSchema = z.object({
-  name: z.string(),
-  created_at: z.string(),
-  registration_number: z.string(),
-  colour: z.string(),
-  livery: z.boolean(),
-  selected: z.boolean(),
-});
-
-const userDetailsSchema = z.object({
-  cpnz_id: z.string(),
-  patrol_id: z.string(),
-  email: z.string(),
-  mobile_phone: z.string(),
-  home_phone: z.string(),
-  first_names: z.string(),
-  surname: z.string(),
-  call_sign: z.string(),
-  police_station: z.string(),
-});
+import { userDetailsSchema, vehicleDetailsSchema } from "../schemas";
 
 type UserDetails = z.infer<typeof userDetailsSchema>;
 type VehicleDetails = z.infer<typeof vehicleDetailsSchema>;
@@ -65,6 +45,8 @@ export default function Profile() {
         const response = await axios.get(
           `${import.meta.env.VITE_API_URL}/user/getUserDetails`
         );
+
+        console.log(response.data);
 
         const { userDetails, patrolDetails, vehicleDetails } = response.data;
         const parsedUserDetails = userDetailsSchema.parse(userDetails);

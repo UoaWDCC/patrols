@@ -13,13 +13,18 @@ import {
   FormMessage,
 } from "@components/ui/form";
 import userIcon from "../assets/images/gorilla.png";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { FaCog } from "react-icons/fa";
 import axios from "axios";
-import { userDetailsSchema, vehicleDetailsSchema } from "../schemas";
+import {
+  patrolDetailsSchema,
+  userDetailsSchema,
+  vehicleDetailsSchema,
+} from "../schemas";
 
 type UserDetails = z.infer<typeof userDetailsSchema>;
 type VehicleDetails = z.infer<typeof vehicleDetailsSchema>;
+type PatrolDetails = z.infer<typeof patrolDetailsSchema>;
 
 export default function Logon() {
   const [loading, setLoading] = useState(true);
@@ -35,6 +40,50 @@ export default function Logon() {
   const [selectedVehicle, setSelectedVehicle] = useState<VehicleDetails | null>(
     null
   );
+  const [membersInPatrol, setMembersInPatrol] = useState<PatrolDetails[]>([]);
+  const [driverName, setDriverName] = useState<string>("");
+
+  useEffect(() => {
+    const fetchUserData = async () => {
+      try {
+        const response = await axios.get(
+          `${import.meta.env.VITE_API_URL}/user/getUserDetails`
+        );
+
+        const { userDetails, patrolDetails, vehicleDetails } = response.data;
+        const parsedUserDetails = userDetailsSchema.parse(userDetails);
+        const parsedVehicleDetails = vehicleDetailsSchema
+          .array()
+          .parse(vehicleDetails);
+        setCurrentUserDetails(parsedUserDetails);
+        setCallSign(userDetails.call_sign);
+        setPatrolName(patrolDetails.name);
+        setPoliceStation(userDetails.police_station.replace(/_/g, " ")); // Replace enum underscores with space
+        setMobileNumber(userDetails.mobile_phone);
+        setFullName(`${userDetails.first_names} ${userDetails.surname}`);
+
+        if (parsedVehicleDetails.length === 0) {
+          setSelectedVehicle(null);
+          setCurrentUserVehicles([]);
+        } else {
+          setSelectedVehicle(
+            parsedVehicleDetails.find((vehicle) => vehicle.selected) || null
+          );
+          const reorderedVehicles = [
+            ...parsedVehicleDetails.filter((vehicle) => vehicle.selected),
+            ...parsedVehicleDetails.filter((vehicle) => !vehicle.selected),
+          ];
+          setCurrentUserVehicles(reorderedVehicles);
+        }
+
+        setLoading(false);
+      } catch (e) {
+        console.log(e);
+      }
+    };
+
+    fetchUserData();
+  }, []);
 
   const navigate = useNavigate();
   const [guestPatrols, setGuestPatrols] = useState<
@@ -62,13 +111,13 @@ export default function Logon() {
     defaultValues: {
       startTime: "",
       endTime: "",
-      policeStationBase: "",
-      cpCallSign: "",
-      patrol: "",
-      observerName: "",
-      observerNumber: "",
+      policeStationBase: currentUserDetails?.police_station,
+      cpCallSign: callSign,
+      patrol: patrolName,
+      observerName: fullName,
+      observerNumber: mobileNumber,
       driver: "",
-      vehicle: "",
+      vehicle: selectedVehicle?.name || "",
       liveryOrSignage: "",
       havePoliceRadio: "",
     },
@@ -102,7 +151,7 @@ export default function Logon() {
 
   return (
     <div className=" bg-white flex items-center justify-center">
-      <div className="max-w-7xl w-full">
+      <div className="max-w-6xl w-full">
         <div className="bg-[#EEF6FF] px-8 py-6 flex items-center justify-between">
           <div className="flex items-center">
             <img
@@ -110,7 +159,7 @@ export default function Logon() {
               alt="User Icon"
               className="w-16 h-16 mr-4 rounded-full"
             />
-            <h2 className="text-2xl font-bold">Welcome back, XXXXXX</h2>
+            <h2 className="text-2xl font-bold">Welcome back, {fullName}</h2>
           </div>
           <button className="flex items-center">
             <span className="mr-2 text-lg font-semibold">Settings</span>
@@ -193,14 +242,13 @@ export default function Logon() {
                 <FormField
                   control={form.control}
                   name="policeStationBase"
-                  render={({ field }) => (
+                  render={() => (
                     <FormItem>
                       <FormLabel>Police Station Base</FormLabel>
                       <FormControl>
                         <Input
-                          {...field}
+                          defaultValue={policeStation}
                           className="w-full"
-                          placeholder="Base"
                         />
                       </FormControl>
                       <FormMessage />
@@ -210,14 +258,13 @@ export default function Logon() {
                 <FormField
                   control={form.control}
                   name="cpCallSign"
-                  render={({ field }) => (
+                  render={() => (
                     <FormItem>
                       <FormLabel>CP Call Sign</FormLabel>
                       <FormControl>
                         <Input
-                          {...field}
+                          defaultValue={policeStation}
                           className="w-full"
-                          placeholder="Call Sign"
                         />
                       </FormControl>
                       <FormMessage />
@@ -227,15 +274,11 @@ export default function Logon() {
                 <FormField
                   control={form.control}
                   name="patrol"
-                  render={({ field }) => (
+                  render={() => (
                     <FormItem>
                       <FormLabel>Patrol</FormLabel>
                       <FormControl>
-                        <Input
-                          {...field}
-                          className="w-full"
-                          placeholder="Area"
-                        />
+                        <Input defaultValue={patrolName} className="w-full" />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -249,15 +292,11 @@ export default function Logon() {
                     <FormField
                       control={form.control}
                       name="observerName"
-                      render={({ field }) => (
+                      render={() => (
                         <FormItem>
                           <FormLabel>Name</FormLabel>
                           <FormControl>
-                            <Input
-                              {...field}
-                              className="w-full"
-                              placeholder="Name"
-                            />
+                            <Input defaultValue={fullName} className="w-full" />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -266,14 +305,13 @@ export default function Logon() {
                     <FormField
                       control={form.control}
                       name="observerNumber"
-                      render={({ field }) => (
+                      render={() => (
                         <FormItem>
                           <FormLabel>Mobile Number</FormLabel>
                           <FormControl>
                             <Input
-                              {...field}
+                              defaultValue={mobileNumber}
                               className="w-full"
-                              placeholder="Number"
                             />
                           </FormControl>
                           <FormMessage />
@@ -289,18 +327,13 @@ export default function Logon() {
                   <FormField
                     control={form.control}
                     name="driver"
-                    render={({ field }) => (
+                    render={() => (
                       <FormItem>
                         <FormControl>
-                          <select
-                            {...field}
-                            className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                          >
-                            <option value="">Select a driver</option>
-                            <option value="driver1">Driver 1</option>
-                            <option value="driver2">Driver 2</option>
-                            {/* Add more driver options */}
-                          </select>
+                          <Input
+                            className="w-full"
+                            onChange={(e) => setDriverName(e.target.value)}
+                          />
                         </FormControl>
                       </FormItem>
                     )}
@@ -381,26 +414,17 @@ export default function Logon() {
                                 field.onChange(e);
                               }}
                             >
-                              <option value="" disabled>
-                                Select an option
-                              </option>
-                              <option value="vehicle1">Vehicle 1</option>
-                              <option value="vehicle2">Vehicle 2</option>
+                              {currentUserVehicles.map((v) => (
+                                <option key={v.name} value={v.name}>
+                                  {v.name}
+                                </option>
+                              ))}
                             </select>
                           </FormControl>
                           <FormMessage />
                         </FormItem>
                       )}
                     />
-                    <div className="flex items-center justify-start">
-                      <span className="mr-4 font-bold">OR</span>
-                      <button
-                        type="button"
-                        className="px-4 py-2 bg-white text-black border-2 border-[#0f1363] rounded-md font-semibold underline hover:bg-[#0f1363] hover:text-white"
-                      >
-                        Add new vehicle
-                      </button>
-                    </div>
                   </div>
                 </div>
                 <FormField
@@ -417,6 +441,7 @@ export default function Logon() {
                               {...field}
                               value="Yes"
                               className="mr-2"
+                              checked
                             />
                             Yes
                           </label>
@@ -457,6 +482,7 @@ export default function Logon() {
                               type="radio"
                               {...field}
                               value="No"
+                              checked
                               className="mr-2"
                             />
                             No
