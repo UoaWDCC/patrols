@@ -69,16 +69,27 @@ const useUserData = () => {
 
   return {
     loading,
+    setLoading,
     currentUserDetails,
+    setCurrentUserDetails,
     fullName,
+    setFullName,
     cpnzID,
+    setCPNZID,
     email,
+    setEmail,
     mobileNumber,
+    setMobileNumber,
     callSign,
+    setCallSign,
     patrolName,
+    setPatrolName,
     policeStation,
-    selectedVehicle,
+    setPoliceStation,
     currentUserVehicles,
+    setCurrentUserVehicles,
+    selectedVehicle,
+    setSelectedVehicle,
   };
 };
 
