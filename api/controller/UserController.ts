@@ -4,40 +4,9 @@ import type { Request, Response } from 'express';
 import { z } from 'zod';
 import { PoliceStation } from '@prisma/client';
 
-const vehicleDetailsSchema = z.object({
-    name: z.string(),
-    created_at: z.date(),
-    model: z.string(),
-    registration_number: z.string(),
-    colour: z.string().nullable(),
-    livery: z.boolean().nullable(),
-    patrol_id: z.bigint(),
-    selected: z.boolean(),
-});
-
-const userDetailsSchema = z.object({
-    mobile_phone: z.bigint(),
-    home_phone: z.bigint(),
-    call_sign: z.string(),
-    police_station: z.string(),
-    patrol_id: z.bigint(),
-    id: z.string(),
-    email: z.string().email(),
-    vehicle_dev: z.array(vehicleDetailsSchema),
-});
-
-const updateSelectedVehicleSchema = z.object({
-    currentVehicle: vehicleDetailsSchema,
-    newVehicle: vehicleDetailsSchema,
-});
-
 function extractCPNZIDFromEmail(userEmail: string) {
     const atSymbolIndex: number = userEmail.indexOf('@');
     return parseInt(userEmail.substring(0, atSymbolIndex));
-}
-
-function removeUnderscores(value: string): string {
-    return value.replace(/_/g, ' ');
 }
 
 export const getUserDetailsByCPNZID = async (req: Request, res: Response) => {
@@ -99,6 +68,8 @@ export const getUserDetailsByCPNZID = async (req: Request, res: Response) => {
                 )
             );
         }
+
+        console.log(vehicleDetails);
 
         res.status(200).json({
             userDetails: toObject(userDetails),
