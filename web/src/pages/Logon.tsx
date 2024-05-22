@@ -21,6 +21,18 @@ import {
   userDetailsSchema,
   vehicleDetailsSchema,
 } from "../schemas";
+import { Popover } from "@components/ui/popover";
+import { PopoverContent, PopoverTrigger } from "@radix-ui/react-popover";
+import { Check, ChevronsUpDown } from "lucide-react";
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+} from "@components/ui/command";
+import { cn } from "../lib/utils";
 
 type UserDetails = z.infer<typeof userDetailsSchema>;
 type VehicleDetails = z.infer<typeof vehicleDetailsSchema>;
@@ -40,8 +52,11 @@ export default function Logon() {
   const [selectedVehicle, setSelectedVehicle] = useState<VehicleDetails | null>(
     null
   );
-  const [membersInPatrol, setMembersInPatrol] = useState<PatrolDetails[]>([]);
-  const [driverName, setDriverName] = useState<string>("");
+  const [membersInPatrol, setMembersInPatrol] = useState<UserDetails[]>([]);
+  const [open, setOpen] = useState(false);
+
+  // driverName
+  const [value, setValue] = useState<string>("");
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -75,6 +90,7 @@ export default function Logon() {
           ];
           setCurrentUserVehicles(reorderedVehicles);
         }
+        setMembersInPatrol(patrolDetails.members_dev);
 
         setLoading(false);
       } catch (e) {
@@ -84,6 +100,12 @@ export default function Logon() {
 
     fetchUserData();
   }, []);
+
+  const membersFullName = membersInPatrol
+    .filter((m) => m.cpnz_id !== currentUserDetails?.cpnz_id)
+    .map((m) => ({
+      name: `${m.first_names} ${m.surname}`,
+    }));
 
   const navigate = useNavigate();
   const [guestPatrols, setGuestPatrols] = useState<
@@ -144,10 +166,6 @@ export default function Logon() {
   const addGuestPatrol = () => {
     setGuestPatrols([...guestPatrols, { name: "", number: "" }]);
   };
-
-  // const removeGuestPatrol = (index: number) => {
-  //   setGuestPatrols(guestPatrols.filter((_, i) => i !== index));
-  // };
 
   return (
     <div className=" bg-white flex items-center justify-center">
@@ -330,10 +348,60 @@ export default function Logon() {
                     render={() => (
                       <FormItem>
                         <FormControl>
-                          <Input
-                            className="w-full"
-                            onChange={(e) => setDriverName(e.target.value)}
-                          />
+                          <Popover open={open} onOpenChange={setOpen}>
+                            <PopoverTrigger asChild>
+                              <Button
+                                variant={"outline"}
+                                role="combobox"
+                                aria-expanded={open}
+                                className="w-[300px] justify-between text-md text-gray-600"
+                              >
+                                {value
+                                  ? membersFullName.find(
+                                      (member) => member.name === value
+                                    )?.name
+                                  : "Select Driver"}
+                                <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                              </Button>
+                            </PopoverTrigger>
+                            <PopoverContent>
+                              <Command>
+                                <CommandInput
+                                  placeholder="Search..."
+                                  className="w-[255px]"
+                                />
+                                <CommandEmpty>No user found.</CommandEmpty>
+                                <CommandGroup>
+                                  <CommandList>
+                                    {membersFullName.map((member) => (
+                                      <CommandItem
+                                        key={member.name}
+                                        value={member.name}
+                                        onSelect={(currentValue) => {
+                                          setValue(
+                                            currentValue === value
+                                              ? ""
+                                              : currentValue
+                                          );
+                                          setOpen(false);
+                                        }}
+                                      >
+                                        <Check
+                                          className={cn(
+                                            "mr-2 h-4 w-4",
+                                            value === member.name
+                                              ? "opacity-100"
+                                              : "opacity-0"
+                                          )}
+                                        />
+                                        {member.name}
+                                      </CommandItem>
+                                    ))}
+                                  </CommandList>
+                                </CommandGroup>
+                              </Command>
+                            </PopoverContent>
+                          </Popover>
                         </FormControl>
                       </FormItem>
                     )}
