@@ -2,8 +2,9 @@ import prisma from '../db/database';
 import supabase from '../supabase/supabase_client';
 import type { Request, Response } from 'express';
 import { z } from 'zod';
+import { PoliceStation } from '@prisma/client';
 
-const vehiclesSchema = z.object({
+const vehicleDetailsSchema = z.object({
     name: z.string(),
     created_at: z.date(),
     model: z.string(),
@@ -22,17 +23,21 @@ const userDetailsSchema = z.object({
     patrol_id: z.bigint(),
     id: z.string(),
     email: z.string().email(),
-    vehicle_dev: z.array(vehiclesSchema),
+    vehicle_dev: z.array(vehicleDetailsSchema),
 });
 
 const updateSelectedVehicleSchema = z.object({
-    currentVehicle: vehiclesSchema,
-    newVehicle: vehiclesSchema,
+    currentVehicle: vehicleDetailsSchema,
+    newVehicle: vehicleDetailsSchema,
 });
 
 function extractCPNZIDFromEmail(userEmail: string) {
     const atSymbolIndex: number = userEmail.indexOf('@');
     return parseInt(userEmail.substring(0, atSymbolIndex));
+}
+
+function removeUnderscores(value: string): string {
+    return value.replace(/_/g, ' ');
 }
 
 export const getUserDetailsByCPNZID = async (req: Request, res: Response) => {
@@ -66,6 +71,19 @@ export const getUserDetailsByCPNZID = async (req: Request, res: Response) => {
             },
         });
 
+        if (!userDetails) {
+            return res.status(404).json({ error: 'User details not found' });
+        }
+
+        const patrolDetails = await prisma.patrols_prod.findUnique({
+            where: {
+                id: userDetails?.patrol_id,
+            },
+            select: {
+                name: true,
+            },
+        });
+
         const vehicleDetails = await prisma.vehicle_dev.findMany({
             where: {
                 patrolID: userDetails?.patrol_id,
@@ -82,7 +100,11 @@ export const getUserDetailsByCPNZID = async (req: Request, res: Response) => {
             );
         }
 
-        res.status(200).json(toObject({ toObject, vehicleDetails }));
+        res.status(200).json({
+            userDetails: toObject(userDetails),
+            vehicleDetails: toObject(vehicleDetails),
+            patrolDetails: toObject(patrolDetails),
+        });
     } catch (error) {
         console.error('Error:', error);
     }
