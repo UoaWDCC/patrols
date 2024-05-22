@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-export const vehiclesSchema = z.object({
+export const vehicleDetailsSchema = z.object({
   name: z.string(),
   created_at: z.string(),
   registration_number: z.string(),
@@ -12,12 +12,13 @@ export const vehiclesSchema = z.object({
 export const userDetailsSchema = z.object({
   cpnz_id: z.string(),
   email: z.string().email(),
+  first_names: z.string(),
+  surname: z.string(),
   mobile_phone: z.string(),
   home_phone: z.string(),
   call_sign: z.string(),
   police_station: z.string(),
   patrol_id: z.string(),
-  vehicle_dev: z.array(vehiclesSchema),
 });
 
 export const tokenSchema = z.object({
@@ -30,4 +31,9 @@ export const emailSchema = z.object({
   email: z.string(),
   patrolID: z.string(),
   formData: z.string(),
-})
+});
+
+export const patrolDetailsSchema = z.object({
+  name: z.string(),
+  members_dev: z.array(userDetailsSchema),
+});

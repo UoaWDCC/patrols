@@ -13,30 +13,116 @@ import {
   FormMessage,
 } from "@components/ui/form";
 import userIcon from "../assets/images/gorilla.png";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { FaCog } from "react-icons/fa";
 import axios from "axios";
+import { userDetailsSchema, vehicleDetailsSchema } from "../schemas";
+import { Popover } from "@components/ui/popover";
+import { PopoverContent, PopoverTrigger } from "@radix-ui/react-popover";
+import { Check, ChevronsUpDown, Loader2 } from "lucide-react";
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+} from "@components/ui/command";
+import { cn } from "../lib/utils";
+
+type UserDetails = z.infer<typeof userDetailsSchema>;
+type VehicleDetails = z.infer<typeof vehicleDetailsSchema>;
 
 export default function Logon() {
+  const [loading, setLoading] = useState(true);
+  const [currentUserDetails, setCurrentUserDetails] = useState<UserDetails>();
+  const [mobileNumber, setMobileNumber] = useState<string>("");
+  const [callSign, setCallSign] = useState<string>("");
+  const [patrolName, setPatrolName] = useState<string>("");
+  const [fullName, setFullName] = useState<string>("");
+  const [policeStation, setPoliceStation] = useState<string>("");
+  const [currentUserVehicles, setCurrentUserVehicles] = useState<
+    VehicleDetails[]
+  >([]);
+  const [selectedVehicle, setSelectedVehicle] = useState<VehicleDetails | null>(
+    null
+  );
+  const [membersInPatrol, setMembersInPatrol] = useState<UserDetails[]>([]);
+  const [open, setOpen] = useState(false);
+
+  // driverName
+  const [value, setValue] = useState<string>("");
+
+  useEffect(() => {
+    const fetchUserData = async () => {
+      try {
+        const response = await axios.get(
+          `${import.meta.env.VITE_API_URL}/user/getUserDetails`
+        );
+
+        const { userDetails, patrolDetails, vehicleDetails } = response.data;
+        const parsedUserDetails = userDetailsSchema.parse(userDetails);
+        const parsedVehicleDetails = vehicleDetailsSchema
+          .array()
+          .parse(vehicleDetails);
+        setCurrentUserDetails(parsedUserDetails);
+        setCallSign(userDetails.call_sign);
+        setPatrolName(patrolDetails.name);
+        setPoliceStation(userDetails.police_station.replace(/_/g, " ")); // Replace enum underscores with space
+        setMobileNumber(userDetails.mobile_phone);
+        setFullName(`${userDetails.first_names} ${userDetails.surname}`);
+
+        if (parsedVehicleDetails.length === 0) {
+          setSelectedVehicle(null);
+          setCurrentUserVehicles([]);
+        } else {
+          setSelectedVehicle(
+            parsedVehicleDetails.find((vehicle) => vehicle.selected) || null
+          );
+          const reorderedVehicles = [
+            ...parsedVehicleDetails.filter((vehicle) => vehicle.selected),
+            ...parsedVehicleDetails.filter((vehicle) => !vehicle.selected),
+          ];
+          setCurrentUserVehicles(reorderedVehicles);
+        }
+        setMembersInPatrol(patrolDetails.members_dev);
+
+        setLoading(false);
+      } catch (e) {
+        console.log(e);
+      }
+    };
+
+    fetchUserData();
+  }, []);
+
+  const membersFullName = membersInPatrol
+    .filter((m) => m.cpnz_id !== currentUserDetails?.cpnz_id)
+    .map((m) => ({
+      name: `${m.first_names} ${m.surname}`,
+    }));
+
   const navigate = useNavigate();
   const [guestPatrols, setGuestPatrols] = useState<
     { name: string; number: string }[]
   >([]);
 
   const formSchema = z.object({
-    startTime: z.string(),
-    endTime: z.string(),
-    policeStationBase: z.string().nonempty("Police Station Base is required"),
-    cpCallSign: z.string().nonempty("CP Call Sign is required"),
-    patrol: z.string().nonempty("Patrol is required"),
-    observerName: z.string().nonempty("Observer Name is required"),
-    observerNumber: z.string().nonempty("Observer Mobile Number is required"),
-    driver: z.string(),
-    vehicle: z.string().refine((value) => value !== "", {
-      message: "Please select a vehicle",
+    startTime: z.string().refine((value) => value !== "", {
+      message: "Start time is required",
     }),
-    liveryOrSignage: z.string().nonempty("Livery or Signage is required"),
-    havePoliceRadio: z.string().nonempty("Police Radio is required"),
+    endTime: z.string().refine((value) => value !== "", {
+      message: "End time is required",
+    }),
+    policeStationBase: z.string(),
+    cpCallSign: z.string(),
+    patrol: z.string(),
+    observerName: z.string(),
+    observerNumber: z.string(),
+    driver: z.string(),
+    vehicle: z.string(),
+    liveryOrSignage: z.string(),
+    havePoliceRadio: z.string(),
   });
 
   const form = useForm<z.infer<typeof formSchema>>({
@@ -45,18 +131,19 @@ export default function Logon() {
       startTime: "",
       endTime: "",
       policeStationBase: "",
-      cpCallSign: "",
-      patrol: "",
-      observerName: "",
-      observerNumber: "",
+      cpCallSign: callSign,
+      patrol: patrolName,
+      observerName: fullName,
+      observerNumber: mobileNumber,
       driver: "",
-      vehicle: "",
+      vehicle: selectedVehicle?.name || "",
       liveryOrSignage: "",
       havePoliceRadio: "",
     },
   });
 
   const onSubmit = async (data: z.infer<typeof formSchema>) => {
+    setLoading(true);
     try {
       await axios.post(`${import.meta.env.VITE_API_URL}/send-email`, {
         email: "jasonabc0626@gmail.com",
@@ -78,13 +165,9 @@ export default function Logon() {
     setGuestPatrols([...guestPatrols, { name: "", number: "" }]);
   };
 
-  // const removeGuestPatrol = (index: number) => {
-  //   setGuestPatrols(guestPatrols.filter((_, i) => i !== index));
-  // };
-
   return (
     <div className=" bg-white flex items-center justify-center">
-      <div className="max-w-7xl w-full">
+      <div className="max-w-6xl w-full">
         <div className="bg-[#EEF6FF] px-8 py-6 flex items-center justify-between">
           <div className="flex items-center">
             <img
@@ -92,7 +175,7 @@ export default function Logon() {
               alt="User Icon"
               className="w-16 h-16 mr-4 rounded-full"
             />
-            <h2 className="text-2xl font-bold">Welcome back, XXXXXX</h2>
+            <h2 className="text-2xl font-bold">Welcome back, {fullName}</h2>
           </div>
           <button className="flex items-center">
             <span className="mr-2 text-lg font-semibold">Settings</span>
@@ -175,14 +258,13 @@ export default function Logon() {
                 <FormField
                   control={form.control}
                   name="policeStationBase"
-                  render={({ field }) => (
+                  render={() => (
                     <FormItem>
                       <FormLabel>Police Station Base</FormLabel>
                       <FormControl>
                         <Input
-                          {...field}
                           className="w-full"
-                          placeholder="Base"
+                          defaultValue={policeStation}
                         />
                       </FormControl>
                       <FormMessage />
@@ -192,14 +274,13 @@ export default function Logon() {
                 <FormField
                   control={form.control}
                   name="cpCallSign"
-                  render={({ field }) => (
+                  render={() => (
                     <FormItem>
                       <FormLabel>CP Call Sign</FormLabel>
                       <FormControl>
                         <Input
-                          {...field}
+                          defaultValue={policeStation}
                           className="w-full"
-                          placeholder="Call Sign"
                         />
                       </FormControl>
                       <FormMessage />
@@ -209,15 +290,11 @@ export default function Logon() {
                 <FormField
                   control={form.control}
                   name="patrol"
-                  render={({ field }) => (
+                  render={() => (
                     <FormItem>
                       <FormLabel>Patrol</FormLabel>
                       <FormControl>
-                        <Input
-                          {...field}
-                          className="w-full"
-                          placeholder="Area"
-                        />
+                        <Input defaultValue={patrolName} className="w-full" />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -231,15 +308,11 @@ export default function Logon() {
                     <FormField
                       control={form.control}
                       name="observerName"
-                      render={({ field }) => (
+                      render={() => (
                         <FormItem>
                           <FormLabel>Name</FormLabel>
                           <FormControl>
-                            <Input
-                              {...field}
-                              className="w-full"
-                              placeholder="Name"
-                            />
+                            <Input defaultValue={fullName} className="w-full" />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -248,14 +321,13 @@ export default function Logon() {
                     <FormField
                       control={form.control}
                       name="observerNumber"
-                      render={({ field }) => (
+                      render={() => (
                         <FormItem>
                           <FormLabel>Mobile Number</FormLabel>
                           <FormControl>
                             <Input
-                              {...field}
+                              defaultValue={mobileNumber}
                               className="w-full"
-                              placeholder="Number"
                             />
                           </FormControl>
                           <FormMessage />
@@ -271,18 +343,63 @@ export default function Logon() {
                   <FormField
                     control={form.control}
                     name="driver"
-                    render={({ field }) => (
+                    render={() => (
                       <FormItem>
                         <FormControl>
-                          <select
-                            {...field}
-                            className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                          >
-                            <option value="">Select a driver</option>
-                            <option value="driver1">Driver 1</option>
-                            <option value="driver2">Driver 2</option>
-                            {/* Add more driver options */}
-                          </select>
+                          <Popover open={open} onOpenChange={setOpen}>
+                            <PopoverTrigger asChild>
+                              <Button
+                                variant={"outline"}
+                                role="combobox"
+                                aria-expanded={open}
+                                className="w-[300px] justify-between text-md text-gray-600"
+                              >
+                                {value
+                                  ? membersFullName.find(
+                                      (member) => member.name === value
+                                    )?.name
+                                  : "Select Driver"}
+                                <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                              </Button>
+                            </PopoverTrigger>
+                            <PopoverContent>
+                              <Command>
+                                <CommandInput
+                                  placeholder="Search..."
+                                  className="w-[255px]"
+                                />
+                                <CommandEmpty>No user found.</CommandEmpty>
+                                <CommandGroup>
+                                  <CommandList>
+                                    {membersFullName.map((member) => (
+                                      <CommandItem
+                                        key={member.name}
+                                        value={member.name}
+                                        onSelect={(currentValue) => {
+                                          setValue(
+                                            currentValue === value
+                                              ? ""
+                                              : currentValue
+                                          );
+                                          setOpen(false);
+                                        }}
+                                      >
+                                        <Check
+                                          className={cn(
+                                            "mr-2 h-4 w-4",
+                                            value === member.name
+                                              ? "opacity-100"
+                                              : "opacity-0"
+                                          )}
+                                        />
+                                        {member.name}
+                                      </CommandItem>
+                                    ))}
+                                  </CommandList>
+                                </CommandGroup>
+                              </Command>
+                            </PopoverContent>
+                          </Popover>
                         </FormControl>
                       </FormItem>
                     )}
@@ -363,26 +480,17 @@ export default function Logon() {
                                 field.onChange(e);
                               }}
                             >
-                              <option value="" disabled>
-                                Select an option
-                              </option>
-                              <option value="vehicle1">Vehicle 1</option>
-                              <option value="vehicle2">Vehicle 2</option>
+                              {currentUserVehicles.map((v) => (
+                                <option key={v.name} value={v.name}>
+                                  {v.name}
+                                </option>
+                              ))}
                             </select>
                           </FormControl>
                           <FormMessage />
                         </FormItem>
                       )}
                     />
-                    <div className="flex items-center justify-start">
-                      <span className="mr-4 font-bold">OR</span>
-                      <button
-                        type="button"
-                        className="px-4 py-2 bg-white text-black border-2 border-[#0f1363] rounded-md font-semibold underline hover:bg-[#0f1363] hover:text-white"
-                      >
-                        Add new vehicle
-                      </button>
-                    </div>
                   </div>
                 </div>
                 <FormField
@@ -399,6 +507,7 @@ export default function Logon() {
                               {...field}
                               value="Yes"
                               className="mr-2"
+                              checked
                             />
                             Yes
                           </label>
@@ -439,6 +548,7 @@ export default function Logon() {
                               type="radio"
                               {...field}
                               value="No"
+                              checked
                               className="mr-2"
                             />
                             No
@@ -455,7 +565,13 @@ export default function Logon() {
                   type="submit"
                   className="w-full bg-[#0f1363] text-white hover:bg-[#0a0d4a]"
                 >
-                  Submit
+                  {loading ? (
+                    <>
+                      Submitting <Loader2 className="animate-spin ml-4" />{" "}
+                    </>
+                  ) : (
+                    "Submit"
+                  )}
                 </Button>
               </div>
             </form>
