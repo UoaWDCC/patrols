@@ -37,3 +37,13 @@ export const patrolDetailsSchema = z.object({
   name: z.string(),
   members_dev: z.array(userDetailsSchema),
 });
+
+export const formSchema = z.object({
+  cpnzID: z.string(),
+  password: z
+    .string()
+    .min(6, { message: 'Password must be at least 6 characters' }),
+  confirmPassword: z
+    .string()
+    .min(6, { message: 'Password must be at least 6 characters' }),
+});
