@@ -16,14 +16,10 @@ import userIcon from "../assets/images/gorilla.png";
 import { useEffect, useState } from "react";
 import { FaCog } from "react-icons/fa";
 import axios from "axios";
-import {
-  patrolDetailsSchema,
-  userDetailsSchema,
-  vehicleDetailsSchema,
-} from "../schemas";
+import { userDetailsSchema, vehicleDetailsSchema } from "../schemas";
 import { Popover } from "@components/ui/popover";
 import { PopoverContent, PopoverTrigger } from "@radix-ui/react-popover";
-import { Check, ChevronsUpDown } from "lucide-react";
+import { Check, ChevronsUpDown, Loader2 } from "lucide-react";
 import {
   Command,
   CommandEmpty,
@@ -147,6 +143,7 @@ export default function Logon() {
   });
 
   const onSubmit = async (data: z.infer<typeof formSchema>) => {
+    setLoading(true);
     try {
       await axios.post(`${import.meta.env.VITE_API_URL}/send-email`, {
         email: "jasonabc0626@gmail.com",
@@ -568,7 +565,13 @@ export default function Logon() {
                   type="submit"
                   className="w-full bg-[#0f1363] text-white hover:bg-[#0a0d4a]"
                 >
-                  Submit
+                  {loading ? (
+                    <>
+                      Submitting <Loader2 className="animate-spin ml-4" />{" "}
+                    </>
+                  ) : (
+                    "Submit"
+                  )}
                 </Button>
               </div>
             </form>
