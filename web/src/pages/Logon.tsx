@@ -16,8 +16,26 @@ import userIcon from "../assets/images/gorilla.png";
 import { useState } from "react";
 import { FaCog } from "react-icons/fa";
 import axios from "axios";
+import { userDetailsSchema, vehicleDetailsSchema } from "../schemas";
+
+type UserDetails = z.infer<typeof userDetailsSchema>;
+type VehicleDetails = z.infer<typeof vehicleDetailsSchema>;
 
 export default function Logon() {
+  const [loading, setLoading] = useState(true);
+  const [currentUserDetails, setCurrentUserDetails] = useState<UserDetails>();
+  const [mobileNumber, setMobileNumber] = useState<string>("");
+  const [callSign, setCallSign] = useState<string>("");
+  const [patrolName, setPatrolName] = useState<string>("");
+  const [fullName, setFullName] = useState<string>("");
+  const [policeStation, setPoliceStation] = useState<string>("");
+  const [currentUserVehicles, setCurrentUserVehicles] = useState<
+    VehicleDetails[]
+  >([]);
+  const [selectedVehicle, setSelectedVehicle] = useState<VehicleDetails | null>(
+    null
+  );
+
   const navigate = useNavigate();
   const [guestPatrols, setGuestPatrols] = useState<
     { name: string; number: string }[]
@@ -26,17 +44,17 @@ export default function Logon() {
   const formSchema = z.object({
     startTime: z.string(),
     endTime: z.string(),
-    policeStationBase: z.string().nonempty("Police Station Base is required"),
-    cpCallSign: z.string().nonempty("CP Call Sign is required"),
-    patrol: z.string().nonempty("Patrol is required"),
-    observerName: z.string().nonempty("Observer Name is required"),
-    observerNumber: z.string().nonempty("Observer Mobile Number is required"),
+    policeStationBase: z.string().min(1, "Police Station Base is required"),
+    cpCallSign: z.string().min(1, "CP Call Sign is required"),
+    patrol: z.string().min(1, "Patrol is required"),
+    observerName: z.string().min(1, "Observer Name is required"),
+    observerNumber: z.string().min(1, "Observer Mobile Number is required"),
     driver: z.string(),
     vehicle: z.string().refine((value) => value !== "", {
       message: "Please select a vehicle",
     }),
-    liveryOrSignage: z.string().nonempty("Livery or Signage is required"),
-    havePoliceRadio: z.string().nonempty("Police Radio is required"),
+    liveryOrSignage: z.string().min(1, "Livery or Signage is required"),
+    havePoliceRadio: z.string().min(1, "Police Radio is required"),
   });
 
   const form = useForm<z.infer<typeof formSchema>>({
