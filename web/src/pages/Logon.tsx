@@ -13,10 +13,9 @@ import {
   FormMessage,
 } from "@components/ui/form";
 import userIcon from "../assets/images/gorilla.png";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { FaCog } from "react-icons/fa";
 import axios from "axios";
-import { userDetailsSchema, vehicleDetailsSchema } from "../schemas";
 import { Popover } from "@components/ui/popover";
 import { PopoverContent, PopoverTrigger } from "@radix-ui/react-popover";
 import { Check, ChevronsUpDown, Loader2 } from "lucide-react";
@@ -29,72 +28,27 @@ import {
   CommandList,
 } from "@components/ui/command";
 import { cn } from "../lib/utils";
-
-type UserDetails = z.infer<typeof userDetailsSchema>;
-type VehicleDetails = z.infer<typeof vehicleDetailsSchema>;
+import useUserData from "../hooks/useUserData";
 
 export default function Logon() {
-  const [loading, setLoading] = useState(true);
-  const [currentUserDetails, setCurrentUserDetails] = useState<UserDetails>();
-  const [mobileNumber, setMobileNumber] = useState<string>("");
-  const [callSign, setCallSign] = useState<string>("");
-  const [patrolName, setPatrolName] = useState<string>("");
-  const [fullName, setFullName] = useState<string>("");
-  const [policeStation, setPoliceStation] = useState<string>("");
-  const [currentUserVehicles, setCurrentUserVehicles] = useState<
-    VehicleDetails[]
-  >([]);
-  const [selectedVehicle, setSelectedVehicle] = useState<VehicleDetails | null>(
-    null
-  );
-  const [membersInPatrol, setMembersInPatrol] = useState<UserDetails[]>([]);
+  const {
+    loading,
+    setLoading,
+    currentUserDetails,
+    mobileNumber,
+    callSign,
+    patrolName,
+    fullName,
+    policeStation,
+    selectedVehicle,
+    currentUserVehicles,
+    membersInPatrol,
+  } = useUserData();
+
   const [open, setOpen] = useState(false);
 
   // driverName
   const [value, setValue] = useState<string>("");
-
-  useEffect(() => {
-    const fetchUserData = async () => {
-      try {
-        const response = await axios.get(
-          `${import.meta.env.VITE_API_URL}/user/getUserDetails`
-        );
-
-        const { userDetails, patrolDetails, vehicleDetails } = response.data;
-        const parsedUserDetails = userDetailsSchema.parse(userDetails);
-        const parsedVehicleDetails = vehicleDetailsSchema
-          .array()
-          .parse(vehicleDetails);
-        setCurrentUserDetails(parsedUserDetails);
-        setCallSign(userDetails.call_sign);
-        setPatrolName(patrolDetails.name);
-        setPoliceStation(userDetails.police_station.replace(/_/g, " ")); // Replace enum underscores with space
-        setMobileNumber(userDetails.mobile_phone);
-        setFullName(`${userDetails.first_names} ${userDetails.surname}`);
-
-        if (parsedVehicleDetails.length === 0) {
-          setSelectedVehicle(null);
-          setCurrentUserVehicles([]);
-        } else {
-          setSelectedVehicle(
-            parsedVehicleDetails.find((vehicle) => vehicle.selected) || null
-          );
-          const reorderedVehicles = [
-            ...parsedVehicleDetails.filter((vehicle) => vehicle.selected),
-            ...parsedVehicleDetails.filter((vehicle) => !vehicle.selected),
-          ];
-          setCurrentUserVehicles(reorderedVehicles);
-        }
-        setMembersInPatrol(patrolDetails.members_dev);
-
-        setLoading(false);
-      } catch (e) {
-        console.log(e);
-      }
-    };
-
-    fetchUserData();
-  }, []);
 
   const membersFullName = membersInPatrol
     .filter((m) => m.cpnz_id !== currentUserDetails?.cpnz_id)
