@@ -46,6 +46,7 @@ export default function Profile() {
     const [mobileNumber, setMobileNumber] = useState<string>('');
     const [callSign, setCallSign] = useState<string>('');
     const [patrolName, setPatrolName] = useState<string>('');
+    const [fullName, setFullName] = useState<string>('');
     const [policeStation, setPoliceStation] = useState<string>('');
     const [currentUserVehicles, setCurrentUserVehicles] = useState<
         VehicleDetails[]
@@ -76,7 +77,9 @@ export default function Profile() {
                 setEmail(userDetails.email);
                 setCPNZID(userDetails.cpnz_id);
                 setMobileNumber(userDetails.mobile_phone);
-                
+                setFullName(
+                    `${userDetails.first_names} ${userDetails.surname}`
+                );
 
                 if (parsedVehicleDetails.length === 0) {
                     setSelectedVehicle(null);
@@ -211,16 +214,44 @@ export default function Profile() {
             <div className="bg-[#EEF6FF] py-6 mx-8 my-10 space-y-5 text-left px-7 rounded-md shadow-md">
                 <Form {...form}>
                     <FormItem className="flex flex-col w-full">
-                        <FormLabel htmlFor="email">Email Address </FormLabel>
+                        <FormLabel htmlFor="email">Full Name</FormLabel>
                         <Input
-                            type="email"
-                            id="email"
-                            name="email"
+                            type="text"
+                            id="fullName"
+                            name="fullName"
                             disabled
-                            value={email}
+                            value={fullName}
                             className="rounded-md border-[#CBD5E1]"
                         />
                     </FormItem>
+                    <div className="flex flex-col-2 gap-4">
+                        <FormItem className="flex flex-col basis-1/2">
+                            <FormLabel htmlFor="id">
+                                ID
+                                <Input
+                                    type="text"
+                                    id="id"
+                                    name="id"
+                                    value={cpnzID}
+                                    disabled
+                                    className="rounded-md border-[#CBD5E1]"
+                                />
+                            </FormLabel>
+                        </FormItem>
+                        <FormItem className="flex flex-col basis-1/2">
+                            <FormLabel htmlFor="email">
+                                Email Address
+                                <Input
+                                    type="email"
+                                    id="email"
+                                    name="email"
+                                    disabled
+                                    value={email}
+                                    className="rounded-md border-[#CBD5E1]"
+                                />
+                            </FormLabel>
+                        </FormItem>
+                    </div>
                     <div className="flex flex-col-2 space-x-6">
                         <FormItem className="flex flex-col flex-1">
                             <FormLabel htmlFor="cpnzId">
@@ -235,55 +266,48 @@ export default function Profile() {
                                 />
                             </FormLabel>
                         </FormItem>
-                        <FormItem className="flex flex-col flex-1">
-                            <FormLabel htmlFor="id">
-                                ID
-                                <Input
-                                    type="text"
-                                    id="id"
-                                    name="id"
-                                    value={cpnzID}
-                                    disabled
-                                    className="rounded-md border-[#CBD5E1]"
-                                />
-                            </FormLabel>
-                        </FormItem>
                     </div>
                     {editable && (
                         <>
-                            <FormItem>
-                                <FormLabel htmlFor="password">
-                                    New Password{' '}
-                                </FormLabel>
-                                <Input
-                                    type="password"
-                                    id="password"
-                                    name="password"
-                                    onChange={(e) =>
-                                        setPassword(e.target.value)
-                                    }
-                                    className="rounded-md border-[#CBD5E1]"
-                                />
-                            </FormItem>
-                            <FormItem className="flex flex-col">
-                                <FormLabel
-                                    htmlFor="confirmPassword"
-                                    className="font-semibold"
-                                >
-                                    Confirm New Password{' '}
-                                </FormLabel>
-                                <Input
-                                    type="password"
-                                    id="confirmPassword"
-                                    name="confirmPassword"
-                                    value={confirmPassword}
-                                    onChange={(e) =>
-                                        setConfirmPassword(e.target.value)
-                                    }
-                                    className="rounded-md border-[#CBD5E1]"
-                                />
-                                {errorMessage && <p>{errorMessage}</p>}
-                            </FormItem>
+                            <div className="flex flex-col-2 gap-4">
+                                <FormItem className="basis-1/2">
+                                    <FormLabel htmlFor="password">
+                                        New Password{' '}
+                                    </FormLabel>
+                                    <Input
+                                        type="password"
+                                        id="password"
+                                        name="password"
+                                        onChange={(e) =>
+                                            setPassword(e.target.value)
+                                        }
+                                        className="rounded-md border-[#CBD5E1]"
+                                    />
+                                </FormItem>
+                                <FormItem className="basis-1/2">
+                                    <FormLabel
+                                        htmlFor="confirmPassword"
+                                        className="font-semibold"
+                                    >
+                                        Confirm New Password{' '}
+                                    </FormLabel>
+                                    <Input
+                                        type="password"
+                                        id="confirmPassword"
+                                        name="confirmPassword"
+                                        value={confirmPassword}
+                                        onChange={(e) =>
+                                            setConfirmPassword(e.target.value)
+                                        }
+                                        className="rounded-md border-[#CBD5E1]"
+                                    />
+                                </FormItem>
+                            </div>
+                            {errorMessage && (
+                                <div className="text-red-600 flex justify-center">
+                                    <p>{errorMessage}</p>
+                                </div>
+                            )}
                         </>
                     )}
                     {!editable ? (
