@@ -10,7 +10,7 @@ export const vehiclesSchema = z.object({
 });
 
 export const userDetailsSchema = z.object({
-  id: z.string(),
+  cpnz_id: z.string(),
   email: z.string().email(),
   mobile_phone: z.string(),
   home_phone: z.string(),
