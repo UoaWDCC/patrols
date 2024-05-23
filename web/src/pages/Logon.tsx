@@ -89,7 +89,7 @@ export default function Logon() {
         observerName: userDetails.first_names + " " + userDetails.surname || "",
         observerNumber: userDetails.mobile_phone || "",
         driver: "",
-        vehicle: vehicleDetails.filter((v: any) => v.selected).name,
+        vehicle: vehicleDetails.filter((v: any) => v.selected)[0].name,
         liveryOrSignage: "yes",
         havePoliceRadio: "no",
       };
@@ -106,6 +106,9 @@ export default function Logon() {
         email,
         cpnzID,
         formData: data,
+        driver: membersInPatrol.find(
+          (m) => m.first_names + " " + m.surname === value
+        ),
       });
 
       // Navigates to Loghome if succesfully logged on.
@@ -290,7 +293,7 @@ export default function Logon() {
                   <FormField
                     control={form.control}
                     name="driver"
-                    render={() => (
+                    render={({ field }) => (
                       <FormItem>
                         <FormControl>
                           <Popover open={open} onOpenChange={setOpen}>
