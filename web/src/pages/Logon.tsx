@@ -33,14 +33,8 @@ import useUserData from "../hooks/useUserData";
 export default function Logon() {
   const {
     loading,
-    setLoading,
     currentUserDetails,
-    mobileNumber,
-    callSign,
-    patrolName,
     fullName,
-    policeStation,
-    selectedVehicle,
     currentUserVehicles,
     membersInPatrol,
   } = useUserData();
@@ -62,12 +56,8 @@ export default function Logon() {
   >([]);
 
   const formSchema = z.object({
-    startTime: z.string().refine((value) => value !== "", {
-      message: "Start time is required",
-    }),
-    endTime: z.string().refine((value) => value !== "", {
-      message: "End time is required",
-    }),
+    startTime: z.string(),
+    endTime: z.string(),
     policeStationBase: z.string(),
     cpCallSign: z.string(),
     patrol: z.string(),
@@ -81,23 +71,33 @@ export default function Logon() {
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
-    defaultValues: {
-      startTime: "",
-      endTime: "",
-      policeStationBase: "",
-      cpCallSign: callSign,
-      patrol: patrolName,
-      observerName: fullName,
-      observerNumber: mobileNumber,
-      driver: "",
-      vehicle: selectedVehicle?.name || "",
-      liveryOrSignage: "",
-      havePoliceRadio: "",
+    defaultValues: async () => {
+      const response = await axios.get(
+        `${import.meta.env.VITE_API_URL}/user/getUserDetails`
+      );
+
+      const { userDetails, patrolDetails, vehicleDetails } = response.data;
+      return {
+        startTime: "",
+        endTime: "",
+        policeStationBase: userDetails.police_station.replace(/_/g, " ") || "",
+        cpCallSign: userDetails.call_sign || "",
+        patrol: patrolDetails.name || "",
+        observerName: userDetails.first_names + " " + userDetails.surname || "",
+        observerNumber: userDetails.mobile_phone || "",
+        driver: "",
+        vehicle: vehicleDetails[0].name,
+        liveryOrSignage: "yes",
+        havePoliceRadio: "no",
+      };
     },
+    mode: "onChange",
   });
 
   const onSubmit = async (data: z.infer<typeof formSchema>) => {
     setLoading(true);
+    console.log(data.policeStationBase);
+    console.log(data.cpCallSign);
     try {
       await axios.post(`${import.meta.env.VITE_API_URL}/send-email`, {
         email: "jasonabc0626@gmail.com",
@@ -212,14 +212,11 @@ export default function Logon() {
                 <FormField
                   control={form.control}
                   name="policeStationBase"
-                  render={() => (
+                  render={({ field }) => (
                     <FormItem>
                       <FormLabel>Police Station Base</FormLabel>
                       <FormControl>
-                        <Input
-                          className="w-full"
-                          defaultValue={policeStation}
-                        />
+                        <Input {...field} className="w-full" />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -228,14 +225,11 @@ export default function Logon() {
                 <FormField
                   control={form.control}
                   name="cpCallSign"
-                  render={() => (
+                  render={({ field }) => (
                     <FormItem>
                       <FormLabel>CP Call Sign</FormLabel>
                       <FormControl>
-                        <Input
-                          defaultValue={policeStation}
-                          className="w-full"
-                        />
+                        <Input {...field} className="w-full" />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -244,11 +238,11 @@ export default function Logon() {
                 <FormField
                   control={form.control}
                   name="patrol"
-                  render={() => (
+                  render={({ field }) => (
                     <FormItem>
                       <FormLabel>Patrol</FormLabel>
                       <FormControl>
-                        <Input defaultValue={patrolName} className="w-full" />
+                        <Input {...field} className="w-full" />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -262,11 +256,11 @@ export default function Logon() {
                     <FormField
                       control={form.control}
                       name="observerName"
-                      render={() => (
+                      render={({ field }) => (
                         <FormItem>
                           <FormLabel>Name</FormLabel>
                           <FormControl>
-                            <Input defaultValue={fullName} className="w-full" />
+                            <Input {...field} className="w-full" />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -275,14 +269,11 @@ export default function Logon() {
                     <FormField
                       control={form.control}
                       name="observerNumber"
-                      render={() => (
+                      render={({ field }) => (
                         <FormItem>
                           <FormLabel>Mobile Number</FormLabel>
                           <FormControl>
-                            <Input
-                              defaultValue={mobileNumber}
-                              className="w-full"
-                            />
+                            <Input {...field} className="w-full" />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
