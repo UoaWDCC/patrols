@@ -62,7 +62,7 @@ const ReportObservation = ({
                 <FormItem>
                   <FormLabel>Location</FormLabel>
                   <FormControl>
-                    <Input type="text" {...field} />
+                    <Input type="text" {...field} defaultValue={"a"} />
                   </FormControl>
                 </FormItem>
               )}
@@ -74,7 +74,7 @@ const ReportObservation = ({
                 <FormItem>
                   <FormLabel>Description</FormLabel>
                   <FormControl>
-                    <Input type="textarea" {...field} />
+                    <Input type="textarea" {...field} defaultValue={"a"} />
                   </FormControl>
                 </FormItem>
               )}

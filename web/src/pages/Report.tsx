@@ -7,6 +7,7 @@ import { z } from "zod";
 import { formObservationSchema, reportFormSchema } from "../schemas";
 import { ReportObservation } from "@components/report/ReportObservation";
 import { useState } from "react";
+import ReportFinishDetails from "@components/report/ReportFinishDetails";
 
 export default function Report() {
   const form = useForm<z.infer<typeof reportFormSchema>>({
@@ -17,6 +18,7 @@ export default function Report() {
       weatherCondition: "",
       intel: undefined,
       observations: [],
+      debrief: "",
     },
   });
 
@@ -44,6 +46,7 @@ export default function Report() {
               observationsList={observationsList}
               setObservationsList={setObservationsList}
             />
+            <ReportFinishDetails form={form} />
           </div>
 
           <Button type="submit" className="bg-cpnz-blue-800 mt-16">

@@ -25,13 +25,13 @@ export default function ReportIntel({ form }: ReportIntelProps) {
         name="startOdometer"
         render={({ field }) => (
           <FormItem>
-            <FormLabel>Start Odometer</FormLabel>
+            <FormLabel>Odometer Start KMs</FormLabel>
             <FormControl>
               <Input {...field} type="number" />
             </FormControl>
           </FormItem>
         )}
-      ></FormField>
+      />
     </div>
   );
 }

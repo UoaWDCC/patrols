@@ -65,4 +65,5 @@ export const reportFormSchema = z.object({
   intel: z.any(),
   observations: formObservationSchema,
   endOdometer: z.string(),
+  debrief: z.string(),
 });
