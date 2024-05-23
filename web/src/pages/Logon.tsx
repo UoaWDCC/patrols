@@ -34,6 +34,8 @@ export default function Logon() {
   const {
     loading,
     setLoading,
+    cpnzID,
+    email,
     currentUserDetails,
     fullName,
     currentUserVehicles,
@@ -87,7 +89,7 @@ export default function Logon() {
         observerName: userDetails.first_names + " " + userDetails.surname || "",
         observerNumber: userDetails.mobile_phone || "",
         driver: "",
-        vehicle: vehicleDetails[0].name,
+        vehicle: vehicleDetails.filter((v: any) => v.selected).name,
         liveryOrSignage: "yes",
         havePoliceRadio: "no",
       };
@@ -101,10 +103,10 @@ export default function Logon() {
     console.log(data.cpCallSign);
     try {
       await axios.post(`${import.meta.env.VITE_API_URL}/send-email`, {
-        email: "jasonabc0626@gmail.com",
-        patrolName: data.observerName,
-        patrolID: "10",
-        formData: JSON.stringify(data),
+        recipientEmail: "jasonabc0626@gmail.com",
+        email,
+        cpnzID,
+        formData: data,
       });
 
       // Navigates to Loghome if succesfully logged on.
@@ -427,9 +429,7 @@ export default function Logon() {
                               }}
                             >
                               {currentUserVehicles.map((v) => (
-                                <option key={v.name} value={v.name}>
-                                  {v.name}
-                                </option>
+                                <option key={v.name}>{v.name}</option>
                               ))}
                             </select>
                           </FormControl>
