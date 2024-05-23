@@ -22,7 +22,7 @@ const fetchUserData = async () => {
     const parsedVehicleDetails = vehicleDetailsSchema
       .array()
       .parse(vehicleDetails);
-    console.log('API CALLED');
+    console.log('API CALL');
     return { parsedUserDetails, parsedPatrolDetails, parsedVehicleDetails };
   } catch (error) {
     console.log('Error: ', error);
@@ -30,7 +30,7 @@ const fetchUserData = async () => {
 };
 
 const useUserData = () => {
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState<boolean>(true);
   const [currentUserDetails, setCurrentUserDetails] = useState<UserDetails>();
   const [fullName, setFullName] = useState<string>('');
   const [cpnzID, setCPNZID] = useState<string>('');
@@ -47,10 +47,10 @@ const useUserData = () => {
   );
   const [membersInPatrol, setMembersInPatrol] = useState<UserDetails[]>([]);
 
-  const { data } = useQuery({
+  const { data, refetch } = useQuery({
     queryKey: ['userData'],
     queryFn: fetchUserData,
-    staleTime: 300000,
+    staleTime: 300000, // data become stale after 5 minutes
   });
 
   useEffect(() => {
@@ -112,6 +112,7 @@ const useUserData = () => {
     setSelectedVehicle,
     membersInPatrol,
     setMembersInPatrol,
+    refetch,
   };
 };
 
