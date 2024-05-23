@@ -33,6 +33,7 @@ import useUserData from "../hooks/useUserData";
 export default function Logon() {
   const {
     loading,
+    setLoading,
     currentUserDetails,
     fullName,
     currentUserVehicles,
