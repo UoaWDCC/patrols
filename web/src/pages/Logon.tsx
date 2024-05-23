@@ -13,10 +13,9 @@ import {
   FormMessage,
 } from "@components/ui/form";
 import userIcon from "../assets/images/gorilla.png";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { FaCog } from "react-icons/fa";
 import axios from "axios";
-import { userDetailsSchema, vehicleDetailsSchema } from "../schemas";
 import { Popover } from "@components/ui/popover";
 import { PopoverContent, PopoverTrigger } from "@radix-ui/react-popover";
 import { Check, ChevronsUpDown, Loader2 } from "lucide-react";
@@ -29,72 +28,24 @@ import {
   CommandList,
 } from "@components/ui/command";
 import { cn } from "../lib/utils";
-
-type UserDetails = z.infer<typeof userDetailsSchema>;
-type VehicleDetails = z.infer<typeof vehicleDetailsSchema>;
+import useUserData from "../hooks/useUserData";
 
 export default function Logon() {
-  const [loading, setLoading] = useState(true);
-  const [currentUserDetails, setCurrentUserDetails] = useState<UserDetails>();
-  const [mobileNumber, setMobileNumber] = useState<string>("");
-  const [callSign, setCallSign] = useState<string>("");
-  const [patrolName, setPatrolName] = useState<string>("");
-  const [fullName, setFullName] = useState<string>("");
-  const [policeStation, setPoliceStation] = useState<string>("");
-  const [currentUserVehicles, setCurrentUserVehicles] = useState<
-    VehicleDetails[]
-  >([]);
-  const [selectedVehicle, setSelectedVehicle] = useState<VehicleDetails | null>(
-    null
-  );
-  const [membersInPatrol, setMembersInPatrol] = useState<UserDetails[]>([]);
+  const {
+    loading,
+    setLoading,
+    cpnzID,
+    email,
+    currentUserDetails,
+    fullName,
+    currentUserVehicles,
+    membersInPatrol,
+  } = useUserData();
+
   const [open, setOpen] = useState(false);
 
   // driverName
   const [value, setValue] = useState<string>("");
-
-  useEffect(() => {
-    const fetchUserData = async () => {
-      try {
-        const response = await axios.get(
-          `${import.meta.env.VITE_API_URL}/user/getUserDetails`
-        );
-
-        const { userDetails, patrolDetails, vehicleDetails } = response.data;
-        const parsedUserDetails = userDetailsSchema.parse(userDetails);
-        const parsedVehicleDetails = vehicleDetailsSchema
-          .array()
-          .parse(vehicleDetails);
-        setCurrentUserDetails(parsedUserDetails);
-        setCallSign(userDetails.call_sign);
-        setPatrolName(patrolDetails.name);
-        setPoliceStation(userDetails.police_station.replace(/_/g, " ")); // Replace enum underscores with space
-        setMobileNumber(userDetails.mobile_phone);
-        setFullName(`${userDetails.first_names} ${userDetails.surname}`);
-
-        if (parsedVehicleDetails.length === 0) {
-          setSelectedVehicle(null);
-          setCurrentUserVehicles([]);
-        } else {
-          setSelectedVehicle(
-            parsedVehicleDetails.find((vehicle) => vehicle.selected) || null
-          );
-          const reorderedVehicles = [
-            ...parsedVehicleDetails.filter((vehicle) => vehicle.selected),
-            ...parsedVehicleDetails.filter((vehicle) => !vehicle.selected),
-          ];
-          setCurrentUserVehicles(reorderedVehicles);
-        }
-        setMembersInPatrol(patrolDetails.members_dev);
-
-        setLoading(false);
-      } catch (e) {
-        console.log(e);
-      }
-    };
-
-    fetchUserData();
-  }, []);
 
   const membersFullName = membersInPatrol
     .filter((m) => m.cpnz_id !== currentUserDetails?.cpnz_id)
@@ -108,12 +59,8 @@ export default function Logon() {
   >([]);
 
   const formSchema = z.object({
-    startTime: z.string().refine((value) => value !== "", {
-      message: "Start time is required",
-    }),
-    endTime: z.string().refine((value) => value !== "", {
-      message: "End time is required",
-    }),
+    startTime: z.string().min(1),
+    endTime: z.string().min(1),
     policeStationBase: z.string(),
     cpCallSign: z.string(),
     patrol: z.string(),
@@ -127,29 +74,38 @@ export default function Logon() {
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
-    defaultValues: {
-      startTime: "",
-      endTime: "",
-      policeStationBase: "",
-      cpCallSign: callSign,
-      patrol: patrolName,
-      observerName: fullName,
-      observerNumber: mobileNumber,
-      driver: "",
-      vehicle: selectedVehicle?.name || "",
-      liveryOrSignage: "",
-      havePoliceRadio: "",
+    defaultValues: async () => {
+      const response = await axios.get(
+        `${import.meta.env.VITE_API_URL}/user/getUserDetails`
+      );
+
+      const { userDetails, patrolDetails, vehicleDetails } = response.data;
+      return {
+        startTime: "",
+        endTime: "",
+        policeStationBase: userDetails.police_station.replace(/_/g, " ") || "",
+        cpCallSign: userDetails.call_sign || "",
+        patrol: patrolDetails.name || "",
+        observerName: userDetails.first_names + " " + userDetails.surname || "",
+        observerNumber: userDetails.mobile_phone || "",
+        driver: "",
+        vehicle: vehicleDetails.filter((v: any) => v.selected).name,
+        liveryOrSignage: "yes",
+        havePoliceRadio: "no",
+      };
     },
+    mode: "onChange",
   });
 
   const onSubmit = async (data: z.infer<typeof formSchema>) => {
     setLoading(true);
+
     try {
       await axios.post(`${import.meta.env.VITE_API_URL}/send-email`, {
-        email: "jasonabc0626@gmail.com",
-        patrolName: data.observerName,
-        patrolID: "10",
-        formData: JSON.stringify(data),
+        recipientEmail: "jasonabc0626@gmail.com",
+        email,
+        cpnzID,
+        formData: data,
       });
 
       // Navigates to Loghome if succesfully logged on.
@@ -258,14 +214,11 @@ export default function Logon() {
                 <FormField
                   control={form.control}
                   name="policeStationBase"
-                  render={() => (
+                  render={({ field }) => (
                     <FormItem>
                       <FormLabel>Police Station Base</FormLabel>
                       <FormControl>
-                        <Input
-                          className="w-full"
-                          defaultValue={policeStation}
-                        />
+                        <Input {...field} className="w-full" />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -274,14 +227,11 @@ export default function Logon() {
                 <FormField
                   control={form.control}
                   name="cpCallSign"
-                  render={() => (
+                  render={({ field }) => (
                     <FormItem>
                       <FormLabel>CP Call Sign</FormLabel>
                       <FormControl>
-                        <Input
-                          defaultValue={policeStation}
-                          className="w-full"
-                        />
+                        <Input {...field} className="w-full" />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -290,11 +240,11 @@ export default function Logon() {
                 <FormField
                   control={form.control}
                   name="patrol"
-                  render={() => (
+                  render={({ field }) => (
                     <FormItem>
                       <FormLabel>Patrol</FormLabel>
                       <FormControl>
-                        <Input defaultValue={patrolName} className="w-full" />
+                        <Input {...field} className="w-full" />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -308,11 +258,11 @@ export default function Logon() {
                     <FormField
                       control={form.control}
                       name="observerName"
-                      render={() => (
+                      render={({ field }) => (
                         <FormItem>
                           <FormLabel>Name</FormLabel>
                           <FormControl>
-                            <Input defaultValue={fullName} className="w-full" />
+                            <Input {...field} className="w-full" />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -321,14 +271,11 @@ export default function Logon() {
                     <FormField
                       control={form.control}
                       name="observerNumber"
-                      render={() => (
+                      render={({ field }) => (
                         <FormItem>
                           <FormLabel>Mobile Number</FormLabel>
                           <FormControl>
-                            <Input
-                              defaultValue={mobileNumber}
-                              className="w-full"
-                            />
+                            <Input {...field} className="w-full" />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -481,9 +428,7 @@ export default function Logon() {
                               }}
                             >
                               {currentUserVehicles.map((v) => (
-                                <option key={v.name} value={v.name}>
-                                  {v.name}
-                                </option>
+                                <option key={v.name}>{v.name}</option>
                               ))}
                             </select>
                           </FormControl>
