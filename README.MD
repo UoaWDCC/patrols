@@ -1,5 +1,5 @@
 # Community Patrols NZ
-With the crime rate on the rise in New Zealand, regional committees like the Mt Roskill and Epsom committees conduct their patrols and reports independently, each using different processes. This makes it tedious for the main office to collect, process, and analyse information and statistics. Therefore, CPNZ seeks a universal solution to be used by all committees across New Zealand to simplify this process.
+With the crime rate on the rise in New Zealand, regional committees like the Mt Roskill and Epsom committees conduct their patrols and reports independently, each using different processes. This makes it tedious for the main office to collect, process, and analyse information and statistics. Therefore, CPNZ seeks a universal solution to be used by all committees across New Zealand to simplify the reporting procedure of patrollers and admin work. 
 
 ## Team
 
