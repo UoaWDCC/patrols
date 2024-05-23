@@ -59,8 +59,8 @@ export default function Logon() {
   >([]);
 
   const formSchema = z.object({
-    startTime: z.string(),
-    endTime: z.string(),
+    startTime: z.string().min(1),
+    endTime: z.string().min(1),
     policeStationBase: z.string(),
     cpCallSign: z.string(),
     patrol: z.string(),
@@ -99,8 +99,7 @@ export default function Logon() {
 
   const onSubmit = async (data: z.infer<typeof formSchema>) => {
     setLoading(true);
-    console.log(data.policeStationBase);
-    console.log(data.cpCallSign);
+
     try {
       await axios.post(`${import.meta.env.VITE_API_URL}/send-email`, {
         recipientEmail: "jasonabc0626@gmail.com",
