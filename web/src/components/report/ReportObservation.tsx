@@ -1,64 +1,127 @@
-export default function ReportObservation() {
-  return (
-    <div className="text-center min-h-screen relative bg-[#FFFFFF] max-w-3xl mx-auto">
-      <div className="max-w-800 mx-auto px-4 my-8">
-        <div className="bg-[#E9EFF2] p-4 rounded-lg shadow-md mb-6">
-          <h2 className="text-lg font-semibold mb-4">OBSERVATION</h2>
-          <div className="mb-4">
-            <button className="bg-[#334D92] px-4 py-2 rounded-lg text-white font-semibold hover:bg-[#243B73]">
-              + Add Observation
-            </button>
-          </div>
-          <div className="mb-4">
-            <div className="mb-4">
-              <label className="block text-left font-semibold mb-1">
-                Location
-              </label>
-              <input
-                type="text"
-                className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                placeholder="Type your message here"
-              />
-            </div>
+import { Button } from "@components/ui/button";
+import {
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+} from "@components/ui/form";
+import { Input } from "@components/ui/input";
+import { z } from "zod";
+import { formObservationSchema } from "../../schemas";
+import { useEffect } from "react";
 
-            <div className="mb-4">
-              <label className="block text-left font-semibold mb-1">
-                Time Observation Ended
-              </label>
-              <input
-                type="text"
-                className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                placeholder="Type your message here"
-              />
-            </div>
-            <div className="mb-4">
-              <h4 className="text-left font-semibold mb-2">
-                CPNZ Incident Statistics*
-              </h4>
-              <div className="flex items-center mb-2">
-                <input type="checkbox" className="mr-2" />
-                <label>Vehicle</label>
-              </div>
-              <div className="flex items-center mb-2">
-                <input type="checkbox" className="mr-2" />
-                <label>Property</label>
-              </div>
-              <div className="flex items-center mb-2">
-                <input type="checkbox" className="mr-2" />
-                <label>People</label>
-              </div>
-              <div className="flex items-center mb-2">
-                <input type="checkbox" className="mr-2" />
-                <label>Wilful Damage</label>
-              </div>
-              <div className="flex items-center">
-                <input type="checkbox" className="mr-2" />
-                <label>Nothing to Report (NTR)</label>
-              </div>
-            </div>
+interface ReportObservationProps {
+  form: any;
+  observationsList: z.infer<typeof formObservationSchema>;
+  setObservationsList: React.Dispatch<
+    React.SetStateAction<z.infer<typeof formObservationSchema>>
+  >;
+}
+
+type Observation = z.infer<typeof formObservationSchema>[number];
+
+enum type {
+  observation = "observation",
+  intel = "intel",
+}
+
+const addObservation = (
+  type: type,
+  observationsList: Observation[],
+  setObservationsList: React.Dispatch<React.SetStateAction<Observation[]>>
+) => {
+  const date = new Date();
+  const newObservation: Observation = {
+    location: "",
+    description: "",
+    time: date,
+    category: "",
+    type: type,
+    displayed: true,
+  };
+  setObservationsList([...observationsList, newObservation]);
+};
+
+const ReportObservation = ({
+  form,
+  observationsList,
+  setObservationsList,
+}: ReportObservationProps) => {
+  useEffect(() => {
+    console.log(observationsList);
+  }, [observationsList]);
+
+  return (
+    <div className="mt-8">
+      <div className="flex flex-col gap-4">
+        {observationsList.map((observation, i) => (
+          <div
+            className="flex gap-4 items-center"
+            key={observation.location + i}
+          >
+            <div className="mt-8">Observation {i}</div>
+            <FormField
+              control={form.control}
+              name={`location${i}`}
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Location</FormLabel>
+                  <FormControl>
+                    <Input type="text" {...field} />
+                  </FormControl>
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name={`description${i}`}
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Description</FormLabel>
+                  <FormControl>
+                    <Input type="textarea" {...field} />
+                  </FormControl>
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name={`time${i}`}
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Time</FormLabel>
+                  <FormControl>
+                    <Input
+                      type="textarea"
+                      {...field}
+                      value={
+                        observation.time.getHours() +
+                        ":" +
+                        observation.time.getMinutes()
+                      }
+                    />
+                  </FormControl>
+                </FormItem>
+              )}
+            />
           </div>
-        </div>
+        ))}
       </div>
+
+      <Button
+        className="mt-6"
+        onClick={() =>
+          addObservation(
+            type.observation,
+            observationsList,
+            setObservationsList
+          )
+        }
+      >
+        Add observation
+      </Button>
     </div>
   );
-}
+};
+
+export { ReportObservation };

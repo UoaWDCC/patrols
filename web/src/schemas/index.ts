@@ -42,8 +42,27 @@ export const formSchema = z.object({
   cpnzID: z.string(),
   password: z
     .string()
-    .min(6, { message: 'Password must be at least 6 characters' }),
+    .min(6, { message: "Password must be at least 6 characters" }),
   confirmPassword: z
     .string()
-    .min(6, { message: 'Password must be at least 6 characters' }),
+    .min(6, { message: "Password must be at least 6 characters" }),
+});
+
+export const formObservationSchema = z.array(
+  z.object({
+    location: z.string(),
+    description: z.string(),
+    time: z.date(),
+    category: z.string(),
+    type: z.enum(["observation", "intel"]),
+    displayed: z.boolean(),
+  })
+);
+
+export const reportFormSchema = z.object({
+  startOdometer: z.number(),
+  weatherCondition: z.string(),
+  intel: z.any(),
+  observations: z.array(formObservationSchema),
+  endOdometer: z.number(),
 });
