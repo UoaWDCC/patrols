@@ -57,7 +57,7 @@ const ReportObservation = ({
             <div className="mt-8">Observation {i}</div>
             <FormField
               control={form.control}
-              name={`location${i}`}
+              name={`location`}
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Location</FormLabel>
@@ -69,7 +69,7 @@ const ReportObservation = ({
             />
             <FormField
               control={form.control}
-              name={`description${i}`}
+              name={`description`}
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Description</FormLabel>
