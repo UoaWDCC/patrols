@@ -2,7 +2,7 @@ import { useNavigate } from "react-router-dom";
 import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
 // import { z } from "zod";
 
-export default function ReportForm() {
+export default function ReportVehicle() {
   const navigate = useNavigate();
 
   // Function to navigate to the next form page
