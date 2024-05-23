@@ -1,33 +1,37 @@
-// import {
-//   FormControl,
-//   FormField,
-//   FormItem,
-//   FormLabel,
-// } from "@components/ui/form";
-// import { Input } from "@components/ui/input";
+import {
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+} from "@components/ui/form";
+import { Input } from "@components/ui/input";
 
-export default function ReportIntel() {
+interface ReportIntelProps {
+  form: any;
+}
+
+export default function ReportIntel({ form }: ReportIntelProps) {
   return (
     <div className="relative bg-[#FFFFFF] max-w-3xl mx-auto">
       <h2 className="text-lg font-semibold py-4 text-center">INTEL</h2>
-      <p className="text-left">
+      <p className="text-left mb-6">
         Message:{" "}
         {
           "Temporarily generated dummmy intel message but this should be a message that the chairman / secretary / police liasion can set for a specific patrol to will show for all patrollers in that patrol"
         }
       </p>
-      {/* <FormField
+      <FormField
         control={form.control}
-        name="intel"
+        name="startOdometer"
         render={({ field }) => (
           <FormItem>
-            <FormLabel>intel</FormLabel>
+            <FormLabel>Start Odometer</FormLabel>
             <FormControl>
-              <Input type="text" {...field} />
+              <Input {...field} type="number" />
             </FormControl>
           </FormItem>
         )}
-      ></FormField> */}
+      ></FormField>
     </div>
   );
 }

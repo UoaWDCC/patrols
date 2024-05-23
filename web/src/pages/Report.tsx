@@ -12,8 +12,8 @@ export default function Report() {
   const form = useForm<z.infer<typeof reportFormSchema>>({
     resolver: zodResolver(reportFormSchema),
     defaultValues: {
-      startOdometer: 0,
-      endOdometer: 0,
+      startOdometer: "",
+      endOdometer: "",
       weatherCondition: "",
       intel: undefined,
       observations: [],
@@ -24,7 +24,10 @@ export default function Report() {
     z.infer<typeof formObservationSchema>
   >([]);
 
-  const onSubmit = () => {};
+  const onSubmit = (data: z.infer<typeof reportFormSchema>) => {
+    data.observations = observationsList;
+    console.log(data);
+  };
 
   return (
     <div className="relative bg-[#FFFFFF] max-w-3xl mx-auto">
@@ -35,16 +38,19 @@ export default function Report() {
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)}>
           <div>
-            <ReportIntel />
+            <ReportIntel form={form} />
             <ReportObservation
               form={form}
               observationsList={observationsList}
               setObservationsList={setObservationsList}
             />
           </div>
+
+          <Button type="submit" className="bg-cpnz-blue-800 mt-16">
+            Submit
+          </Button>
         </form>
       </Form>
-      {/* <Button className="bg-cpnz-blue-800">Submit</Button> */}
     </div>
   );
 }

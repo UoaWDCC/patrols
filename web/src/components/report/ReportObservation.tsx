@@ -8,7 +8,6 @@ import {
 import { Input } from "@components/ui/input";
 import { z } from "zod";
 import { formObservationSchema } from "../../schemas";
-import { useEffect } from "react";
 
 interface ReportObservationProps {
   form: any;
@@ -47,10 +46,6 @@ const ReportObservation = ({
   observationsList,
   setObservationsList,
 }: ReportObservationProps) => {
-  useEffect(() => {
-    console.log(observationsList);
-  }, [observationsList]);
-
   return (
     <div className="mt-8">
       <div className="flex flex-col gap-4">

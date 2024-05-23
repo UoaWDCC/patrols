@@ -60,9 +60,9 @@ export const formObservationSchema = z.array(
 );
 
 export const reportFormSchema = z.object({
-  startOdometer: z.number(),
+  startOdometer: z.string(),
   weatherCondition: z.string(),
   intel: z.any(),
-  observations: z.array(formObservationSchema),
-  endOdometer: z.number(),
+  observations: formObservationSchema,
+  endOdometer: z.string(),
 });
