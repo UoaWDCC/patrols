@@ -50,20 +50,20 @@ export const formSchema = z.object({
 
 export const formObservationSchema = z.array(
   z.object({
-    location: z.string(),
-    description: z.string(),
-    time: z.date(),
-    category: z.string(),
+    location: z.string().min(1),
+    description: z.string().min(1),
+    time: z.string().min(1),
+    category: z.string().min(1),
     type: z.enum(["observation", "intel"]),
     displayed: z.boolean(),
   })
 );
 
 export const reportFormSchema = z.object({
-  startOdometer: z.string(),
+  startOdometer: z.string().min(3, "Odometer must be at least 3 digits"),
   weatherCondition: z.string(),
   intel: z.any(),
   observations: formObservationSchema,
-  endOdometer: z.string(),
+  endOdometer: z.string().min(3, "Odometer must be at least 3 digits"),
   debrief: z.string(),
 });

@@ -7,14 +7,16 @@ import {
 } from "@components/ui/form";
 import { Input } from "@components/ui/input";
 import { z } from "zod";
-import { formObservationSchema } from "../../schemas";
+import { formObservationSchema, reportFormSchema } from "../../schemas";
+import { UseFormReturn } from "react-hook-form";
+import { X } from "lucide-react";
 
 interface ReportObservationProps {
-  form: any;
-  observationsList: z.infer<typeof formObservationSchema>;
-  setObservationsList: React.Dispatch<
-    React.SetStateAction<z.infer<typeof formObservationSchema>>
-  >;
+  form: UseFormReturn<z.infer<typeof reportFormSchema>>;
+  fields: Observation[];
+  setObservationsList: (value: z.infer<typeof formObservationSchema>) => void;
+  append: any;
+  remove: any;
 }
 
 type Observation = z.infer<typeof formObservationSchema>[number];
@@ -24,32 +26,67 @@ enum type {
   intel = "intel",
 }
 
+const observationCategories = [
+  "",
+  "vehicle",
+  "people",
+  "property",
+  "willful damage",
+  "other",
+];
+
+const deleteObservation = (
+  i: number,
+  fields: Observation[],
+  setFields: any,
+  remove: any
+) => {
+  const updatedFields = [...fields]; // Create a copy of the fields array
+  updatedFields.splice(i, 1); // Delete the observation at index i
+  remove(i);
+  setFields(updatedFields); // Update the state with the updated fields array
+  localStorage.setItem("observations", JSON.stringify(updatedFields)); // Update localStorage as well
+};
+
 const addObservation = (
   type: type,
-  observationsList: Observation[],
-  setObservationsList: React.Dispatch<React.SetStateAction<Observation[]>>
+  fields: Observation[],
+  setFields: any,
+  append: any
 ) => {
   const date = new Date();
+  let parsedDate = "";
+  if (date.getMinutes() < 10) {
+    parsedDate = date.getHours() + ":0" + date.getMinutes();
+  } else {
+    parsedDate = date.getHours() + ":" + date.getMinutes();
+  }
   const newObservation: Observation = {
     location: "",
     description: "",
-    time: date,
+    time: parsedDate,
     category: "",
     type: type,
     displayed: true,
   };
-  setObservationsList([...observationsList, newObservation]);
+
+  const updatedFields = [...fields, newObservation];
+  setFields(updatedFields);
+  append(newObservation);
+  localStorage.setItem("observations", JSON.stringify(updatedFields)); // Update localStorage as well
 };
 
 const ReportObservation = ({
   form,
-  observationsList,
+  fields,
   setObservationsList,
+  append,
+  remove,
 }: ReportObservationProps) => {
   return (
     <div className="mt-8">
       <div className="flex flex-col gap-4">
-        {observationsList.map((observation, i) => (
+        {fields.map((observation: any, i: number) => (
           <div
             className="flex gap-4 items-center"
             key={observation.location + i}
@@ -57,48 +94,108 @@ const ReportObservation = ({
             <div className="mt-8">Observation {i}</div>
             <FormField
               control={form.control}
-              name={`location+${i}`}
+              name={`observations.${i}.location`}
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Location</FormLabel>
                   <FormControl>
-                    <Input type="text" {...field} defaultValue={""} />
-                  </FormControl>
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name={`description+${i}`}
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Description</FormLabel>
-                  <FormControl>
-                    <Input type="textarea" {...field} defaultValue={""} />
-                  </FormControl>
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name={`time${i}`}
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Time</FormLabel>
-                  <FormControl>
                     <Input
-                      type="textarea"
+                      type="text"
                       {...field}
-                      value={
-                        observation.time.getHours() +
-                        ":" +
-                        observation.time.getMinutes()
-                      }
+                      key={observation.id}
+                      onChange={(event) => {
+                        const value = event.target.value;
+                        fields[i].location = value;
+                        form.setValue(`observations.${i}.location`, value);
+                        localStorage.setItem(
+                          "observations",
+                          JSON.stringify(fields)
+                        );
+                      }}
                     />
                   </FormControl>
                 </FormItem>
               )}
             />
+            <FormField
+              control={form.control}
+              name={`observations.${i}.description`}
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Description</FormLabel>
+                  <FormControl>
+                    <Input
+                      type="textarea"
+                      {...field}
+                      onChange={(event) => {
+                        const value = event.target.value;
+                        fields[i].description = value;
+                        form.setValue(`observations.${i}.description`, value);
+                        localStorage.setItem(
+                          "observations",
+                          JSON.stringify(fields)
+                        );
+                      }}
+                    />
+                  </FormControl>
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name={`observations.${i}.time`}
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Time</FormLabel>
+                  <FormControl>
+                    <Input
+                      type="text"
+                      {...field}
+                      value={fields[i]?.time || ""}
+                    />
+                  </FormControl>
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name={`observations.${i}.category`}
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Category</FormLabel>
+                  <FormControl>
+                    <select
+                      {...field}
+                      className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      onChange={(e) => {
+                        const value = e.target.value;
+                        fields[i].category = value;
+                        form.setValue(`observations.${i}.category`, value);
+                        localStorage.setItem(
+                          "observations",
+                          JSON.stringify(fields)
+                        );
+                      }}
+                    >
+                      {observationCategories.map((category) => (
+                        <option key={category + i} value={category}>
+                          {category}
+                        </option>
+                      ))}
+                    </select>
+                  </FormControl>
+                </FormItem>
+              )}
+            />
+            <Button
+              variant={"destructive"}
+              onClick={() =>
+                deleteObservation(i, fields, setObservationsList, remove)
+              }
+              type="button"
+            >
+              <X size={16} />
+            </Button>
           </div>
         ))}
       </div>
@@ -106,12 +203,9 @@ const ReportObservation = ({
       <Button
         className="mt-6"
         onClick={() =>
-          addObservation(
-            type.observation,
-            observationsList,
-            setObservationsList
-          )
+          addObservation(type.observation, fields, setObservationsList, append)
         }
+        type="button"
       >
         Add observation
       </Button>
