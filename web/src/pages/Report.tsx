@@ -57,8 +57,6 @@ export default function Report() {
     name: "observations",
   });
 
-  // console.log(fields);
-
   const onSubmit = (data: z.infer<typeof reportFormSchema>) => {
     setOpenDialog(true);
 

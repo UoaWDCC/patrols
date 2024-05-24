@@ -74,7 +74,6 @@ const addObservation = (
   setFields(updatedFields);
   append(newObservation);
   localStorage.setItem("observations", JSON.stringify(updatedFields)); // Update localStorage as well
-  console.log(fields);
 };
 
 const ReportObservation = ({
@@ -112,7 +111,6 @@ const ReportObservation = ({
                           "observations",
                           JSON.stringify(fields)
                         );
-                        console.log(localStorage.getItem("observations"));
                       }}
                     />
                   </FormControl>
