@@ -15,8 +15,8 @@ import {
   DialogContent,
   DialogHeader,
   DialogTrigger,
+  DialogDescription,
 } from "@components/ui/dialog";
-import { DialogDescription } from "@radix-ui/react-dialog";
 
 export default function Report() {
   const navigate = useNavigate();
@@ -31,26 +31,39 @@ export default function Report() {
   const [startOdometer, setStartOdometer] = useState<string>(
     localStorage.getItem("startOdometer") || ""
   );
+  const [endOdometer, setEndOdometer] = useState<string>(
+    localStorage.getItem("endOdometer") || ""
+  );
+  const [debrief, setDebrief] = useState<string>(
+    localStorage.getItem("debrief") || ""
+  );
+
+  const [openDialog, setOpenDialog] = useState<boolean>(false);
 
   const form = useForm<z.infer<typeof reportFormSchema>>({
     resolver: zodResolver(reportFormSchema),
     defaultValues: {
-      startOdometer: startOdometer || "",
-      endOdometer: "",
+      startOdometer: startOdometer,
+      endOdometer: endOdometer,
       weatherCondition: "",
       intel: undefined,
       observations: observationsList || [],
-      debrief: "",
+      debrief: debrief,
     },
   });
 
-  const { fields } = useFieldArray({
+  const { fields, append, remove } = useFieldArray({
     control: form.control,
     name: "observations",
   });
 
   const onSubmit = (data: z.infer<typeof reportFormSchema>) => {
-    data.observations = observationsList;
+    setOpenDialog(true);
+
+    localStorage.removeItem("observations");
+    localStorage.removeItem("startOdometer");
+    localStorage.removeItem("endOdometer");
+    localStorage.removeItem("debrief");
     console.log(data);
   };
 
@@ -68,18 +81,24 @@ export default function Report() {
               form={form}
               fields={fields}
               observationsList={observationsList}
+              setObservationsList={setObservationsList}
+              append={append}
+              remove={remove}
             />
-            <ReportFinishDetails form={form} />
+            <ReportFinishDetails
+              form={form}
+              setDebrief={setDebrief}
+              setEndOdometer={setEndOdometer}
+            />
           </div>
 
           <div className="flex justify-between mt-16 pb-12">
             <Button variant={"outline"} onClick={() => navigate(-1)}>
               <ChevronLeft />
             </Button>
-            <Dialog>
-              <DialogTrigger asChild>
-                <Button className="bg-cpnz-blue-800">Submit</Button>
-              </DialogTrigger>
+
+            <Dialog open={openDialog} onOpenChange={setOpenDialog}>
+              <DialogTrigger></DialogTrigger>
               <DialogContent className="text-center flex flex-col gap-24 p-12">
                 <DialogHeader className="text-lg text-center font-semibold">
                   Please double check your information because submitting
@@ -94,6 +113,9 @@ export default function Report() {
                 </DialogDescription>
               </DialogContent>
             </Dialog>
+            <Button className="bg-cpnz-blue-800" type="submit">
+              Submit
+            </Button>
           </div>
         </form>
       </Form>
