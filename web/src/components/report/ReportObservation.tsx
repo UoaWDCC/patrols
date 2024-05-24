@@ -15,6 +15,9 @@ interface ReportObservationProps {
   form: UseFormReturn<z.infer<typeof reportFormSchema>>;
   fields: Observation[];
   observationsList: z.infer<typeof formObservationSchema>;
+  setObservationsList: (value: z.infer<typeof formObservationSchema>) => void;
+  append: any;
+  remove: any;
 }
 
 type Observation = z.infer<typeof formObservationSchema>[number];
@@ -25,16 +28,34 @@ enum type {
 }
 
 const observationCategories = [
+  "",
   "vehicle",
   "people",
   "property",
   "willful damage",
   "other",
-  "",
 ];
 
-const addObservation = (type: type, fields: Observation[]) => {
-  let date = new Date();
+const deleteObservation = (
+  i: number,
+  fields: Observation[],
+  setFields: any,
+  remove: any
+) => {
+  const updatedFields = [...fields]; // Create a copy of the fields array
+  updatedFields.splice(i, 1); // Delete the observation at index i
+  remove({ index: i });
+  setFields(updatedFields); // Update the state with the updated fields array
+  localStorage.setItem("observations", JSON.stringify(updatedFields)); // Update localStorage as well
+};
+
+const addObservation = (
+  type: type,
+  fields: Observation[],
+  setFields: any,
+  append: any
+) => {
+  const date = new Date();
   let parsedDate = "";
   if (date.getMinutes() < 10) {
     parsedDate = date.getHours() + ":0" + date.getMinutes();
@@ -49,19 +70,20 @@ const addObservation = (type: type, fields: Observation[]) => {
     type: type,
     displayed: true,
   };
-  fields.push(newObservation);
-  localStorage.setItem("observations", JSON.stringify(fields));
-};
 
-const deleteObservation = (i: number, fields: Observation[]) => {
-  fields.splice(i, 1);
-  localStorage.setItem("observations", JSON.stringify(fields));
+  const updatedFields = [...fields, newObservation]; // Add the new observation to the fields array
+  setFields(updatedFields); // Update the state with the updated fields array
+  append(newObservation);
+  localStorage.setItem("observations", JSON.stringify(updatedFields)); // Update localStorage as well
 };
 
 const ReportObservation = ({
   form,
   fields,
   observationsList,
+  setObservationsList,
+  append,
+  remove,
 }: ReportObservationProps) => {
   return (
     <div className="mt-8">
@@ -139,14 +161,7 @@ const ReportObservation = ({
                           <Input
                             type="text"
                             {...field}
-                            onChange={(event) => {
-                              const value = event.target.value;
-                              form.setValue(`observations.${i}.time`, value);
-                              localStorage.setItem(
-                                "observations",
-                                JSON.stringify(fields)
-                              );
-                            }}
+                            value={fields[i]?.time || ""}
                           />
                         </FormControl>
                       </FormItem>
@@ -187,7 +202,15 @@ const ReportObservation = ({
                   />
                   <Button
                     variant={"destructive"}
-                    onClick={() => deleteObservation(i, fields)}
+                    onClick={() =>
+                      deleteObservation(
+                        i,
+                        observationsList,
+                        setObservationsList,
+                        remove
+                      )
+                    }
+                    type="button"
                   >
                     <X size={16} />
                   </Button>
@@ -202,7 +225,15 @@ const ReportObservation = ({
 
       <Button
         className="mt-6"
-        onClick={() => addObservation(type.observation, observationsList)}
+        onClick={() =>
+          addObservation(
+            type.observation,
+            observationsList,
+            setObservationsList,
+            append
+          )
+        }
+        type="button"
       >
         Add observation
       </Button>

@@ -12,9 +12,15 @@ import { reportFormSchema } from "../../schemas";
 
 interface ReportFinishProps {
   form: UseFormReturn<z.infer<typeof reportFormSchema>>;
+  setDebrief: (value: string) => void;
+  setEndOdometer: (value: string) => void;
 }
 
-export default function ReportFinishDetails({ form }: ReportFinishProps) {
+export default function ReportFinishDetails({
+  form,
+  setDebrief,
+  setEndOdometer,
+}: ReportFinishProps) {
   return (
     <div className="mt-12">
       <div className="relative bg-[#FFFFFF] max-w-3xl mx-auto">
@@ -29,7 +35,16 @@ export default function ReportFinishDetails({ form }: ReportFinishProps) {
               <FormItem>
                 <FormLabel>Odometer Finish KMs</FormLabel>
                 <FormControl>
-                  <Input {...field} type="number" />
+                  <Input
+                    {...field}
+                    type="number"
+                    onChange={(event) => {
+                      const value = event.target.value;
+                      setEndOdometer(value);
+                      localStorage.setItem("endOdometer", value);
+                      form.setValue("endOdometer", value);
+                    }}
+                  />
                 </FormControl>
               </FormItem>
             )}
@@ -44,7 +59,15 @@ export default function ReportFinishDetails({ form }: ReportFinishProps) {
                   Patrol Leader)
                 </FormLabel>
                 <FormControl>
-                  <Textarea {...field} />
+                  <Textarea
+                    {...field}
+                    onChange={(event) => {
+                      const value = event.target.value;
+                      setDebrief(value);
+                      localStorage.setItem("debrief", value);
+                      form.setValue("debrief", value);
+                    }}
+                  />
                 </FormControl>
               </FormItem>
             )}
