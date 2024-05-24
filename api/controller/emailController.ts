@@ -22,12 +22,25 @@ const formSchema = z.object({
   havePoliceRadio: z.string(),
 });
 
+export const userDetailsSchema = z.object({
+  cpnz_id: z.string(),
+  email: z.string().email(),
+  first_names: z.string(),
+  surname: z.string(),
+  mobile_phone: z.string(),
+  home_phone: z.string(),
+  call_sign: z.string(),
+  police_station: z.string(),
+  patrol_id: z.string(),
+});
+
 export const sendEmail = async (req: Request, res: Response) => {
   const emailSchema = z.object({
     email: z.string(),
     recipientEmail: z.string(),
     cpnzID: z.string(),
     formData: formSchema,
+    driver: userDetailsSchema,
   });
 
   const parseResult = emailSchema.safeParse(req.body);
@@ -41,6 +54,7 @@ export const sendEmail = async (req: Request, res: Response) => {
     recipientEmail,
     cpnzID,
     formData,
+    driver,
   }: z.infer<typeof emailSchema> = parseResult.data;
 
   // might be easier if frontend just need to pass a patrol id, all other info availiable in auth session
@@ -72,18 +86,29 @@ export const sendEmail = async (req: Request, res: Response) => {
       html: `
       <div style="font-family: Arial, sans-serif; line-height: 1.8;">
     <p style="font-size: 1.2em; font-weight: bold;">
-      ${formData.observerName} requests to log on a shift with the following details:
+      ${
+        formData.observerName
+      } requests to log on a shift with the following details:
     </p>
     <p>
-      <strong>Start Time:</strong> <span style="font-size: 1.1em; color: #333;">${formData.startTime}</span> <br>
-      <strong>End Time:</strong> <span style="font-size: 1.1em; color: #333;">${formData.endTime}</span> <br>
+      <strong>Start Time:</strong> <span style="font-size: 1.1em; color: #333;">${
+        formData.startTime
+      }</span> <br>
+      <strong>End Time:</strong> <span style="font-size: 1.1em; color: #333;">${
+        formData.endTime
+      }</span> <br>
       <strong>CPNZ ID:</strong> ${formData.cpCallSign} <br>
       <strong>Name:</strong> ${formData.observerName} <br>
       <strong>Mobile Number:</strong> ${formData.observerNumber} <br>
       <strong>Email:</strong> ${email} <br>
       <strong>Police Station Base:</strong> ${formData.policeStationBase} <br>
       <strong>Patrol:</strong> ${formData.patrol} <br>
-      <strong>Driver:</strong> ${formData.driver} <br>
+      <strong>Driver Name:</strong> ${
+        driver.first_names + " " + driver.surname
+      } <br>
+      <strong>Driver Number:</strong> ${
+        driver.mobile_phone ? driver.mobile_phone : driver.home_phone
+      } <br>
       <strong>Vehicle:</strong> ${formData.vehicle} <br>
       <strong>Livery or Signage:</strong> ${formData.liveryOrSignage} <br>
       <strong>Have Police Radio:</strong> ${formData.havePoliceRadio} <br>

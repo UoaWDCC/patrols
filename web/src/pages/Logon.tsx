@@ -123,6 +123,9 @@ export default function Logon() {
         email,
         cpnzID,
         formData: data,
+        driver: membersInPatrol.find(
+          (m) => m.first_names + " " + m.surname === value
+        ),
       });
       console.log(data);
       setSubmitting(false);
