@@ -52,7 +52,7 @@ export const formObservationSchema = z.array(
   z.object({
     location: z.string(),
     description: z.string(),
-    time: z.date(),
+    time: z.string(),
     category: z.string(),
     type: z.enum(["observation", "intel"]),
     displayed: z.boolean(),

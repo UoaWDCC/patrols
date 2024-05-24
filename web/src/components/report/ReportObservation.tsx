@@ -15,9 +15,6 @@ interface ReportObservationProps {
   form: UseFormReturn<z.infer<typeof reportFormSchema>>;
   fields: Observation[];
   observationsList: z.infer<typeof formObservationSchema>;
-  setObservationsList: React.Dispatch<
-    React.SetStateAction<z.infer<typeof formObservationSchema>>
-  >;
 }
 
 type Observation = z.infer<typeof formObservationSchema>[number];
@@ -36,12 +33,7 @@ const observationCategories = [
   "",
 ];
 
-const addObservation = (
-  type: type,
-  observationsList: Observation[],
-  setObservationsList: React.Dispatch<React.SetStateAction<Observation[]>>,
-  fields: Observation[]
-) => {
+const addObservation = (type: type) => {
   let date = new Date();
   let parsedDate = "";
   if (date.getMinutes() < 10) {
@@ -66,12 +58,7 @@ const deleteObservation = (i: number, fields: Observation[]) => {
   localStorage.setItem("observations", JSON.stringify(fields));
 };
 
-const ReportObservation = ({
-  form,
-  fields,
-  observationsList,
-  setObservationsList,
-}: ReportObservationProps) => {
+const ReportObservation = ({ form, fields }: ReportObservationProps) => {
   return (
     <div className="mt-8">
       <div className="flex flex-col gap-4">
@@ -209,17 +196,7 @@ const ReportObservation = ({
         )}
       </div>
 
-      <Button
-        className="mt-6"
-        onClick={() =>
-          addObservation(
-            type.observation,
-            observationsList,
-            setObservationsList,
-            fields
-          )
-        }
-      >
+      <Button className="mt-6" onClick={() => addObservation(type.observation)}>
         Add observation
       </Button>
     </div>

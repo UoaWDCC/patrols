@@ -61,7 +61,6 @@ export default function Report() {
               form={form}
               fields={fields}
               observationsList={observationsList}
-              setObservationsList={setObservationsList}
             />
             <ReportFinishDetails form={form} />
           </div>
