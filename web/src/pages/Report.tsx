@@ -8,8 +8,11 @@ import { formObservationSchema, reportFormSchema } from "../schemas";
 import { ReportObservation } from "@components/report/ReportObservation";
 import { useState } from "react";
 import ReportFinishDetails from "@components/report/ReportFinishDetails";
+import { ChevronLeft } from "lucide-react";
+import { useNavigate } from "react-router";
 
 export default function Report() {
+  const navigate = useNavigate();
   const [observationsList, setObservationsList] = useState<
     z.infer<typeof formObservationSchema>
   >(
@@ -45,7 +48,7 @@ export default function Report() {
   };
 
   return (
-    <div className="relative max-w-3xl mx-auto max-h-screen ">
+    <div className="relative max-w-3xl mx-auto max-h-screen">
       <div className="bg-[#1E3A8A] py-6 flex justify-between items-center px-8 rounded-b-3xl">
         <h1 className="text-xl font-bold text-white">Shift in progress</h1>
         <p className="text-sm text-white">Event number: #P23848457</p>
@@ -63,9 +66,14 @@ export default function Report() {
             <ReportFinishDetails form={form} />
           </div>
 
-          <Button type="submit" className="bg-cpnz-blue-800 mt-16">
-            Submit
-          </Button>
+          <div className="flex justify-between mt-16 pb-12">
+            <Button variant={"outline"} onClick={() => navigate(-1)}>
+              <ChevronLeft />
+            </Button>
+            <Button type="submit" className="bg-cpnz-blue-800">
+              Submit
+            </Button>
+          </div>
         </form>
       </Form>
     </div>
