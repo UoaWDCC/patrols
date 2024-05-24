@@ -39,6 +39,9 @@ export default function Report() {
   );
 
   const [openDialog, setOpenDialog] = useState<boolean>(false);
+  const [formData, setFormData] = useState<z.infer<
+    typeof reportFormSchema
+  > | null>(null);
 
   const form = useForm<z.infer<typeof reportFormSchema>>({
     resolver: zodResolver(reportFormSchema),
@@ -58,29 +61,29 @@ export default function Report() {
   });
 
   const onSubmit = (data: z.infer<typeof reportFormSchema>) => {
+    setFormData(data);
     setOpenDialog(true);
+  };
 
-    localStorage.removeItem("observations");
-    localStorage.removeItem("startOdometer");
-    localStorage.removeItem("endOdometer");
-    localStorage.removeItem("debrief");
-    const kmTravelled =
-      parseInt(data.endOdometer) - parseInt(data.startOdometer);
-    const vehicleIncidents = data.observations.filter(
-      (o) => o.category.toString() === "vehicle"
-    ).length;
-    const personIncidents = data.observations.filter(
-      (o) => o.category.toString() === "people"
-    ).length;
-    const propertyIncidents = data.observations.filter(
-      (o) => o.category.toString() === "property"
-    ).length;
-    const willfulDamageIncidents = data.observations.filter(
-      (o) => o.category.toString() === "willful damage"
-    ).length;
-    const otherIncidents = data.observations.filter(
-      (o) => o.category.toString() === "other"
-    ).length;
+  const handleConfirmSubmit = () => {
+    if (!formData) return;
+
+    const [
+      kmTravelled,
+      vehicleIncidents,
+      personIncidents,
+      propertyIncidents,
+      willfulDamageIncidents,
+      otherIncidents,
+    ] = [
+      parseInt(formData.endOdometer) - parseInt(formData.startOdometer),
+      ...["vehicle", "people", "property", "willful damage", "other"].map(
+        (category) =>
+          formData.observations.filter(
+            (o) => o.category.toString() === category
+          ).length
+      ),
+    ];
     const totalIncidents =
       vehicleIncidents +
       personIncidents +
@@ -97,7 +100,16 @@ export default function Report() {
       totalIncidents,
       otherIncidents,
     };
-    console.log(data, statistics);
+    console.log(formData, statistics);
+
+    localStorage.removeItem("observations");
+    localStorage.removeItem("startOdometer");
+    localStorage.removeItem("endOdometer");
+    localStorage.removeItem("debrief");
+
+    form.reset();
+    setOpenDialog(false);
+    navigate("/logHome");
   };
 
   return (
@@ -137,12 +149,12 @@ export default function Report() {
               <DialogTrigger></DialogTrigger>
               <DialogContent className="text-center flex flex-col gap-24 p-12">
                 <DialogHeader className="text-lg text-center font-semibold">
-                  Please double check your information because submitting
+                  Please double check your information before submitting
                 </DialogHeader>
                 <DialogDescription className="flex justify-center">
                   <Button
                     className="flex gap-4 px-6 items-center justify-center bg-cpnz-blue-800"
-                    onClick={() => navigate("/logHome")}
+                    onClick={handleConfirmSubmit}
                   >
                     Confirm Submit <ChevronRight />
                   </Button>
