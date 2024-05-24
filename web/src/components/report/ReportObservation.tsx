@@ -33,7 +33,7 @@ const observationCategories = [
   "",
 ];
 
-const addObservation = (type: type) => {
+const addObservation = (type: type, fields: Observation[]) => {
   let date = new Date();
   let parsedDate = "";
   if (date.getMinutes() < 10) {
@@ -58,7 +58,11 @@ const deleteObservation = (i: number, fields: Observation[]) => {
   localStorage.setItem("observations", JSON.stringify(fields));
 };
 
-const ReportObservation = ({ form, fields }: ReportObservationProps) => {
+const ReportObservation = ({
+  form,
+  fields,
+  observationsList,
+}: ReportObservationProps) => {
   return (
     <div className="mt-8">
       <div className="flex flex-col gap-4">
@@ -196,7 +200,10 @@ const ReportObservation = ({ form, fields }: ReportObservationProps) => {
         )}
       </div>
 
-      <Button className="mt-6" onClick={() => addObservation(type.observation)}>
+      <Button
+        className="mt-6"
+        onClick={() => addObservation(type.observation, observationsList)}
+      >
         Add observation
       </Button>
     </div>
