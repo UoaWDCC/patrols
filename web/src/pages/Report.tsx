@@ -8,8 +8,15 @@ import { formObservationSchema, reportFormSchema } from "../schemas";
 import { ReportObservation } from "@components/report/ReportObservation";
 import { useState } from "react";
 import ReportFinishDetails from "@components/report/ReportFinishDetails";
-import { ChevronLeft } from "lucide-react";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useNavigate } from "react-router";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTrigger,
+} from "@components/ui/dialog";
+import { DialogDescription } from "@radix-ui/react-dialog";
 
 export default function Report() {
   const navigate = useNavigate();
@@ -69,9 +76,24 @@ export default function Report() {
             <Button variant={"outline"} onClick={() => navigate(-1)}>
               <ChevronLeft />
             </Button>
-            <Button type="submit" className="bg-cpnz-blue-800">
-              Submit
-            </Button>
+            <Dialog>
+              <DialogTrigger asChild>
+                <Button className="bg-cpnz-blue-800">Submit</Button>
+              </DialogTrigger>
+              <DialogContent className="text-center flex flex-col gap-24 p-12">
+                <DialogHeader className="text-lg text-center font-semibold">
+                  Please double check your information because submitting
+                </DialogHeader>
+                <DialogDescription className="flex justify-center">
+                  <Button
+                    className="flex gap-4 px-6 items-center justify-center bg-cpnz-blue-800"
+                    onClick={() => navigate("/logHome")}
+                  >
+                    Confirm Submit <ChevronRight />
+                  </Button>
+                </DialogDescription>
+              </DialogContent>
+            </Dialog>
           </div>
         </form>
       </Form>
