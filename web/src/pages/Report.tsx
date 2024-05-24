@@ -47,7 +47,7 @@ export default function Report() {
       endOdometer: endOdometer,
       weatherCondition: "",
       intel: undefined,
-      observations: observationsList || [],
+      observations: observationsList,
       debrief: debrief,
     },
   });
@@ -56,6 +56,8 @@ export default function Report() {
     control: form.control,
     name: "observations",
   });
+
+  // console.log(fields);
 
   const onSubmit = (data: z.infer<typeof reportFormSchema>) => {
     setOpenDialog(true);
@@ -113,7 +115,6 @@ export default function Report() {
             <ReportObservation
               form={form}
               fields={fields}
-              observationsList={observationsList}
               setObservationsList={setObservationsList}
               append={append}
               remove={remove}
