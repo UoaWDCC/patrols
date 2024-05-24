@@ -2,7 +2,7 @@ import ReportIntel from "@components/report/ReportIntel";
 import { Button } from "@components/ui/button";
 import { Form } from "@components/ui/form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
+import { useFieldArray, useForm } from "react-hook-form";
 import { z } from "zod";
 import { formObservationSchema, reportFormSchema } from "../schemas";
 import { ReportObservation } from "@components/report/ReportObservation";
@@ -10,21 +10,34 @@ import { useState } from "react";
 import ReportFinishDetails from "@components/report/ReportFinishDetails";
 
 export default function Report() {
+  const [observationsList, setObservationsList] = useState<
+    z.infer<typeof formObservationSchema>
+  >(
+    localStorage.getItem("observations")
+      ? JSON.parse(localStorage.getItem("observations")!)
+      : []
+  );
+
+  const [startOdometer, setStartOdometer] = useState<string>(
+    localStorage.getItem("startOdometer") || ""
+  );
+
   const form = useForm<z.infer<typeof reportFormSchema>>({
     resolver: zodResolver(reportFormSchema),
     defaultValues: {
-      startOdometer: "",
+      startOdometer: startOdometer || "",
       endOdometer: "",
       weatherCondition: "",
       intel: undefined,
-      observations: [],
+      observations: observationsList || [],
       debrief: "",
     },
   });
 
-  const [observationsList, setObservationsList] = useState<
-    z.infer<typeof formObservationSchema>
-  >([]);
+  const { fields } = useFieldArray({
+    control: form.control,
+    name: "observations",
+  });
 
   const onSubmit = (data: z.infer<typeof reportFormSchema>) => {
     data.observations = observationsList;
@@ -32,7 +45,7 @@ export default function Report() {
   };
 
   return (
-    <div className="relative bg-[#FFFFFF] max-w-3xl mx-auto">
+    <div className="relative max-w-3xl mx-auto max-h-screen ">
       <div className="bg-[#1E3A8A] py-6 flex justify-between items-center px-8 rounded-b-3xl">
         <h1 className="text-xl font-bold text-white">Shift in progress</h1>
         <p className="text-sm text-white">Event number: #P23848457</p>
@@ -40,9 +53,10 @@ export default function Report() {
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)}>
           <div>
-            <ReportIntel form={form} />
+            <ReportIntel form={form} setStartOdometer={setStartOdometer} />
             <ReportObservation
               form={form}
+              fields={fields}
               observationsList={observationsList}
               setObservationsList={setObservationsList}
             />

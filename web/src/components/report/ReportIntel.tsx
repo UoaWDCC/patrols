@@ -8,9 +8,13 @@ import { Input } from "@components/ui/input";
 
 interface ReportIntelProps {
   form: any;
+  setStartOdometer: (value: string) => void;
 }
 
-export default function ReportIntel({ form }: ReportIntelProps) {
+export default function ReportIntel({
+  form,
+  setStartOdometer,
+}: ReportIntelProps) {
   return (
     <div className="relative bg-[#FFFFFF] max-w-3xl mx-auto">
       <h2 className="text-lg font-semibold py-4 text-center">INTEL</h2>
@@ -27,7 +31,16 @@ export default function ReportIntel({ form }: ReportIntelProps) {
           <FormItem>
             <FormLabel>Odometer Start KMs</FormLabel>
             <FormControl>
-              <Input {...field} type="number" />
+              <Input
+                {...field}
+                type="number"
+                onChange={(event) => {
+                  const value = event.target.value;
+                  setStartOdometer(value);
+                  localStorage.setItem("startOdometer", value);
+                  form.setValue("startOdometer", value);
+                }}
+              />
             </FormControl>
           </FormItem>
         )}
