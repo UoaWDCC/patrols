@@ -64,7 +64,40 @@ export default function Report() {
     localStorage.removeItem("startOdometer");
     localStorage.removeItem("endOdometer");
     localStorage.removeItem("debrief");
-    console.log(data);
+    const kmTravelled =
+      parseInt(data.endOdometer) - parseInt(data.startOdometer);
+    const vehicleIncidents = data.observations.filter(
+      (o) => o.category.toString() === "vehicle"
+    ).length;
+    const personIncidents = data.observations.filter(
+      (o) => o.category.toString() === "people"
+    ).length;
+    const propertyIncidents = data.observations.filter(
+      (o) => o.category.toString() === "property"
+    ).length;
+    const willfulDamageIncidents = data.observations.filter(
+      (o) => o.category.toString() === "willful damage"
+    ).length;
+    const otherIncidents = data.observations.filter(
+      (o) => o.category.toString() === "other"
+    ).length;
+    const totalIncidents =
+      vehicleIncidents +
+      personIncidents +
+      propertyIncidents +
+      willfulDamageIncidents +
+      otherIncidents;
+
+    const statistics = {
+      kmTravelled,
+      vehicleIncidents,
+      personIncidents,
+      propertyIncidents,
+      willfulDamageIncidents,
+      totalIncidents,
+      otherIncidents,
+    };
+    console.log(data, statistics);
   };
 
   return (
