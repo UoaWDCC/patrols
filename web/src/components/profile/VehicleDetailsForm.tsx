@@ -15,8 +15,13 @@ export default function VehicleDetailsForm() {
   const vehicleSelectRef = useRef<HTMLSelectElement | null>(null);
   const [canSaveVehicle, setCanSaveVehicle] = useState(false);
 
-  const { currentUserVehicles, selectedVehicle, setSelectedVehicle, loading } =
-    useUserData();
+  const {
+    currentUserVehicles,
+    selectedVehicle,
+    setSelectedVehicle,
+    loading,
+    refetch,
+  } = useUserData();
 
   const changeSelectedVehicle = async () => {
     try {
@@ -29,6 +34,7 @@ export default function VehicleDetailsForm() {
         `${import.meta.env.VITE_API_URL}/user/updateUserSelectedVehicle`,
         updateSelectedVehicle
       );
+      refetch();
     } catch (error) {
       console.log(error);
     }

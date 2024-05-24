@@ -1,9 +1,9 @@
 import { useNavigate } from "react-router-dom";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
-import { Button } from "@components/ui/button";
-import { Input } from "@components/ui/input";
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { z } from 'zod';
+import { Button } from '@components/ui/button';
+import { Input } from '@components/ui/input';
 import {
   Form,
   FormControl,
@@ -11,14 +11,14 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@components/ui/form";
-import userIcon from "../assets/images/gorilla.png";
-import { useState } from "react";
-import { FaCog } from "react-icons/fa";
-import axios from "axios";
-import { Popover } from "@components/ui/popover";
-import { PopoverContent, PopoverTrigger } from "@radix-ui/react-popover";
-import { Check, ChevronsUpDown, Loader2 } from "lucide-react";
+} from '@components/ui/form';
+import userIcon from '../assets/images/gorilla.png';
+import { useEffect, useState } from 'react';
+import { FaCog } from 'react-icons/fa';
+import axios from 'axios';
+import { Popover } from '@components/ui/popover';
+import { PopoverContent, PopoverTrigger } from '@radix-ui/react-popover';
+import { Check, ChevronsUpDown, Loader2 } from 'lucide-react';
 import {
   Command,
   CommandEmpty,
@@ -26,26 +26,33 @@ import {
   CommandInput,
   CommandItem,
   CommandList,
-} from "@components/ui/command";
-import { cn } from "../lib/utils";
-import useUserData from "../hooks/useUserData";
+} from '@components/ui/command';
+import { cn } from '../lib/utils';
+import useUserData from '../hooks/useUserData';
+import { vehicleDetailsSchema } from '../schemas';
 
 export default function Logon() {
   const {
     loading,
-    setLoading,
     cpnzID,
     email,
     currentUserDetails,
     fullName,
     currentUserVehicles,
     membersInPatrol,
+    policeStation,
+    callSign,
+    patrolName,
+    mobileNumber,
   } = useUserData();
 
   const [open, setOpen] = useState(false);
 
+  type VehicleDetails = z.infer<typeof vehicleDetailsSchema>;
+
   // driverName
-  const [value, setValue] = useState<string>("");
+  const [value, setValue] = useState<string>('');
+  const [submitting, setSubmitting] = useState<boolean>(false);
 
   const membersFullName = membersInPatrol
     .filter((m) => m.cpnz_id !== currentUserDetails?.cpnz_id)
@@ -72,37 +79,47 @@ export default function Logon() {
     havePoliceRadio: z.string(),
   });
 
+  // Initalise empty form
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
-    defaultValues: async () => {
-      const response = await axios.get(
-        `${import.meta.env.VITE_API_URL}/user/getUserDetails`
-      );
-
-      const { userDetails, patrolDetails, vehicleDetails } = response.data;
-      return {
-        startTime: "",
-        endTime: "",
-        policeStationBase: userDetails.police_station.replace(/_/g, " ") || "",
-        cpCallSign: userDetails.call_sign || "",
-        patrol: patrolDetails.name || "",
-        observerName: userDetails.first_names + " " + userDetails.surname || "",
-        observerNumber: userDetails.mobile_phone || "",
-        driver: "",
-        vehicle: vehicleDetails.filter((v: any) => v.selected)[0].name,
-        liveryOrSignage: "yes",
-        havePoliceRadio: "no",
-      };
-    },
-    mode: "onChange",
+    mode: 'onChange',
   });
 
-  const onSubmit = async (data: z.infer<typeof formSchema>) => {
-    setLoading(true);
+  // Populate default values when details have been fetched
+  useEffect(() => {
+    if (!loading) {
+      form.reset({
+        startTime: '',
+        endTime: '',
+        policeStationBase: policeStation || '',
+        cpCallSign: callSign || '',
+        patrol: patrolName || '',
+        observerName: fullName,
+        observerNumber: mobileNumber || '',
+        driver: '',
+        vehicle:
+          currentUserVehicles.find((v: VehicleDetails) => v.selected)?.name ||
+          '',
+        liveryOrSignage: 'yes',
+        havePoliceRadio: 'no',
+      });
+    }
+  }, [
+    loading,
+    policeStation,
+    callSign,
+    patrolName,
+    fullName,
+    mobileNumber,
+    currentUserVehicles,
+    form,
+  ]);
 
+  const onSubmit = async (data: z.infer<typeof formSchema>) => {
     try {
+      setSubmitting(true);
       await axios.post(`${import.meta.env.VITE_API_URL}/send-email`, {
-        recipientEmail: "jasonabc0626@gmail.com",
+        recipientEmail: 'jasonabc0626@gmail.com',
         email,
         cpnzID,
         formData: data,
@@ -110,18 +127,19 @@ export default function Logon() {
           (m) => m.first_names + " " + m.surname === value
         ),
       });
-
+      console.log(data);
+      setSubmitting(false);
       // Navigates to Loghome if succesfully logged on.
-      navigate("/LogHome");
+      navigate('/LogHome');
     } catch (error) {
       axios.isAxiosError(error)
         ? console.log(error.response?.data.error)
-        : console.error("Unexpected error during login:", error);
+        : console.error('Unexpected error during login:', error);
     }
   };
 
   const addGuestPatrol = () => {
-    setGuestPatrols([...guestPatrols, { name: "", number: "" }]);
+    setGuestPatrols([...guestPatrols, { name: '', number: '' }]);
   };
 
   return (
@@ -299,7 +317,7 @@ export default function Logon() {
                           <Popover open={open} onOpenChange={setOpen}>
                             <PopoverTrigger asChild>
                               <Button
-                                variant={"outline"}
+                                variant={'outline'}
                                 role="combobox"
                                 aria-expanded={open}
                                 className="w-[300px] justify-between text-md text-gray-600"
@@ -308,7 +326,7 @@ export default function Logon() {
                                   ? membersFullName.find(
                                       (member) => member.name === value
                                     )?.name
-                                  : "Select Driver"}
+                                  : 'Select Driver'}
                                 <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                               </Button>
                             </PopoverTrigger>
@@ -328,7 +346,7 @@ export default function Logon() {
                                         onSelect={(currentValue) => {
                                           setValue(
                                             currentValue === value
-                                              ? ""
+                                              ? ''
                                               : currentValue
                                           );
                                           setOpen(false);
@@ -336,10 +354,10 @@ export default function Logon() {
                                       >
                                         <Check
                                           className={cn(
-                                            "mr-2 h-4 w-4",
+                                            'mr-2 h-4 w-4',
                                             value === member.name
-                                              ? "opacity-100"
-                                              : "opacity-0"
+                                              ? 'opacity-100'
+                                              : 'opacity-0'
                                           )}
                                         />
                                         {member.name}
@@ -513,12 +531,12 @@ export default function Logon() {
                   type="submit"
                   className="w-full bg-[#0f1363] text-white hover:bg-[#0a0d4a]"
                 >
-                  {loading ? (
+                  {submitting ? (
                     <>
-                      Submitting <Loader2 className="animate-spin ml-4" />{" "}
+                      Submitting <Loader2 className="animate-spin ml-4" />{' '}
                     </>
                   ) : (
-                    "Submit"
+                    'Submit'
                   )}
                 </Button>
               </div>
