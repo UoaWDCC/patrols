@@ -57,24 +57,24 @@ const ReportObservation = ({
             <div className="mt-8">Observation {i}</div>
             <FormField
               control={form.control}
-              name={`location`}
+              name={`location+${i}`}
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Location</FormLabel>
                   <FormControl>
-                    <Input type="text" {...field} defaultValue={"a"} />
+                    <Input type="text" {...field} defaultValue={""} />
                   </FormControl>
                 </FormItem>
               )}
             />
             <FormField
               control={form.control}
-              name={`description`}
+              name={`description+${i}`}
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Description</FormLabel>
                   <FormControl>
-                    <Input type="textarea" {...field} defaultValue={"a"} />
+                    <Input type="textarea" {...field} defaultValue={""} />
                   </FormControl>
                 </FormItem>
               )}
