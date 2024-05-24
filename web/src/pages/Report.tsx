@@ -125,7 +125,11 @@ export default function Report() {
           </div>
 
           <div className="flex justify-between mt-16 pb-12">
-            <Button variant={"outline"} onClick={() => navigate(-1)}>
+            <Button
+              variant={"outline"}
+              onClick={() => navigate(-1)}
+              type="button"
+            >
               <ChevronLeft />
             </Button>
 
