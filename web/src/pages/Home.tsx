@@ -14,6 +14,7 @@ import {
 import { userDetailsSchema } from "../schemas";
 import SignoutButton from "@components/SignoutButton";
 import BottomNavBar from "@components/BottomNavBar";
+import InfoButton from "@components/home/InfoButton";
 
 const reportsDetailsSchema = z.object({
   message: z.string(),
@@ -34,6 +35,7 @@ type reportsDetails = z.infer<typeof reportsDetailsSchema>;
 export default function Home() {
   const navigate = useNavigate();
   const [data, setData] = useState<reportsDetails>();
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [id, setId] = useState<number>();
 
   // Function to navigate to the logon page when new report button is clicked
@@ -87,7 +89,6 @@ export default function Home() {
         </div>
         <div className="bg-[#0F1363] px-4 py-2 rounded-lg shadow-md mb-6">
           <h2 className="text-sm font-bold text-white ml-10 mt-3 text-left">
-            {" "}
             Log on to start a new shift
           </h2>
           <p className="text-white text-xs ml-10 text-left my-3">
@@ -111,61 +112,60 @@ export default function Home() {
           </button>
         </div>
 
-        <div className="grid grid-cols-2 gap-4">
-          <div className="bg-[#EEF6FF] text-black p-4 rounded-lg flex items-center hover:bg-[#808080] transition-colors duration-300">
-            <Dialog>
-              <DialogTrigger className="flex items-center">
-                <FaClipboardList className="mr-4 text-2xl" />
-                <div className="text-left">
-                  <h3 className="text-base font-semibold">Past Reports</h3>
-                  <p className="text-xs">View reports in the past.</p>
-                </div>
-              </DialogTrigger>
-              <DialogContent className="p-8 max-h-[550px] overflow-y-auto">
-                <DialogHeader>
-                  <DialogTitle className="text-center text-subheading pb-12">
-                    All Reports
-                  </DialogTitle>
-                  <DialogDescription>
-                    {data == null ? (
-                      <div>No reports found</div>
-                    ) : (
-                      <div className="flex flex-col w-full gap-8">
-                        {data.reports.map((d) => (
-                          <div
-                            key={d.id}
-                            className="flex-1 border-2 border-zinc-400 rounded-lg shadow-md px-6 py-4 hover:bg-zinc-200 transition-all cursor-pointer"
-                          >
-                            <h3 className="text-lg font-semibold text-cpnz-blue-900 ">
-                              {d.title}
-                            </h3>
-                            <p>
-                              <strong>Location</strong>: {d.location}
-                            </p>
-                            <p>
-                              <strong>Type:</strong> {d.reportIncidentType}
-                            </p>
-                            <p>
-                              <strong>Patrol ID:</strong> {d.patrolID}
-                            </p>
-                          </div>
-                        ))}
-                      </div>
-                    )}
-                  </DialogDescription>
-                </DialogHeader>
-              </DialogContent>
-            </Dialog>
-          </div>
-          <div className="bg-[#EEF6FF] text-black p-4 rounded-lg flex items-center hover:bg-[#808080] transition-colors duration-300">
-            <FaCogs className="mr-4 text-2xl" />
-            <div className="text-left">
-              <h3 className="text-md font-semibold">Report Settings</h3>
-              <p className="text-xs">
-                Modify report templates including templates.
-              </p>
-            </div>
-          </div>
+        <div className="flex justify-between gap-10">
+          <InfoButton
+            heading="Past Reports"
+            description="View reports in the past."
+            icon={<FaClipboardList className="mr-4 text-2xl" />}
+            onClick={() => setIsDialogOpen(true)}
+          />
+          <Dialog
+            open={isDialogOpen}
+            onOpenChange={() => setIsDialogOpen(false)}
+          >
+            <DialogTrigger>
+              <button className="hidden"></button>
+            </DialogTrigger>
+            <DialogContent className="p-8 max-h-[550px] overflow-y-auto">
+              <DialogHeader>
+                <DialogTitle className="text-center text-subheading pb-12">
+                  All Reports
+                </DialogTitle>
+                <DialogDescription>
+                  {data == null ? (
+                    <div>No reports found</div>
+                  ) : (
+                    <div className="flex flex-col w-full gap-8">
+                      {data.reports.map((d) => (
+                        <div
+                          key={d.id}
+                          className="flex-1 border-2 border-zinc-400 rounded-lg shadow-md px-6 py-4 hover:bg-zinc-200 transition-all cursor-pointer"
+                        >
+                          <h3 className="text-lg font-semibold text-cpnz-blue-900 ">
+                            {d.title}
+                          </h3>
+                          <p>
+                            <strong>Location</strong>: {d.location}
+                          </p>
+                          <p>
+                            <strong>Type:</strong> {d.reportIncidentType}
+                          </p>
+                          <p>
+                            <strong>Patrol ID:</strong> {d.patrolID}
+                          </p>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </DialogDescription>
+              </DialogHeader>
+            </DialogContent>
+          </Dialog>
+          <InfoButton
+            heading="Report Settings"
+            description="Modify report templates including templates."
+            icon={<FaCogs className="mr-4 text-2xl" />}
+          />
         </div>
       </div>
       <SignoutButton />
