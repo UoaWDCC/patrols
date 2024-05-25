@@ -1,78 +1,78 @@
-import prisma from '../db/database';
-import supabase from '../supabase/supabase_client';
-import type { Request, Response } from 'express';
-import { z } from 'zod';
+import prisma from "../db/database";
+import supabase from "../supabase/supabase_client";
+import type { Request, Response } from "express";
 
-const updateDetailSchema = z.object({
-    id: z.number(),
-    email: z.string(),
-    password: z.string().min(4, 'Password must be at least 4 characters long'),
-    // vehicles: z.string(), // Need to change once we have some vehicle dummy data
-});
+function extractCPNZIDFromEmail(userEmail: string) {
+  const atSymbolIndex: number = userEmail.indexOf("@");
+  return parseInt(userEmail.substring(0, atSymbolIndex));
+}
 
-export const getUserDetailsByEmail = async (req: Request, res: Response) => {
-    try {
-        const {
-            data: { user },
-            error,
-        } = await supabase.auth.getUser();
+export const getUserDetailsByCPNZID = async (req: Request, res: Response) => {
+  try {
+    const {
+      data: { user },
+      error,
+    } = await supabase.auth.getUser();
 
-        if (error) {
-            return res.status(404).json({ error: 'User not found' });
-        }
-
-        const userEmail = user?.email;
-
-        const userDetails = await prisma.patrols.findUnique({
-            where: {
-                email: userEmail,
-            },
-            select: {
-                id: true,
-                email: true,
-                name: true,
-                vehicles: true,
-            },
-        });
-
-        res.status(200).json(userDetails);
-    } catch (error) {
-        console.error('Error:', error);
+    if (error) {
+      return res.status(404).json({ error: "User not found" });
     }
-};
 
-export const updateUserDetails = async (req: Request, res: Response) => {
-    try {
-        const parseResult = updateDetailSchema.safeParse(req.body);
+    /* Emails are not unique in members table so cannot use findUnique
+        Use findFirst to retrieve using email and CPNZ ID to ensure correct user is returned */
+    const userDetails = await prisma.members_dev.findFirst({
+      where: {
+        email: user?.email,
+        cpnz_id: extractCPNZIDFromEmail(user?.email as string),
+      },
+      select: {
+        cpnz_id: true,
+        patrol_id: true,
+        email: true,
+        mobile_phone: true,
+        home_phone: true,
+        first_names: true,
+        surname: true,
+        call_sign: true,
+        police_station: true,
+      },
+    });
 
-        if (!parseResult.success) {
-            return res.status(400).json({ error: parseResult.error.flatten() });
-        }
-
-        const { id, email, password } = parseResult.data;
-
-        const { error } = await supabase.auth.updateUser({
-            email: email,
-            password: password,
-        });
-
-        if (error) {
-            console.log(`Error updating details: ${error}`);
-        }
-
-        const updatedUserDetails = await prisma.patrols.update({
-            where: {
-                id: id,
-            },
-            data: {
-                // email: email,
-                password: password,
-                // vehicles: vehicles,
-            },
-        });
-
-        res.status(200).json(updatedUserDetails);
-    } catch (error) {
-        console.error('Error: ', error);
+    if (!userDetails) {
+      return res.status(404).json({ error: "User details not found" });
     }
+
+    const patrolDetails = await prisma.patrols_prod.findUnique({
+      where: {
+        id: userDetails?.patrol_id,
+      },
+      select: {
+        name: true,
+        members_dev: true,
+      },
+    });
+
+    const vehicleDetails = await prisma.vehicle_dev.findMany({
+      where: {
+        patrolID: userDetails?.patrol_id,
+      },
+    });
+
+    function toObject(userDetails: any) {
+      return JSON.parse(
+        JSON.stringify(
+          userDetails,
+          (key, value) => (typeof value === "bigint" ? value.toString() : value) // return everything else unchanged
+        )
+      );
+    }
+
+    res.status(200).json({
+      userDetails: toObject(userDetails),
+      vehicleDetails: toObject(vehicleDetails),
+      patrolDetails: toObject(patrolDetails),
+    });
+  } catch (error) {
+    console.error("Error:", error);
+  }
 };

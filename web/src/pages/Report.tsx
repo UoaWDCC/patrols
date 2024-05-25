@@ -1,113 +1,172 @@
-import { useNavigate } from "react-router-dom";
-import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
+import ReportIntel from "@components/report/ReportIntel";
+import { Button } from "@components/ui/button";
+import { Form } from "@components/ui/form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useFieldArray, useForm } from "react-hook-form";
+import { z } from "zod";
+import { formObservationSchema, reportFormSchema } from "../schemas";
+import { ReportObservation } from "@components/report/ReportObservation";
+import { useState } from "react";
+import ReportFinishDetails from "@components/report/ReportFinishDetails";
+import { ChevronLeft, ChevronRight } from "lucide-react";
+import { useNavigate } from "react-router";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTrigger,
+  DialogDescription,
+} from "@components/ui/dialog";
 
-export default function ReportForm() {
+export default function Report() {
   const navigate = useNavigate();
+  const [observationsList, setObservationsList] = useState<
+    z.infer<typeof formObservationSchema>
+  >(
+    localStorage.getItem("observations")
+      ? JSON.parse(localStorage.getItem("observations")!)
+      : []
+  );
 
-  // Function to navigate to the next form page
-  const handleNextPage = () => {
-    // Navigate to the next form page
-    navigate("/ReportTwo");
+  const [startOdometer, setStartOdometer] = useState<string>(
+    localStorage.getItem("startOdometer") || ""
+  );
+  const [endOdometer, setEndOdometer] = useState<string>(
+    localStorage.getItem("endOdometer") || ""
+  );
+  const [debrief, setDebrief] = useState<string>(
+    localStorage.getItem("debrief") || ""
+  );
+
+  const [openDialog, setOpenDialog] = useState<boolean>(false);
+  const [formData, setFormData] = useState<z.infer<
+    typeof reportFormSchema
+  > | null>(null);
+
+  const form = useForm<z.infer<typeof reportFormSchema>>({
+    resolver: zodResolver(reportFormSchema),
+    defaultValues: {
+      startOdometer: startOdometer,
+      endOdometer: endOdometer,
+      weatherCondition: "",
+      intel: undefined,
+      observations: observationsList,
+      debrief: debrief,
+    },
+  });
+
+  const { fields, append, remove } = useFieldArray({
+    control: form.control,
+    name: "observations",
+  });
+
+  const onSubmit = (data: z.infer<typeof reportFormSchema>) => {
+    setFormData(data);
+    setOpenDialog(true);
   };
 
-  // Function to navigate to the previous form page
-  const handlePreviousPage = () => {
-    // Navigate to the previous form page
-    navigate("/LogHome");
+  const handleConfirmSubmit = () => {
+    if (!formData) return;
+
+    const [
+      kmTravelled,
+      vehicleIncidents,
+      personIncidents,
+      propertyIncidents,
+      willfulDamageIncidents,
+      otherIncidents,
+    ] = [
+      parseInt(formData.endOdometer) - parseInt(formData.startOdometer),
+      ...["vehicle", "people", "property", "willful damage", "other"].map(
+        (category) =>
+          formData.observations.filter(
+            (o) => o.category.toString() === category
+          ).length
+      ),
+    ];
+    const totalIncidents =
+      vehicleIncidents +
+      personIncidents +
+      propertyIncidents +
+      willfulDamageIncidents +
+      otherIncidents;
+
+    const statistics = {
+      kmTravelled,
+      vehicleIncidents,
+      personIncidents,
+      propertyIncidents,
+      willfulDamageIncidents,
+      totalIncidents,
+      otherIncidents,
+    };
+    console.log(formData, statistics);
+
+    localStorage.removeItem("observations");
+    localStorage.removeItem("startOdometer");
+    localStorage.removeItem("endOdometer");
+    localStorage.removeItem("debrief");
+
+    form.reset();
+    setOpenDialog(false);
+    navigate("/logHome");
   };
 
   return (
-    <div className="text-center min-h-screen relative bg-[#FFFFFF] max-w-3xl mx-auto">
-      <div className="bg-[#1E3A8A] py-6 flex justify-between items-center px-4 rounded-b-3xl">
-        <div>
-          <h1 className="text-xl font-bold text-white">Shift in progress</h1>
-          <p className="text-sm text-white">Event number: 2384839457</p>
-        </div>
+    <div className="relative max-w-3xl mx-auto max-h-screen">
+      <div className="bg-[#1E3A8A] py-6 flex justify-between items-center px-8 rounded-b-3xl">
+        <h1 className="text-xl font-bold text-white">Shift in progress</h1>
+        <p className="text-sm text-white">Event number: #P23848457</p>
       </div>
+      <Form {...form}>
+        <form onSubmit={form.handleSubmit(onSubmit)}>
+          <div>
+            <ReportIntel form={form} setStartOdometer={setStartOdometer} />
+            <ReportObservation
+              form={form}
+              fields={fields}
+              setObservationsList={setObservationsList}
+              append={append}
+              remove={remove}
+            />
+            <ReportFinishDetails
+              form={form}
+              setDebrief={setDebrief}
+              setEndOdometer={setEndOdometer}
+            />
+          </div>
 
-      <div className="max-w-800 mx-auto px-4 my-8">
-        <div className="bg-[#E9EFF2] p-4 rounded-lg shadow-md mb-6">
-          <h2 className="text-lg font-semibold mb-4">VEHICLE DETAILS</h2>
-          <div className="mb-4">
-            <label className="block text-left font-semibold mb-1">
-              Select a Patrol Vehicle
-            </label>
-            <select className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500">
-              <option value="">Select an option</option>
-              {/* Add more vehicle options */}
-            </select>
-            <p className="text-left text-sm text-gray-500">
-              Don't see your vehicle? Register a new one here.
-            </p>
-          </div>
-          <p className="text-left text-sm text-gray-500 mb-4">
-            Please check your vehicle and equipment prior to starting your
-            shift.
-          </p>
-          <div className="mb-4">
-            <label className="block text-left font-semibold mb-1">
-              Vehicle Checklist
-            </label>
-            <select className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500">
-              <option value="">Select an option</option>
-              {/* Add more checklist options */}
-            </select>
-          </div>
-          <div className="mb-4">
-            <label className="block text-left font-semibold mb-1">
-              Equipment Checklist
-            </label>
-            <select className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500">
-              <option value="">Select an option</option>
-              {/* Add more checklist options */}
-            </select>
-          </div>
-          <div className="mb-4">
-            <label className="block text-left font-semibold mb-1">
-              Please record any visible damage before starting your shift (if
-              applicable).
-            </label>
-            <textarea
-              className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
-              rows={3}
-              placeholder="Type your message here"
-            ></textarea>
-          </div>
-          <div className="mb-4">
-            <p className="text-left font-semibold mb-2">
-              Is there anything that requires the attention of the vehicle
-              manager?
-            </p>
-            <div className="flex items-center">
-              <label className="mr-4">
-                <input type="radio" value="yes" className="mr-2" />
-                Yes
-              </label>
-              <label>
-                <input type="radio" value="no" className="mr-2" />
-                No
-              </label>
-            </div>
-          </div>
-        </div>
+          <div className="flex justify-between mt-16 pb-12">
+            <Button
+              variant={"outline"}
+              onClick={() => navigate(-1)}
+              type="button"
+            >
+              <ChevronLeft />
+            </Button>
 
-        <div className="flex justify-between">
-          <button
-            onClick={handlePreviousPage}
-            className="bg-[#334D92] px-4 py-2 rounded-lg text-white font-semibold flex items-center hover:bg-[#243B73]"
-          >
-            <FaChevronLeft className="mr-2" />
-            Previous
-          </button>
-          <button
-            onClick={handleNextPage}
-            className="bg-[#334D92] px-4 py-2 rounded-lg text-white font-semibold flex items-center hover:bg-[#243B73]"
-          >
-            Next
-            <FaChevronRight className="ml-2" />
-          </button>
-        </div>
-      </div>
+            <Dialog open={openDialog} onOpenChange={setOpenDialog}>
+              <DialogTrigger></DialogTrigger>
+              <DialogContent className="text-center flex flex-col gap-24 p-12">
+                <DialogHeader className="text-lg text-center font-semibold">
+                  Please double check your information before submitting
+                </DialogHeader>
+                <DialogDescription className="flex justify-center">
+                  <Button
+                    className="flex gap-4 px-6 items-center justify-center bg-cpnz-blue-800"
+                    onClick={handleConfirmSubmit}
+                  >
+                    Confirm Submit <ChevronRight />
+                  </Button>
+                </DialogDescription>
+              </DialogContent>
+            </Dialog>
+            <Button className="bg-cpnz-blue-800" type="submit">
+              Submit
+            </Button>
+          </div>
+        </form>
+      </Form>
     </div>
   );
 }

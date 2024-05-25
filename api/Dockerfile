@@ -18,10 +18,11 @@ FROM base as install
 
 # Install packages needed to build node modules
 RUN apt-get update -qq && \
-    apt-get install --no-install-recommends -y build-essential node-gyp pkg-config python-is-python3
+    apt-get install --no-install-recommends -y build-essential node-gyp pkg-config python-is-python3 openssl
 
 # Install node modules
 COPY --link package.json yarn.lock ./
+COPY prisma ./prisma/
 RUN yarn install --frozen-lockfile
 
 # Copy application code
@@ -43,12 +44,13 @@ FROM base as build
 
 COPY --from=install /app /app
 
-RUN yarn prisma generate
-
 RUN yarn run build
 
 # Final stage for app image
 FROM base
+
+RUN apt-get update -qq && \
+    apt-get install -y openssl
 
 # Copy built application
 COPY --from=build /app /app
