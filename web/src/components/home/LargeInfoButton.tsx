@@ -13,7 +13,7 @@ interface LargeInfoButtonProps {
   description: string;
   icon?: ReactNode;
   iconDescription: string;
-  onClick: () => void;
+  onClick?: () => void;
   variant: VariantType;
 }
 

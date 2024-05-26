@@ -87,9 +87,6 @@ export default function Home() {
           description={"You have a report you haven't submitted."}
           className="bg-[#EEF6FF] p-4 rounded-lg shadow-md mb-6"
           iconDescription={"Finish your report?"}
-          onClick={function () {
-            throw new Error("Function not implemented.");
-          }}
           variant={"light"}
         />
         <LargeInfoButton
@@ -106,9 +103,6 @@ export default function Home() {
           heading={"Patrol vehicles"}
           description={"Create a new report from scratch or select a template."}
           iconDescription={"View and Update Patrol Vehicles"}
-          onClick={function () {
-            throw new Error("Function not implemented.");
-          }}
           variant={"light"}
         />
         <div className="flex justify-between gap-10">
