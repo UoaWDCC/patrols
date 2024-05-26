@@ -1,6 +1,8 @@
 import { useNavigate } from "react-router-dom";
 import { FaCog, FaClipboardList } from "react-icons/fa";
 import BottomNavBar from "@components/BottomNavBar";
+import LargeInfoButton from "@components/ui/LargeInfoButton";
+import SmallInfoButton from "@components/ui/SmallInfoButton";
 
 export default function ReportSummary() {
   const navigate = useNavigate();
@@ -21,24 +23,29 @@ export default function ReportSummary() {
         <FaCog className="text-2xl text-black cursor-pointer hover:text-gray-200 transition-colors duration-300" />
       </div>
       <div className="max-w-800 mx-auto px-8 my-8">
-        <div className="bg-[#EEF6FF] p-4 rounded-lg shadow-md mb-6 flex items-center">
-          <FaClipboardList className="mr-4 text-2xl" />
-          <div>
-            <h2 className="text-md font-semibold">Draft report detected</h2>
-            <p className="text-gray-600">Finish your report?</p>
-          </div>
-        </div>
+        <LargeInfoButton
+          heading={"Draft report detected"}
+          description={"You have a report you haven't submitted."}
+          className="bg-[#0F1363] p-4 rounded-lg shadow-md mb-6"
+          iconDescription={"Finish your report?"}
+          variant={"dark"}
+        />
+        <LargeInfoButton
+          heading={"Report your observations"}
+          description={"Use this to report your observations during your shift"}
+          className="bg-[#EEF6FF] p-4 rounded-lg shadow-md mb-6"
+          iconDescription={"Start a New Report"}
+          onClick={handleNewReport}
+          variant={"light"}
+        />
         <div className="bg-white px-4 py-2 mb-6 flex flex-col items-center">
-          <button
-            onClick={handleNewReport}
-            className="bg-[#EEEEEE] mx-autoo px-6 py-28 rounded-lg shadow-lg mb-6 text-lg font-semibold text-black hover:bg-[#0F1363] hover:shadow-xl hover:text-white transition-all duration-300"
-            style={{ width: "500px" }}
-          >
-            Start a New Report
-          </button>
-          <button className="bg-white w-800 mx-auto px-6 py-4 rounded-lg text-base font-semibold text-black shadow-sm hover:shadow-lg border-2 border-black">
-            Past Reports
-          </button>
+          <div className="cursor-pointer bg-[#EEF6FF] text-black p-4 rounded-lg hover:bg-[#808080] transition-colors duration-300">
+            <SmallInfoButton
+              heading="Past Reports"
+              description="View reports in the past."
+              icon={<FaClipboardList className="mr-4 text-2xl" />}
+            />
+          </div>
         </div>
       </div>
 
