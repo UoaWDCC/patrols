@@ -14,8 +14,8 @@ import {
 import { userDetailsSchema } from "../schemas";
 import SignoutButton from "@components/SignoutButton";
 import BottomNavBar from "@components/BottomNavBar";
-import SmallInfoButton from "@components/home/SmallInfoButton";
-import LargeInfoButton from "@components/home/LargeInfoButton";
+import SmallInfoButton from "@components/ui/SmallInfoButton";
+import LargeInfoButton from "@components/ui/LargeInfoButton";
 
 const reportsDetailsSchema = z.object({
   message: z.string(),

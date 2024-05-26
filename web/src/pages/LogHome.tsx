@@ -1,8 +1,8 @@
 import { useNavigate } from "react-router-dom";
 import { FaCog, FaClipboardList } from "react-icons/fa";
 import BottomNavBar from "@components/BottomNavBar";
-import LargeInfoButton from "@components/home/LargeInfoButton";
-import SmallInfoButton from "@components/home/SmallInfoButton";
+import LargeInfoButton from "@components/ui/LargeInfoButton";
+import SmallInfoButton from "@components/ui/SmallInfoButton";
 
 export default function ReportSummary() {
   const navigate = useNavigate();
