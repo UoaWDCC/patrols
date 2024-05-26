@@ -90,26 +90,26 @@ export default function Home() {
           onClick={function () {
             throw new Error("Function not implemented.");
           }}
+          variant={"light"}
         />
         <LargeInfoButton
           className="bg-[#0F1363] p-4 rounded-lg shadow-md mb-6 text-left"
           heading={"Log on to start a new shift"}
-          headingColor="text-white"
           description={"Create a new report from scratch or select a template."}
-          descriptionColor="text-white"
           icon={<FaPlus className="mr-2" />}
           iconDescription={"Start a New Shift"}
           onClick={() => handleNewReport()}
+          variant={"dark"}
         />
         <LargeInfoButton
           className="bg-[#EEF6FF] p-4 rounded-lg shadow-md mb-6 text-left"
           heading={"Patrol vehicles"}
           description={"Create a new report from scratch or select a template."}
-          descriptionColor="text-gray-600"
           iconDescription={"View and Update Patrol Vehicles"}
           onClick={function () {
             throw new Error("Function not implemented.");
           }}
+          variant={"light"}
         />
         <div className="flex justify-between gap-10">
           <div className="basis-1/2 flex">
