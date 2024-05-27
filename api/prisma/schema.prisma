@@ -8,16 +8,40 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model Shift {
+  id                  BigInt      @id @unique @default(autoincrement())
+  event_no            Int         @default(null) 
+  patrol_id           BigInt   
+  start_time          DateTime    @db.Timestamptz(0)
+  end_time            DateTime    @db.Timestamptz(0)
+  police_station_base String
+  observer_id         BigInt
+  driver_id           BigInt
+  guest_patroller_id  BigInt
+  vehicle_id          BigInt
+  Patrol              patrols_dev @relation(fields: [patrol_id], references: [id])
+  Observer            members_dev @relation(fields: [observer_id], references: [id])
+  Driver              members_dev @relation(fields: [driver_id], references: [id])
+  GuestPatoller       GuestPatoller @relation(fields: [guest_patroller_id], references: [id])
+}
+
+model GuestPatrol {
+  id           BigInt  @id @unique @default(autoincrement())
+  name         String
+  isRegistered Boolean
+  member_id    BigInt?
+}
+
 model Vehicle {
-  id                  BigInt         @id @unique @default(autoincrement())
+  id                  BigInt       @id @unique @default(autoincrement())
   patrol_id           Int
-  registration_no     String
+  registration_no     String       @unique
   colour              String
   model               String
   make                String
   hasLiveryOrSignage  Boolean
   hasPoliceRadio      Boolean
-  Patrol              patrols_prod @relation(fields: [patrol_id], references: [id])
+  Patrol              patrols_dev @relation(fields: [patrol_id], references: [id])
 }
 
 model EquipmentChecklist {
@@ -32,7 +56,7 @@ model EquipmentChecklist {
 }
 
 model VehicleCheckList {
-  id               BigInt
+  id               BigInt  @id @unique @default(autoincrement())
   externalLighting Boolean
   lightAndAlley    Boolean
   DashCamOperation Boolean
@@ -41,16 +65,16 @@ model VehicleCheckList {
 
 model VehicleDetails {
   id                              BigInt            @id @unique @default(autoincrement())
-  vehicle_id                      Int
+  vehicle_id                      BigInt
   hasWof                          Boolean
   hasRegistration                 Boolean
   isSafe                          Boolean
   hasVisibleDamage                Boolean
   visible_damage_note             String?
-  vehicle_checkList_id            Int
-  equipment_checklist_id          Int
+  vehicle_checkList_id            BigInt
+  equipment_checklist_id          BigInt
   isVehicleManagerAttentionNeeded boolean
-  Vehicle                         Vehicle
+  Vehicle                         Vehicle            @relation(fields: [vehicle_id], references: [id])
   VehicleCheckList                VehicleCheckList   @relation(fields: [vehicle_checkList_id], references: [id])
   EquipmentChecklist              EquipmentChecklist @relation(fields: [equipment_checklist_id], references: [id])
 } 
