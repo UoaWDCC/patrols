@@ -65,7 +65,7 @@ model VehicleCheckList {
 
 model VehicleDetails {
   id                              BigInt            @id @unique @default(autoincrement())
-  vehicle_id                      BigInt
+  vehicle_id                      BigInt            
   hasWof                          Boolean
   hasRegistration                 Boolean
   isSafe                          Boolean
@@ -77,7 +77,24 @@ model VehicleDetails {
   Vehicle                         Vehicle            @relation(fields: [vehicle_id], references: [id])
   VehicleCheckList                VehicleCheckList   @relation(fields: [vehicle_checkList_id], references: [id])
   EquipmentChecklist              EquipmentChecklist @relation(fields: [equipment_checklist_id], references: [id])
-} 
+}
+
+model Observation {
+  id                        BigInt          @id @unique @default(autoincrement())
+  start_time                DateTime        @db.Timestamptz(0)
+  end_time                  DateTime        @db.Timestamptz(0)
+  location                  String          
+  isPoliceOrSecurityPresent Boolean
+  incidentCategory          String
+  incidentSubCategory       String
+  description               String
+}
+
+model IncidentTypes {
+  id                  Int             @id @unique @default(autoincrement())
+  incidentCategory    String
+  incidentSubCategory String
+}
 
 model Amendment {
   id                 Int      @id @unique @default(autoincrement())
