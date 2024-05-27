@@ -8,6 +8,53 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model Vehicle {
+  id                  BigInt         @id @unique @default(autoincrement())
+  patrol_id           Int
+  registration_no     String
+  colour              String
+  model               String
+  make                String
+  hasLiveryOrSignage  Boolean
+  hasPoliceRadio      Boolean
+  Patrol              patrols_prod @relation(fields: [patrol_id], references: [id])
+}
+
+model EquipmentChecklist {
+  id               BigInt    @id @unique @default(autoincrement())
+  hi_viz_uniform   Boolean
+  first_aid_kit    Boolean
+  torch_or_wand    Boolean
+  fireExtinguisher Boolean
+  roadCones        Boolean
+  addtionalItems   String[]?
+  note             String?
+}
+
+model VehicleCheckList {
+  id               BigInt
+  externalLighting Boolean
+  lightAndAlley    Boolean
+  DashCamOperation Boolean
+  note             String?
+}
+
+model VehicleDetails {
+  id                              BigInt            @id @unique @default(autoincrement())
+  vehicle_id                      Int
+  hasWof                          Boolean
+  hasRegistration                 Boolean
+  isSafe                          Boolean
+  hasVisibleDamage                Boolean
+  visible_damage_note             String?
+  vehicle_checkList_id            Int
+  equipment_checklist_id          Int
+  isVehicleManagerAttentionNeeded boolean
+  Vehicle                         Vehicle
+  VehicleCheckList                VehicleCheckList   @relation(fields: [vehicle_checkList_id], references: [id])
+  EquipmentChecklist              EquipmentChecklist @relation(fields: [equipment_checklist_id], references: [id])
+} 
+
 model Amendment {
   id                 Int      @id @unique @default(autoincrement())
   shiftHoursChange   Decimal?
