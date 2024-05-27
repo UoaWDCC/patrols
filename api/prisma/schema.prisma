@@ -92,9 +92,10 @@ model Observation {
 }
 
 model IncidentTypes {
-  id                  Int             @id @unique @default(autoincrement())
   incidentCategory    String
   incidentSubCategory String
+
+  @@id([incidentCategory, incidentSubCategory])
 }
 
 model Amendment {
