@@ -17,19 +17,20 @@ model Shift {
   police_station_base String
   observer_id         BigInt
   driver_id           BigInt
-  guest_patroller_id  BigInt
+  guest_patroller     GuestPatroller[]?
   vehicle_id          BigInt
   Patrol              patrols_dev @relation(fields: [patrol_id], references: [id])
   Observer            members_dev @relation(fields: [observer_id], references: [id])
   Driver              members_dev @relation(fields: [driver_id], references: [id])
-  GuestPatoller       GuestPatoller @relation(fields: [guest_patroller_id], references: [id])
 }
 
-model GuestPatrol {
+model GuestPatroller {
   id           BigInt  @id @unique @default(autoincrement())
   name         String
   isRegistered Boolean
   member_id    BigInt?
+  shift_id     BigInt
+  Shift        Shift   @relation(fields: [shift_id], references: [id])
 }
 
 model Vehicle {
