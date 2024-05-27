@@ -24,7 +24,7 @@ model Shift {
   Driver              members_dev @relation(fields: [driver_id], references: [id])
 }
 
-model GuestPatroller {
+model GuestPatrollers {
   id           BigInt  @id @unique @default(autoincrement())
   name         String
   isRegistered Boolean
@@ -80,15 +80,17 @@ model VehicleDetails {
   EquipmentChecklist              EquipmentChecklist @relation(fields: [equipment_checklist_id], references: [id])
 }
 
-model Observation {
-  id                        BigInt          @id @unique @default(autoincrement())
-  start_time                DateTime        @db.Timestamptz(0)
-  end_time                  DateTime        @db.Timestamptz(0)
+model Observations {
+  id                        BigInt   @id @unique @default(autoincrement())
+  start_time                DateTime @db.Timestamptz(0)
+  end_time                  DateTime @db.Timestamptz(0)
   location                  String          
   isPoliceOrSecurityPresent Boolean
   incidentCategory          String
   incidentSubCategory       String
   description               String
+  report_id                 BigInt
+  Report                    Report   @relation(fields: [report_id], references: [id])                 
 }
 
 model IncidentTypes {
@@ -96,6 +98,19 @@ model IncidentTypes {
   incidentSubCategory String
 
   @@id([incidentCategory, incidentSubCategory])
+}
+
+model Report {
+  id                       BigInt          @id @unique @default(autoincrement())
+  member_id                BigInt
+  shift_id                 BigInt
+  vehicle_details_id       BigInt
+  odometer_initial_reading Int  
+  odometer_final_reading   Int
+  weather_condition        Weather
+  isFootPatrol             Boolean
+  observations             Observations[]?
+  notes                    String
 }
 
 model Amendment {
@@ -606,4 +621,9 @@ enum LogonStatus {
   No
   Pending
   Yes
+}
+
+emum Weather {
+  Wet
+  Dry
 }
