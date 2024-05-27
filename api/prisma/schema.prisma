@@ -17,7 +17,7 @@ model Shift {
   police_station_base String
   observer_id         BigInt
   driver_id           BigInt
-  guest_patroller     GuestPatroller[]?
+  guest_patroller     GuestPatroller[]
   vehicle_id          BigInt
   Patrol              patrols_dev @relation(fields: [patrol_id], references: [id])
   Observer            members_dev @relation(fields: [observer_id], references: [id])
@@ -52,7 +52,7 @@ model EquipmentChecklist {
   torch_or_wand    Boolean
   fireExtinguisher Boolean
   roadCones        Boolean
-  addtionalItems   String[]?
+  addtionalItems   String[]
   note             String?
 }
 
@@ -109,7 +109,7 @@ model Report {
   odometer_final_reading   Int
   weather_condition        Weather
   isFootPatrol             Boolean
-  observations             Observations[]?
+  observations             Observations[]
   notes                    String
 }
 
@@ -623,7 +623,7 @@ enum LogonStatus {
   Yes
 }
 
-emum Weather {
+enum Weather {
   Wet
   Dry
 }
