@@ -380,6 +380,7 @@ model members_dev {
   call_sign                        Call_Sign     @default(MRCS)
   police_station                   PoliceStation @default(Mt_Roskill_Police_Station)
   password                         String
+  logon_status                     LogonStatus   @dafault(No)
   patrols_prod                     patrols_prod  @relation(fields: [patrol_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
 }
 
@@ -597,4 +598,10 @@ enum Role {
 enum logType {
   logOn
   logOff
+}
+
+enum LogonStatus {
+  No
+  Pending
+  Yes
 }
