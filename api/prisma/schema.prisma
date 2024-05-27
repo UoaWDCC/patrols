@@ -10,18 +10,18 @@ datasource db {
 
 model Shift {
   id                  BigInt      @id @unique @default(autoincrement())
-  event_no            Int         @default(null) 
+  event_no            Int?
   patrol_id           BigInt   
   start_time          DateTime    @db.Timestamptz(0)
   end_time            DateTime    @db.Timestamptz(0)
   police_station_base String
   observer_id         BigInt
   driver_id           BigInt
-  guest_patroller     GuestPatroller[]
+  guest_patroller     GuestPatrollers[]
   vehicle_id          BigInt
   Patrol              patrols_dev @relation(fields: [patrol_id], references: [id])
-  Observer            members_dev @relation(fields: [observer_id], references: [id])
-  Driver              members_dev @relation(fields: [driver_id], references: [id])
+  Observer            members_dev @relation(name: "Observer", fields: [observer_id], references: [id])
+  Driver              members_dev @relation(name: "Driver", fields: [driver_id], references: [id])
 }
 
 model GuestPatrollers {
@@ -35,7 +35,7 @@ model GuestPatrollers {
 
 model Vehicle {
   id                  BigInt       @id @unique @default(autoincrement())
-  patrol_id           Int
+  patrol_id           BigInt
   registration_no     String       @unique
   colour              String
   model               String
@@ -43,6 +43,7 @@ model Vehicle {
   hasLiveryOrSignage  Boolean
   hasPoliceRadio      Boolean
   Patrol              patrols_dev @relation(fields: [patrol_id], references: [id])
+  VehicleDetails      VehicleDetails[]
 }
 
 model EquipmentChecklist {
@@ -54,6 +55,7 @@ model EquipmentChecklist {
   roadCones        Boolean
   addtionalItems   String[]
   note             String?
+  VehicleDetails   VehicleDetails?
 }
 
 model VehicleCheckList {
@@ -62,6 +64,7 @@ model VehicleCheckList {
   lightAndAlley    Boolean
   DashCamOperation Boolean
   note             String?
+  VehicleDetails   VehicleDetails?
 }
 
 model VehicleDetails {
@@ -72,9 +75,9 @@ model VehicleDetails {
   isSafe                          Boolean
   hasVisibleDamage                Boolean
   visible_damage_note             String?
-  vehicle_checkList_id            BigInt
-  equipment_checklist_id          BigInt
-  isVehicleManagerAttentionNeeded boolean
+  vehicle_checkList_id            BigInt             @unique
+  equipment_checklist_id          BigInt             @unique
+  isVehicleManagerAttentionNeeded Boolean
   Vehicle                         Vehicle            @relation(fields: [vehicle_id], references: [id])
   VehicleCheckList                VehicleCheckList   @relation(fields: [vehicle_checkList_id], references: [id])
   EquipmentChecklist              EquipmentChecklist @relation(fields: [equipment_checklist_id], references: [id])
@@ -397,8 +400,10 @@ model members_dev {
   call_sign                        Call_Sign     @default(MRCS)
   police_station                   PoliceStation @default(Mt_Roskill_Police_Station)
   password                         String
-  logon_status                     LogonStatus   @dafault(No)
+  logon_status                     LogonStatus   @default(No)
   patrols_prod                     patrols_prod  @relation(fields: [patrol_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  ObserverShift                    Shift[]       @relation(name:"Observer")
+  DriverShift                      Shift[]       @relation(name:"Driver")
 }
 
 /// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
@@ -459,7 +464,7 @@ model members_prod {
 }
 
 model patrols_dev {
-  id             BigInt         @id
+  id             BigInt         @id @unique @default(autoincrement())
   created_at     DateTime?      @db.Timestamptz(6)
   updated_at     DateTime?      @db.Timestamptz(6)
   name           String
@@ -471,6 +476,8 @@ model patrols_dev {
   email          String         @default("office@cpnz.org.nz")
   districts_prod districts_prod @relation(fields: [district_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
   vehicle_dev    vehicle_dev[]
+  Shift          Shift[]
+  Vehicle        Vehicle[]
 }
 
 /// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
