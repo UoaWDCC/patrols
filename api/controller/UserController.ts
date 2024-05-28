@@ -42,7 +42,7 @@ export const getUserDetailsByCPNZID = async (req: Request, res: Response) => {
       return res.status(404).json({ error: "User details not found" });
     }
 
-    const patrolDetails = await prisma.patrols_prod.findUnique({
+    const patrolDetails = await prisma.patrols_dev.findUnique({
       where: {
         id: userDetails?.patrol_id,
       },
@@ -52,9 +52,9 @@ export const getUserDetailsByCPNZID = async (req: Request, res: Response) => {
       },
     });
 
-    const vehicleDetails = await prisma.vehicle_dev.findMany({
+    const vehicleDetails = await prisma.vehicle.findMany({
       where: {
-        patrolID: userDetails?.patrol_id,
+        patrol_id: userDetails?.patrol_id,
       },
     });
 

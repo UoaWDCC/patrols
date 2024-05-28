@@ -5,7 +5,6 @@ import Home from "@pages/Home";
 import Report from "@pages/Report";
 import LogHome from "@pages/LogHome";
 import Logon from "@pages/Logon";
-import LogonTwo from "@pages/LogonTwo";
 import Login from "@pages/Login";
 import AuthProvider from "./providers/AuthProvider";
 import ProtectedRoute from "@components/ProtectedRoute";
@@ -41,14 +40,6 @@ const router = createBrowserRouter([
     element: (
       <ProtectedRoute>
         <Logon />
-      </ProtectedRoute>
-    ),
-  },
-  {
-    path: "/logon-two",
-    element: (
-      <ProtectedRoute>
-        <LogonTwo />
       </ProtectedRoute>
     ),
   },

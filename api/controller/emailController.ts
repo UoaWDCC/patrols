@@ -1,11 +1,9 @@
 import type { Request, Response } from "express";
 import { z } from "zod";
 import { Resend } from "resend";
-import prisma from "../db/database";
 
 const EMAIL_API_KEY: string = process.env.RESEND_API_KEY as string;
-const trialDomain = "onboarding@resend.dev";
-const CPNZ_APP_EMAIL = process.env.CPNZ_DOMAIN ?? trialDomain;
+const CPNZ_APP_EMAIL = "ecc@cpnz.org.nz";
 const resend = new Resend(EMAIL_API_KEY);
 
 const formSchema = z.object({
@@ -80,7 +78,7 @@ export const sendEmail = async (req: Request, res: Response) => {
 
   try {
     const data = await resend.emails.send({
-      from: `Acme <${CPNZ_APP_EMAIL}>`,
+      from: `CPNZ <${CPNZ_APP_EMAIL}>`,
       to: [`${recipientEmail}`],
       subject: `CPNZ - Log On - Patrol ID: ${cpnzID}`,
       html: `
