@@ -52,9 +52,9 @@ export const getUserDetailsByCPNZID = async (req: Request, res: Response) => {
       },
     });
 
-    const vehicleDetails = await prisma.vehicle_dev.findMany({
+    const vehicleDetails = await prisma.vehicle.findMany({
       where: {
-        patrolID: userDetails?.patrol_id,
+        patrol_id: userDetails?.patrol_id,
       },
     });
 
