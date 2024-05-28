@@ -1,9 +1,9 @@
 import { useNavigate } from "react-router-dom";
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { z } from 'zod';
-import { Button } from '@components/ui/button';
-import { Input } from '@components/ui/input';
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
+import { Button } from "@components/ui/button";
+import { Input } from "@components/ui/input";
 import {
   Form,
   FormControl,
@@ -11,14 +11,14 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from '@components/ui/form';
-import userIcon from '../assets/images/gorilla.png';
-import { useEffect, useState } from 'react';
-import { FaCog } from 'react-icons/fa';
-import axios from 'axios';
-import { Popover } from '@components/ui/popover';
-import { PopoverContent, PopoverTrigger } from '@radix-ui/react-popover';
-import { Check, ChevronsUpDown, Loader2 } from 'lucide-react';
+} from "@components/ui/form";
+import userIcon from "../assets/images/gorilla.png";
+import { useEffect, useState } from "react";
+import { FaCog } from "react-icons/fa";
+import axios from "axios";
+import { Popover } from "@components/ui/popover";
+import { PopoverContent, PopoverTrigger } from "@radix-ui/react-popover";
+import { Check, ChevronsUpDown, Loader2 } from "lucide-react";
 import {
   Command,
   CommandEmpty,
@@ -26,10 +26,10 @@ import {
   CommandInput,
   CommandItem,
   CommandList,
-} from '@components/ui/command';
-import { cn } from '../lib/utils';
-import useUserData from '../hooks/useUserData';
-import { vehicleDetailsSchema } from '../schemas';
+} from "@components/ui/command";
+import { cn } from "../lib/utils";
+import useUserData from "../hooks/useUserData";
+import { vehicleDetailsSchema } from "../schemas";
 
 export default function Logon() {
   const {
@@ -51,7 +51,7 @@ export default function Logon() {
   type VehicleDetails = z.infer<typeof vehicleDetailsSchema>;
 
   // driverName
-  const [value, setValue] = useState<string>('');
+  const [value, setValue] = useState<string>("");
   const [submitting, setSubmitting] = useState<boolean>(false);
 
   const membersFullName = membersInPatrol
@@ -82,26 +82,28 @@ export default function Logon() {
   // Initalise empty form
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
-    mode: 'onChange',
+    mode: "onChange",
   });
 
   // Populate default values when details have been fetched
   useEffect(() => {
     if (!loading) {
       form.reset({
-        startTime: '',
-        endTime: '',
-        policeStationBase: policeStation || '',
-        cpCallSign: callSign || '',
-        patrol: patrolName || '',
+        startTime: "",
+        endTime: "",
+        policeStationBase: policeStation || "",
+        cpCallSign: callSign || "",
+        patrol: patrolName || "",
         observerName: fullName,
-        observerNumber: mobileNumber || '',
-        driver: '',
+        observerNumber: mobileNumber || "",
+        driver: "",
         vehicle:
-          currentUserVehicles.find((v: VehicleDetails) => v.selected)?.name ||
-          '',
-        liveryOrSignage: 'yes',
-        havePoliceRadio: 'no',
+          currentUserVehicles.find((v: VehicleDetails) => v.selected)?.make +
+            " " +
+            currentUserVehicles.find((v: VehicleDetails) => v.selected)
+              ?.model || "",
+        liveryOrSignage: "yes",
+        havePoliceRadio: "no",
       });
     }
   }, [
@@ -119,7 +121,7 @@ export default function Logon() {
     try {
       setSubmitting(true);
       await axios.post(`${import.meta.env.VITE_API_URL}/send-email`, {
-        recipientEmail: 'jasonabc0626@gmail.com',
+        recipientEmail: "jasonabc0626@gmail.com",
         email,
         cpnzID,
         formData: data,
@@ -130,16 +132,16 @@ export default function Logon() {
       console.log(data);
       setSubmitting(false);
       // Navigates to Loghome if succesfully logged on.
-      navigate('/LogHome');
+      navigate("/LogHome");
     } catch (error) {
       axios.isAxiosError(error)
         ? console.log(error.response?.data.error)
-        : console.error('Unexpected error during login:', error);
+        : console.error("Unexpected error during login:", error);
     }
   };
 
   const addGuestPatrol = () => {
-    setGuestPatrols([...guestPatrols, { name: '', number: '' }]);
+    setGuestPatrols([...guestPatrols, { name: "", number: "" }]);
   };
 
   return (
@@ -317,7 +319,7 @@ export default function Logon() {
                           <Popover open={open} onOpenChange={setOpen}>
                             <PopoverTrigger asChild>
                               <Button
-                                variant={'outline'}
+                                variant={"outline"}
                                 role="combobox"
                                 aria-expanded={open}
                                 className="w-[300px] justify-between text-md text-gray-600"
@@ -326,7 +328,7 @@ export default function Logon() {
                                   ? membersFullName.find(
                                       (member) => member.name === value
                                     )?.name
-                                  : 'Select Driver'}
+                                  : "Select Driver"}
                                 <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                               </Button>
                             </PopoverTrigger>
@@ -346,7 +348,7 @@ export default function Logon() {
                                         onSelect={(currentValue) => {
                                           setValue(
                                             currentValue === value
-                                              ? ''
+                                              ? ""
                                               : currentValue
                                           );
                                           setOpen(false);
@@ -354,10 +356,10 @@ export default function Logon() {
                                       >
                                         <Check
                                           className={cn(
-                                            'mr-2 h-4 w-4',
+                                            "mr-2 h-4 w-4",
                                             value === member.name
-                                              ? 'opacity-100'
-                                              : 'opacity-0'
+                                              ? "opacity-100"
+                                              : "opacity-0"
                                           )}
                                         />
                                         {member.name}
@@ -449,7 +451,9 @@ export default function Logon() {
                               }}
                             >
                               {currentUserVehicles.map((v) => (
-                                <option key={v.name}>{v.name}</option>
+                                <option key={v.id}>
+                                  {v.make} {v.model}
+                                </option>
                               ))}
                             </select>
                           </FormControl>
@@ -533,10 +537,10 @@ export default function Logon() {
                 >
                   {submitting ? (
                     <>
-                      Submitting <Loader2 className="animate-spin ml-4" />{' '}
+                      Submitting <Loader2 className="animate-spin ml-4" />{" "}
                     </>
                   ) : (
-                    'Submit'
+                    "Submit"
                   )}
                 </Button>
               </div>

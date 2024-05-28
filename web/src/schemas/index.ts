@@ -1,11 +1,14 @@
 import { z } from "zod";
 
 export const vehicleDetailsSchema = z.object({
-  name: z.string(),
-  created_at: z.string(),
-  registration_number: z.string(),
+  id: z.string(),
+  patrol_id: z.string(),
+  registration_no: z.string(),
   colour: z.string(),
-  livery: z.boolean(),
+  model: z.string(),
+  make: z.string(),
+  has_livery_or_signage: z.boolean(),
+  has_police_radio: z.boolean(),
   selected: z.boolean(),
 });
 
