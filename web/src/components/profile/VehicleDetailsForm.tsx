@@ -1,15 +1,15 @@
-import { FormItem, FormLabel, Form } from '@components/ui/form';
-import { Input } from '@components/ui/input';
-import useUserData from '../../hooks/useUserData';
-import { formSchema } from '../../schemas';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { useForm } from 'react-hook-form';
-import { z } from 'zod';
-import car from '../../assets/images/car.png';
-import { Button } from '@components/ui/button';
-import axios from 'axios';
-import { useRef, useState, ChangeEvent } from 'react';
-import { Loader2 } from 'lucide-react';
+import { FormItem, FormLabel, Form } from "@components/ui/form";
+import { Input } from "@components/ui/input";
+import useUserData from "../../hooks/useUserData";
+import { formSchema } from "../../schemas";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
+import car from "../../assets/images/car.png";
+import { Button } from "@components/ui/button";
+import axios from "axios";
+import { useRef, useState, ChangeEvent } from "react";
+import { Loader2 } from "lucide-react";
 
 export default function VehicleDetailsForm() {
   const vehicleSelectRef = useRef<HTMLSelectElement | null>(null);
@@ -43,7 +43,7 @@ export default function VehicleDetailsForm() {
   const handleVehicleSelect = (event: ChangeEvent<HTMLSelectElement>) => {
     const selectedVehicleName = event.target.value;
     const selectedVehicle = currentUserVehicles.find(
-      (vehicle) => vehicle.name === selectedVehicleName
+      (vehicle) => vehicle.model + " " + vehicle.make === selectedVehicleName
     );
     setSelectedVehicle(selectedVehicle || null);
   };
@@ -83,15 +83,21 @@ export default function VehicleDetailsForm() {
                   const selectedVehicleInDatabase = currentUserVehicles[0];
                   const selectedVehicleName = event.target.value;
                   const vehicleChanged =
-                    selectedVehicleName !== selectedVehicleInDatabase?.name;
+                    selectedVehicleName !==
+                    selectedVehicleInDatabase?.model +
+                      " " +
+                      selectedVehicleInDatabase?.make;
                   setCanSaveVehicle(vehicleChanged);
                   handleVehicleSelect(event);
                 }}
-                value={selectedVehicle?.name}
+                value={selectedVehicle?.model + " " + selectedVehicle?.make}
               >
                 {currentUserVehicles.map((vehicle, index) => (
-                  <option key={index} value={vehicle.name}>
-                    {vehicle.name}
+                  <option
+                    key={index}
+                    value={vehicle.model + " " + vehicle.make}
+                  >
+                    {vehicle.model + " " + vehicle.make}
                   </option>
                 ))}
               </select>
@@ -101,14 +107,14 @@ export default function VehicleDetailsForm() {
         <div className="flex flex-col gap-8 ">
           <div className="flex flex-col">
             {selectedVehicle && (
-              <>
+              <div className="flex flex-col gap-4">
                 <FormItem className="flex flex-col flex-1">
                   <FormLabel htmlFor={`reg-0`}>Registration Number</FormLabel>
                   <Input
                     type="text"
                     id={`reg-0`}
                     name={`reg-0`}
-                    value={selectedVehicle.registration_number}
+                    value={selectedVehicle.registration_no}
                     disabled
                     className="rounded-md px-3 py-2 border-[#CBD5E1]"
                   />
@@ -125,17 +131,17 @@ export default function VehicleDetailsForm() {
                   />
                 </FormItem>
                 <FormItem className="flex flex-col flex-1">
-                  <FormLabel htmlFor={`livery-0`}>Livery</FormLabel>
+                  <FormLabel htmlFor={`livery-0`}>Livery / Signage</FormLabel>
                   <Input
                     type="text"
                     id={`livery-0`}
                     name={`livery-0`}
-                    value={selectedVehicle.livery ? 'Yes' : 'No'}
+                    value={selectedVehicle.has_livery_or_signage ? "Yes" : "No"}
                     disabled
                     className="rounded-md px-3 py-2 border-[#CBD5E1]"
                   />
                 </FormItem>
-              </>
+              </div>
             )}
           </div>
           {canSaveVehicle ? (
