@@ -42,7 +42,7 @@ export const getUserDetailsByCPNZID = async (req: Request, res: Response) => {
       return res.status(404).json({ error: "User details not found" });
     }
 
-    const patrolDetails = await prisma.patrols_prod.findUnique({
+    const patrolDetails = await prisma.patrols_dev.findUnique({
       where: {
         id: userDetails?.patrol_id,
       },
