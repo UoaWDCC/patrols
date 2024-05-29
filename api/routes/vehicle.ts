@@ -5,3 +5,5 @@ const vehicleRoutes = Router();
 
 vehicleRoutes.route('/:id')
     .get(getSingleVehicle);
+
+export default vehicleRoutes;
