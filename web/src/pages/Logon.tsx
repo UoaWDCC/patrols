@@ -90,8 +90,8 @@ export default function Logon() {
   useEffect(() => {
     if (!loading) {
       form.reset({
-        startTime: "",
-        endTime: "",
+        startTime: "" || undefined,
+        endTime: "" || undefined,
         policeStationBase: policeStation || "",
         cpCallSign: callSign || "",
         patrol: patrolName || "",
@@ -238,12 +238,17 @@ export default function Logon() {
                     <FormItem>
                       <FormLabel>Police Station Base</FormLabel>
                       <FormControl>
-                        <Input {...field} className="w-full" />
+                        <Input
+                          {...field}
+                          className="w-full"
+                          value={policeStation}
+                        />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
                   )}
                 />
+
                 <FormField
                   control={form.control}
                   name="cpCallSign"
@@ -251,12 +256,13 @@ export default function Logon() {
                     <FormItem>
                       <FormLabel>CP Call Sign</FormLabel>
                       <FormControl>
-                        <Input {...field} className="w-full" />
+                        <Input {...field} className="w-full" value={callSign} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
                   )}
                 />
+
                 <FormField
                   control={form.control}
                   name="patrol"
@@ -264,12 +270,17 @@ export default function Logon() {
                     <FormItem>
                       <FormLabel>Patrol</FormLabel>
                       <FormControl>
-                        <Input {...field} className="w-full" />
+                        <Input
+                          {...field}
+                          className="w-full"
+                          value={patrolName}
+                        />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
                   )}
                 />
+
                 <div className="col-span-2 mt-6">
                   <h4 className="text-2xl font-semibold mb-2">
                     Patrol (observer)
@@ -282,7 +293,11 @@ export default function Logon() {
                         <FormItem>
                           <FormLabel>Name</FormLabel>
                           <FormControl>
-                            <Input {...field} className="w-full" />
+                            <Input
+                              {...field}
+                              className="w-full"
+                              value={fullName}
+                            />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -295,7 +310,11 @@ export default function Logon() {
                         <FormItem>
                           <FormLabel>Mobile Number</FormLabel>
                           <FormControl>
-                            <Input {...field} className="w-full" />
+                            <Input
+                              {...field}
+                              className="w-full"
+                              value={mobileNumber}
+                            />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -303,6 +322,7 @@ export default function Logon() {
                     />
                   </div>
                 </div>
+
                 <div className="col-span-2">
                   <h4 className="text-2xl font-semibold mb-2">
                     Patrol (driver)
