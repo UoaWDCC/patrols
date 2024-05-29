@@ -32,6 +32,14 @@ import useUserData from "../hooks/useUserData";
 import { vehicleDetailsSchema } from "../schemas";
 
 export default function Logon() {
+  const [driver, setDriver] = useState<string>(""); // driverName
+  const [open, setOpen] = useState(false);
+  const [guestPatrols, setGuestPatrols] = useState<
+    { name: string; number: string }[]
+  >([]);
+  const [submitting, setSubmitting] = useState<boolean>(false);
+  const navigate = useNavigate();
+
   const {
     loading,
     cpnzID,
@@ -46,24 +54,17 @@ export default function Logon() {
     mobileNumber,
   } = useUserData();
 
-  const [open, setOpen] = useState(false);
-
-  type VehicleDetails = z.infer<typeof vehicleDetailsSchema>;
-
-  // driverName
-  const [value, setValue] = useState<string>("");
-  const [submitting, setSubmitting] = useState<boolean>(false);
-
   const membersFullName = membersInPatrol
     .filter((m) => m.cpnz_id !== currentUserDetails?.cpnz_id)
     .map((m) => ({
       name: `${m.first_names} ${m.surname}`,
     }));
 
-  const navigate = useNavigate();
-  const [guestPatrols, setGuestPatrols] = useState<
-    { name: string; number: string }[]
-  >([]);
+  const addGuestPatrol = () => {
+    setGuestPatrols([...guestPatrols, { name: "", number: "" }]);
+  };
+
+  type VehicleDetails = z.infer<typeof vehicleDetailsSchema>;
 
   const formSchema = z.object({
     startTime: z.string().min(1),
@@ -126,7 +127,7 @@ export default function Logon() {
         cpnzID,
         formData: data,
         driver: membersInPatrol.find(
-          (m) => m.first_names + " " + m.surname === value
+          (m) => m.first_names + " " + m.surname === driver
         ),
       });
       console.log(data);
@@ -138,10 +139,6 @@ export default function Logon() {
         ? console.log(error.response?.data.error)
         : console.error("Unexpected error during login:", error);
     }
-  };
-
-  const addGuestPatrol = () => {
-    setGuestPatrols([...guestPatrols, { name: "", number: "" }]);
   };
 
   return (
@@ -324,9 +321,9 @@ export default function Logon() {
                                 aria-expanded={open}
                                 className="w-[300px] justify-between text-md text-gray-600"
                               >
-                                {value
+                                {driver
                                   ? membersFullName.find(
-                                      (member) => member.name === value
+                                      (member) => member.name === driver
                                     )?.name
                                   : "Select Driver"}
                                 <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
@@ -345,11 +342,11 @@ export default function Logon() {
                                       <CommandItem
                                         key={member.name}
                                         value={member.name}
-                                        onSelect={(currentValue) => {
-                                          setValue(
-                                            currentValue === value
+                                        onSelect={(currentDriver) => {
+                                          setDriver(
+                                            currentDriver === driver
                                               ? ""
-                                              : currentValue
+                                              : currentDriver
                                           );
                                           setOpen(false);
                                         }}
@@ -357,7 +354,7 @@ export default function Logon() {
                                         <Check
                                           className={cn(
                                             "mr-2 h-4 w-4",
-                                            value === member.name
+                                            driver === member.name
                                               ? "opacity-100"
                                               : "opacity-0"
                                           )}
