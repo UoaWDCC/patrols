@@ -47,7 +47,26 @@ export const deleteVehicle = async (req: Request, res: Response) => {
     } catch (error: any) {
         res.status(400).json({ error: error.message });
     }
-}
+};
+
+export const updateVehicle = async (req: Request, res: Response) => {
+    try {
+        const { id } = req.params;
+        const updateData = req.body;
+        const vehicle = await prisma.vehicle.update({
+            where: { id: BigInt(id) },
+            data: updateData,
+        });
+
+        if (!vehicle) {
+            return res.status(404).json({ error: 'No such vehicle' });
+        }
+
+        res.status(200).json(vehicle);
+    } catch (error: any) {
+        res.status(400).json({ error: error.message });
+    }
+};
 
 export const getVehicleByPatrolId = async (req: Request, res: Response) => {
     try {
