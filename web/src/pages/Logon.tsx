@@ -13,7 +13,7 @@ import {
   FormMessage,
 } from "@components/ui/form";
 import userIcon from "../assets/images/gorilla.png";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { FaCog } from "react-icons/fa";
 import axios from "axios";
 import { Popover } from "@components/ui/popover";
@@ -41,7 +41,6 @@ export default function Logon() {
   const navigate = useNavigate();
 
   const {
-    loading,
     cpnzID,
     email,
     currentUserDetails,
@@ -80,43 +79,28 @@ export default function Logon() {
     havePoliceRadio: z.string(),
   });
 
-  // Initalise empty form
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
+    defaultValues: {
+      startTime: "",
+      endTime: "",
+      policeStationBase: policeStation || "",
+      cpCallSign: callSign || "",
+      patrol: patrolName || "",
+      observerName: fullName,
+      observerNumber: mobileNumber || "",
+      driver: "",
+      vehicle:
+        (currentUserVehicles.find((v: VehicleDetails) => v.selected)?.make ||
+          "") +
+        " " +
+        (currentUserVehicles.find((v: VehicleDetails) => v.selected)?.model ||
+          ""),
+      liveryOrSignage: "yes",
+      havePoliceRadio: "no",
+    },
     mode: "onChange",
   });
-
-  // Populate default values when details have been fetched
-  useEffect(() => {
-    if (!loading) {
-      form.reset({
-        startTime: "" || undefined,
-        endTime: "" || undefined,
-        policeStationBase: policeStation || "",
-        cpCallSign: callSign || "",
-        patrol: patrolName || "",
-        observerName: fullName,
-        observerNumber: mobileNumber || "",
-        driver: "",
-        vehicle:
-          currentUserVehicles.find((v: VehicleDetails) => v.selected)?.make +
-            " " +
-            currentUserVehicles.find((v: VehicleDetails) => v.selected)
-              ?.model || "",
-        liveryOrSignage: "yes",
-        havePoliceRadio: "no",
-      });
-    }
-  }, [
-    loading,
-    policeStation,
-    callSign,
-    patrolName,
-    fullName,
-    mobileNumber,
-    currentUserVehicles,
-    form,
-  ]);
 
   const onSubmit = async (data: z.infer<typeof formSchema>) => {
     try {
@@ -241,14 +225,13 @@ export default function Logon() {
                         <Input
                           {...field}
                           className="w-full"
-                          value={policeStation}
+                          placeholder="Enter police station base"
                         />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
                   )}
                 />
-
                 <FormField
                   control={form.control}
                   name="cpCallSign"
