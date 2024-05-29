@@ -1,11 +1,12 @@
 import { Router } from 'express';
-import { addVehicle, getSingleVehicle, getVehicleByPatrolId } from '../controller/vehicleController';
+import { addVehicle, deleteVehicle, getSingleVehicle, getVehicleByPatrolId } from '../controller/vehicleController';
 
 const vehicleRoutes = Router();
 
 vehicleRoutes.route('/:id')
     .get(getSingleVehicle)
-    .post(addVehicle);
+    .post(addVehicle)
+    .delete(deleteVehicle);
 
 vehicleRoutes.route('/patrol/:id')
     .get(getVehicleByPatrolId);
