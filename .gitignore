@@ -1,3 +1,5 @@
 *node_modules
 *.env
 */dist
+api/test_gmail/credentials.json
+api/test_gmail/token.json
