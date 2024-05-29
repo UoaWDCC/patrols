@@ -1,9 +1,10 @@
 import { Router } from 'express';
-import { getSingleVehicle } from '../controller/vehicleController';
+import { addVehicle, getSingleVehicle } from '../controller/vehicleController';
 
 const vehicleRoutes = Router();
 
 vehicleRoutes.route('/:id')
-    .get(getSingleVehicle);
+    .get(getSingleVehicle)
+    .post(addVehicle);
 
 export default vehicleRoutes;

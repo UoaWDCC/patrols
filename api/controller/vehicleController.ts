@@ -21,3 +21,13 @@ export const getSingleVehicle = async (req: Request, res: Response) => {
         res.status(400).json({ error: error.message });
     }
 };
+
+export const addVehicle = async (req: Request, res: Response) => {
+    try {
+        const newVehicle = req.body;
+        const vehicle = await prisma.vehicle.create({ data: newVehicle });
+        res.status(200).json(vehicle);
+    } catch (error: any) {
+        res.status(400).json({ error: error.message });
+    }
+}
