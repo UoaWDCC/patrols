@@ -66,24 +66,29 @@ async function authorize() {
 }
 
 /**
- * Lists the labels in the user's account.
+ * Lists emails that have 'Reminder' in the subject.
  *
  * @param {google.auth.OAuth2} auth An authorized OAuth2 client.
  */
-async function listLabels(auth) {
-  const gmail = google.gmail({version: 'v1', auth});
-  const res = await gmail.users.labels.list({
-    userId: 'me',
-  });
-  const labels = res.data.labels;
-  if (!labels || labels.length === 0) {
-    console.log('No labels found.');
-    return;
+async function listReminderEmails(auth) {
+    const gmail = google.gmail({version: 'v1', auth});
+    const res = await gmail.users.messages.list({
+      userId: 'me',
+      q: 'subject:Reminder'
+    });
+    const messages = res.data.messages;
+    if (!messages || messages.length === 0) {
+      console.log('No emails with "Reminder" found.');
+      return;
+    }
+    console.log('Emails with "Reminder":');
+    messages.forEach(async (message) => {
+      const msg = await gmail.users.messages.get({
+        userId: 'me',
+        id: message.id
+      });
+      console.log(`Subject: ${msg.data.payload.headers.find(header => header.name === 'Subject').value}`); // Prints subject of each email
+    });
   }
-  console.log('Labels:');
-  labels.forEach((label) => {
-    console.log(`- ${label.name}`);
-  });
-}
-
-authorize().then(listLabels).catch(console.error);
+  
+  authorize().then(listReminderEmails).catch(console.error);
