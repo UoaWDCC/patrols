@@ -10,7 +10,7 @@ import { createGetConfig, createPostConfig } from '../auth_util/gmailAuth';
 const oAuth2Client = new google.auth.OAuth2(
     process.env.CLIENT_ID,
     process.env.CLIENT_SECRET,
-    process.env.REDIRECT_URI, // I am really sure whether this redirect url applicable in our case, but seems to be required using oAuth, currently set to https://developers.google.com/oauthplayground
+    process.env.REDIRECT_URI, // I am really not sure whether this redirect url applicable in our case, but seems to be required using oAuth, currently set to https://developers.google.com/oauthplayground
 );
 
 const cpnzEmail = process.env.CPNZ_EMAIL_TEST; //this is our cpnz email used for sending to ECC
