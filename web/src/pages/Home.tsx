@@ -14,6 +14,8 @@ import {
 import { userDetailsSchema } from "../schemas";
 import SignoutButton from "@components/SignoutButton";
 import BottomNavBar from "@components/BottomNavBar";
+import SmallInfoButton from "@components/ui/SmallInfoButton";
+import LargeInfoButton from "@components/ui/LargeInfoButton";
 
 const reportsDetailsSchema = z.object({
   message: z.string(),
@@ -79,47 +81,39 @@ export default function Home() {
         </div>
         <FaCog className="text-2xl text-gray-400 cursor-pointer hover:text-gray-200 transition-colors duration-300" />
       </div>
-
       <div className="max-w-800 mx-auto px-8 my-8">
-        <div className="bg-[#EEF6FF] p-4 rounded-lg shadow-md mb-6">
-          <h2 className="text-md font-semibold">Draft report detected</h2>
-          <p className="text-gray-600">Finish your report?</p>
-        </div>
-        <div className="bg-[#0F1363] px-4 py-2 rounded-lg shadow-md mb-6">
-          <h2 className="text-sm font-bold text-white ml-10 mt-3 text-left">
-            {" "}
-            Log on to start a new shift
-          </h2>
-          <p className="text-white text-xs ml-10 text-left my-3">
-            Create a new report from scratch or select a template.
-          </p>
-          <button
-            onClick={handleNewReport}
-            className="bg-white w-full mx-auto px-6 py-4 mb-3 rounded-lg text-md font-semibold flex items-center justify-center transition-all duration-300 text-black shadow-sm hover:shadow-lg"
-          >
-            <FaPlus className="mr-2" /> Start a New Shift
-          </button>
-        </div>
-
-        <div className="bg-[#EEF6FF] p-4 rounded-lg shadow-md mb-6">
-          <h2 className="text-md font-semibold mb-2">Patrol vehicles</h2>
-          <p className="text-gray-600 mb-4">
-            Create a new report from scratch or select a template.
-          </p>
-          <button className="bg-white w-full mx-auto px-6 py-3 rounded-lg text-md font-semibold text-black shadow-sm hover:shadow-lg">
-            View and Update Patrol Vehicles
-          </button>
-        </div>
-
-        <div className="grid grid-cols-2 gap-4">
-          <div className="bg-[#EEF6FF] text-black p-4 rounded-lg flex items-center hover:bg-[#808080] transition-colors duration-300">
+        <LargeInfoButton
+          heading={"Draft report detected"}
+          description={"You have a report you haven't submitted."}
+          className="bg-[#EEF6FF] p-4 rounded-lg shadow-md mb-6"
+          iconDescription={"Finish your report?"}
+          variant={"light"}
+        />
+        <LargeInfoButton
+          className="bg-[#0F1363] p-4 rounded-lg shadow-md mb-6 text-left"
+          heading={"Log on to start a new shift"}
+          description={"Create a new report from scratch or select a template."}
+          icon={<FaPlus className="mr-2" />}
+          iconDescription={"Start a New Shift"}
+          onClick={() => handleNewReport()}
+          variant={"dark"}
+        />
+        <LargeInfoButton
+          className="bg-[#EEF6FF] p-4 rounded-lg shadow-md mb-6 text-left"
+          heading={"Patrol vehicles"}
+          description={"Create a new report from scratch or select a template."}
+          iconDescription={"View and Update Patrol Vehicles"}
+          variant={"light"}
+        />
+        <div className="flex justify-between gap-10">
+          <div className="basis-1/2 flex">
             <Dialog>
-              <DialogTrigger className="flex items-center">
-                <FaClipboardList className="mr-4 text-2xl" />
-                <div className="text-left">
-                  <h3 className="text-base font-semibold">Past Reports</h3>
-                  <p className="text-xs">View reports in the past.</p>
-                </div>
+              <DialogTrigger className="flex-1 bg-[#EEF6FF] text-black p-4 rounded-lg hover:bg-[#808080] transition-colors duration-300">
+                <SmallInfoButton
+                  heading="Past Reports"
+                  description="View reports in the past."
+                  icon={<FaClipboardList className="mr-4 text-2xl" />}
+                />
               </DialogTrigger>
               <DialogContent className="p-8 max-h-[550px] overflow-y-auto">
                 <DialogHeader>
@@ -128,7 +122,7 @@ export default function Home() {
                   </DialogTitle>
                   <DialogDescription>
                     {data == null ? (
-                      <div>No reports found</div>
+                      <span>No reports found</span>
                     ) : (
                       <div className="flex flex-col w-full gap-8">
                         {data.reports.map((d) => (
@@ -157,14 +151,30 @@ export default function Home() {
               </DialogContent>
             </Dialog>
           </div>
-          <div className="bg-[#EEF6FF] text-black p-4 rounded-lg flex items-center hover:bg-[#808080] transition-colors duration-300">
-            <FaCogs className="mr-4 text-2xl" />
-            <div className="text-left">
-              <h3 className="text-md font-semibold">Report Settings</h3>
-              <p className="text-xs">
-                Modify report templates including templates.
-              </p>
-            </div>
+          <div className="basis-1/2 flex">
+            <Dialog>
+              <DialogTrigger className="flex-1 bg-[#EEF6FF] text-black p-4 rounded-lg hover:bg-[#808080] transition-colors duration-300">
+                <SmallInfoButton
+                  heading="Report Settings"
+                  description="Modify report templates including templates."
+                  icon={<FaCogs className="mr-4 text-2xl" />}
+                />
+              </DialogTrigger>
+              <DialogContent className="p-8 max-h-[550px] overflow-y-auto">
+                <DialogHeader>
+                  <DialogTitle className="text-center text-subheading pb-12">
+                    Templates
+                  </DialogTitle>
+                  <DialogDescription>
+                    {data == null ? (
+                      <span>No templates found</span>
+                    ) : (
+                      <div>Some data...</div>
+                    )}
+                  </DialogDescription>
+                </DialogHeader>
+              </DialogContent>
+            </Dialog>
           </div>
         </div>
       </div>
