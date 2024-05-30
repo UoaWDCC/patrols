@@ -532,7 +532,11 @@ export default function Logon() {
                 />
               </div>
               <div className="mt-8 flex justify-between">
-                <Button>
+                <Button
+                  type="button"
+                  variant={"outline"}
+                  className="border-cpnz-blue-800 border-2"
+                >
                   <Link to="/home">Cancel</Link>
                 </Button>
                 <Button
