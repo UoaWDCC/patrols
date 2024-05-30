@@ -1,32 +1,44 @@
 import { FormItem, FormLabel, Form } from "@components/ui/form";
 import { Input } from "@components/ui/input";
 import useUserData from "../../hooks/useUserData";
-import { formSchema } from "../../schemas";
+import { formSchema, vehicleDetailsSchema } from "../../schemas";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import car from "../../assets/images/car.png";
 import { Button } from "@components/ui/button";
 import axios from "axios";
-import { useRef, useState, ChangeEvent } from "react";
-import { Loader2 } from "lucide-react";
+import { useRef, useState, ChangeEvent, useEffect } from "react";
 
-export default function VehicleDetailsForm() {
+interface VehicleDetailsFormFormProps {
+  currentUserVehicles: z.infer<typeof vehicleDetailsSchema>[];
+}
+type VehicleDetails = z.infer<typeof vehicleDetailsSchema>;
+
+export default function VehicleDetailsForm(props: VehicleDetailsFormFormProps) {
   const vehicleSelectRef = useRef<HTMLSelectElement | null>(null);
   const [canSaveVehicle, setCanSaveVehicle] = useState(false);
+  const [selectedVehicle, setSelectedVehicle] = useState<VehicleDetails | null>(
+    null
+  );
 
-  const {
-    currentUserVehicles,
-    selectedVehicle,
-    setSelectedVehicle,
-    loading,
-    refetch,
-  } = useUserData();
+  const { refetch } = useUserData();
+
+  useEffect(() => {
+    if (props) {
+      if (props.currentUserVehicles.length === 0) {
+        setSelectedVehicle(null);
+      } else {
+        setSelectedVehicle(
+          props.currentUserVehicles.find((vehicle) => vehicle.selected) || null
+        );
+      }
+    }
+  }, [props]);
 
   const changeSelectedVehicle = async () => {
     try {
       const updateSelectedVehicle = {
-        // currentVehicle: selectedVehicle[0]?.name,
         newVehicle: vehicleSelectRef.current?.value,
       };
 
@@ -42,25 +54,16 @@ export default function VehicleDetailsForm() {
 
   const handleVehicleSelect = (event: ChangeEvent<HTMLSelectElement>) => {
     const selectedVehicleName = event.target.value;
-    const selectedVehicle = currentUserVehicles.find(
+    const selectedVehicle = props.currentUserVehicles.find(
       (vehicle) => vehicle.model + " " + vehicle.make === selectedVehicleName
     );
     setSelectedVehicle(selectedVehicle || null);
+    setCanSaveVehicle(true);
   };
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
   });
-
-  if (loading) {
-    return (
-      <div className="flex justify-center items-center">
-        <p>Loading vehicles...</p>
-        <Loader2 className="animate-spin ml-4" />
-      </div>
-    );
-  }
-
   return (
     <div className="my-6 mx-8 space-y-5 text-left px-7">
       <div className="flex items-center justify-start">
@@ -73,14 +76,15 @@ export default function VehicleDetailsForm() {
         <Form {...form}>
           <FormItem className="flex flex-col flex-1">
             <FormLabel htmlFor="vehicles">Patrol Vehicle</FormLabel>
-            {currentUserVehicles.length === 0 ? (
+            {props.currentUserVehicles.length === 0 ? (
               <p>No vehicles available</p>
             ) : (
               <select
                 ref={vehicleSelectRef}
                 className="rounded-md px-3 py-2 border-[#CBD5E1] border-[1px]"
                 onChange={(event) => {
-                  const selectedVehicleInDatabase = currentUserVehicles[0];
+                  const selectedVehicleInDatabase =
+                    props.currentUserVehicles[0];
                   const selectedVehicleName = event.target.value;
                   const vehicleChanged =
                     selectedVehicleName !==
@@ -92,7 +96,7 @@ export default function VehicleDetailsForm() {
                 }}
                 value={selectedVehicle?.model + " " + selectedVehicle?.make}
               >
-                {currentUserVehicles.map((vehicle, index) => (
+                {props.currentUserVehicles.map((vehicle, index) => (
                   <option
                     key={index}
                     value={vehicle.model + " " + vehicle.make}
