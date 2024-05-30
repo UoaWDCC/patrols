@@ -10,6 +10,7 @@ import {
 
 type UserDetails = z.infer<typeof userDetailsSchema>;
 type VehicleDetails = z.infer<typeof vehicleDetailsSchema>;
+type PatrolDetails = z.infer<typeof patrolDetailsSchema>;
 
 const fetchUserData = async () => {
   try {
@@ -22,23 +23,24 @@ const fetchUserData = async () => {
     const parsedVehicleDetails = vehicleDetailsSchema
       .array()
       .parse(vehicleDetails);
-    console.log('API CALL');
+    console.log("API CALL");
     return { parsedUserDetails, parsedPatrolDetails, parsedVehicleDetails };
   } catch (error) {
-    console.log('Error: ', error);
+    console.log("Error: ", error);
   }
 };
 
 const useUserData = () => {
   const [loading, setLoading] = useState<boolean>(true);
   const [currentUserDetails, setCurrentUserDetails] = useState<UserDetails>();
-  const [fullName, setFullName] = useState<string>('');
-  const [cpnzID, setCPNZID] = useState<string>('');
-  const [email, setEmail] = useState<string>('');
-  const [mobileNumber, setMobileNumber] = useState<string>('');
-  const [callSign, setCallSign] = useState<string>('');
-  const [patrolName, setPatrolName] = useState<string>('');
-  const [policeStation, setPoliceStation] = useState<string>('');
+  const [patrolDetails, setPatrolDetails] = useState<PatrolDetails>();
+  const [fullName, setFullName] = useState<string>("");
+  const [cpnzID, setCPNZID] = useState<string>("");
+  const [email, setEmail] = useState<string>("");
+  const [mobileNumber, setMobileNumber] = useState<string>("");
+  const [callSign, setCallSign] = useState<string>("");
+  const [patrolName, setPatrolName] = useState<string>("");
+  const [policeStation, setPoliceStation] = useState<string>("");
   const [currentUserVehicles, setCurrentUserVehicles] = useState<
     VehicleDetails[]
   >([]);
@@ -48,7 +50,7 @@ const useUserData = () => {
   const [membersInPatrol, setMembersInPatrol] = useState<UserDetails[]>([]);
 
   const { data, refetch } = useQuery({
-    queryKey: ['userData'],
+    queryKey: ["userData"],
     queryFn: fetchUserData,
     staleTime: 300000, // data become stale after 5 minutes
   });
@@ -59,9 +61,10 @@ const useUserData = () => {
         data;
 
       setCurrentUserDetails(parsedUserDetails);
+      setPatrolDetails(parsedPatrolDetails);
       setCallSign(parsedUserDetails.call_sign);
       setPatrolName(parsedPatrolDetails.name);
-      setPoliceStation(parsedUserDetails.police_station.replace(/_/g, ' '));
+      setPoliceStation(parsedUserDetails.police_station.replace(/_/g, " "));
       setEmail(parsedUserDetails.email);
       setCPNZID(parsedUserDetails.cpnz_id);
       setMobileNumber(parsedUserDetails.mobile_phone);
@@ -112,6 +115,7 @@ const useUserData = () => {
     setSelectedVehicle,
     membersInPatrol,
     setMembersInPatrol,
+    patrolDetails,
     refetch,
   };
 };
