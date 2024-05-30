@@ -30,6 +30,7 @@ import {
 import { cn } from "../lib/utils";
 import useUserData from "../hooks/useUserData";
 import { vehicleDetailsSchema } from "../schemas";
+import { Link } from "react-router-dom";
 
 export default function Logon() {
   const {
@@ -530,10 +531,17 @@ export default function Logon() {
                   )}
                 />
               </div>
-              <div className="mt-8">
+              <div className="mt-8 flex justify-between">
+                <Button
+                  type="button"
+                  variant={"outline"}
+                  className="border-cpnz-blue-800 border-2"
+                >
+                  <Link to="/home">Cancel</Link>
+                </Button>
                 <Button
                   type="submit"
-                  className="w-full bg-[#0f1363] text-white hover:bg-[#0a0d4a]"
+                  className=" bg-[#0f1363] text-white hover:bg-[#0a0d4a] px-12"
                 >
                   {submitting ? (
                     <>
