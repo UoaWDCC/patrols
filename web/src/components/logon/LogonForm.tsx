@@ -99,26 +99,26 @@ export default function LogonForm(props: LogonFormProps) {
   });
 
   const onSubmit = async (data: z.infer<typeof formSchema>) => {
-    try {
-      setSubmitting(true);
-      await axios.post(`${import.meta.env.VITE_API_URL}/send-email`, {
-        recipientEmail: "jasonabc0626@gmail.com",
-        email,
-        cpnzID,
-        formData: data,
-        driver: membersInPatrol.find(
-          (m) => m.first_names + " " + m.surname === driver
-        ),
-      });
-      console.log(data);
-      setSubmitting(false);
-      // Navigates to Loghome if succesfully logged on.
-      navigate("/LogHome");
-    } catch (error) {
-      axios.isAxiosError(error)
-        ? console.log(error.response?.data.error)
-        : console.error("Unexpected error during login:", error);
-    }
+      try {
+        setSubmitting(true);
+        await axios.post(`${import.meta.env.VITE_API_URL}/send-email`, {
+          recipientEmail: "jasonabc0626@gmail.com",
+          email: props.currentUserDetails?.email,
+          cpnzID: props.currentUserDetails?.cpnz_id,
+          formData: data,
+          driver: props.membersInPatrol["members_dev"].find(
+            (m) => m.first_names + " " + m.surname === driver
+          ),
+        });
+        console.log(data);
+        setSubmitting(false);
+        // Navigates to Loghome if succesfully logged on.
+        navigate("/LogHome");
+      } catch (error) {
+        axios.isAxiosError(error)
+          ? console.log(error.response?.data.error)
+          : console.error("Unexpected error during login:", error);
+      }
   };
   return (
     <Form {...form}>
