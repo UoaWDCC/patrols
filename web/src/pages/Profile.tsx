@@ -4,7 +4,6 @@ import PatrolDetailsForm from '@components/profile/PatrolDetailsForm';
 import UserDetailsForm from '@components/profile/UserDetailsForm';
 import VehicleDetailsForm from '@components/profile/VehicleDetailsForm';
 import useUserData from "../hooks/useUserData";
-import { Loader2 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { z } from "zod";
 import {
@@ -12,6 +11,7 @@ import {
   vehicleDetailsSchema,
   patrolDetailsSchema,
 } from "../schemas";
+import Loading from "@components/ui/Loading";
 
 interface ProfileData {
   currentUserDetails: z.infer<typeof userDetailsSchema>;
@@ -41,14 +41,7 @@ export default function Profile() {
   }, [currentUserDetails, currentUserVehicles, patrolDetails]);
 
   if (loading) {
-    return (
-      <div className="flex justify-center items-center h-screen">
-        <div className="flex flex-col items-center">
-          <Loader2 className="animate-spin" />
-          <p>Loading...</p>
-        </div>
-      </div>
-    );
+    return <Loading />;
   }
 
   if (profileData) {
