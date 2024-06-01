@@ -30,6 +30,9 @@ const useCurrentLocation = () => {
 
   const getAddress = async (lat: number, lng: number) => {
     const apiKey = import.meta.env.VITE_GOOGLE_MAPS_API_KEY;
+    if (!apiKey) {
+      console.log("Error: API key not set");
+    }
     const url = `https://maps.googleapis.com/maps/api/geocode/json?latlng=${lat},${lng}&key=${apiKey}`;
 
     try {
