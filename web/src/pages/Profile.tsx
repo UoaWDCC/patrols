@@ -27,7 +27,7 @@ export default function Profile() {
 
   useEffect(() => {
     if (currentUserDetails && currentUserVehicles && patrolDetails) {
-      const profileDataObject = {
+      const profileDataObject: ProfileData = {
         currentUserDetails,
         currentUserVehicles,
         currentPatrolDetails: {
@@ -50,27 +50,32 @@ export default function Profile() {
       </div>
     );
   }
-  return (
-    <div className="text-center flex-col min-h-screen flex max-w-3xl mx-auto">
-      <div className="bg-[#eef6ff] h-28 mb-4 pl-8 pt-4">
-        <div>
-          <img
-            src={placeholder}
-            alt="placeholder"
-            className="rounded-full w-10 h-10"
-          />
+
+  if (profileData) {
+    return (
+      <div className="text-center flex-col min-h-screen flex max-w-3xl mx-auto">
+        <div className="bg-[#eef6ff] h-28 mb-4 pl-8 pt-4">
+          <div>
+            <img
+              src={placeholder}
+              alt="placeholder"
+              className="rounded-full w-10 h-10"
+            />
+          </div>
+          <div>
+            <h1 className="font-bold text-left pt-2 text-2xl">Profile</h1>
+          </div>
         </div>
-        <div>
-          <h1 className="font-bold text-left pt-2 text-2xl">Profile</h1>
-        </div>
+        <UserDetailsForm currentUserDetails={profileData.currentUserDetails} />
+        <PatrolDetailsForm
+          currentUserDetails={profileData.currentUserDetails}
+          patrolDetails={profileData.currentPatrolDetails}
+        />
+        <VehicleDetailsForm
+          currentUserVehicles={profileData.currentUserVehicles}
+        />
+        <BottomNavBar />
       </div>
-      <UserDetailsForm currentUserDetails={profileData!.currentUserDetails} />
-      <PatrolDetailsForm
-        currentUserDetails={profileData!.currentUserDetails}
-        patrolDetails={profileData!.currentPatrolDetails}
-      />
-      <VehicleDetailsForm currentUserVehicles={currentUserVehicles} />
-      <BottomNavBar />
-    </div>
-  );
+    );
+  }
 }

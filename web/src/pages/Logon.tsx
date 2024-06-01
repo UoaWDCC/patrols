@@ -12,7 +12,7 @@ import {
 } from "../schemas";
 
 interface FormData {
-  currentUserDetails?: z.infer<typeof userDetailsSchema>;
+  currentUserDetails: z.infer<typeof userDetailsSchema>;
   currentUserVehicles: z.infer<typeof vehicleDetailsSchema>[];
   currentPatrolDetails: z.infer<typeof patrolDetailsSchema>;
 }
@@ -55,36 +55,36 @@ export default function Logon() {
     );
   }
 
-  return (
-    <div className=" bg-white flex items-center justify-center">
-      <div className="max-w-6xl w-full">
-        <div className="bg-[#EEF6FF] px-8 py-6 flex items-center justify-between">
-          <div className="flex items-center">
-            <img
-              src={userIcon}
-              alt="User Icon"
-              className="w-16 h-16 mr-4 rounded-full"
-            />
-            <h2 className="text-2xl font-bold">Welcome back, {fullName}</h2>
+  if (formData) {
+    return (
+      <div className=" bg-white flex items-center justify-center">
+        <div className="max-w-6xl w-full">
+          <div className="bg-[#EEF6FF] px-8 py-6 flex items-center justify-between">
+            <div className="flex items-center">
+              <img
+                src={userIcon}
+                alt="User Icon"
+                className="w-16 h-16 mr-4 rounded-full"
+              />
+              <h2 className="text-2xl font-bold">Welcome back, {fullName}</h2>
+            </div>
+            <button className="flex items-center">
+              <span className="mr-2 text-lg font-semibold">Settings</span>
+              <FaCog className="text-2xl text-gray-400 cursor-pointer hover:text-gray-200 transition-colors duration-300" />
+            </button>
           </div>
-          <button className="flex items-center">
-            <span className="mr-2 text-lg font-semibold">Settings</span>
-            <FaCog className="text-2xl text-gray-400 cursor-pointer hover:text-gray-200 transition-colors duration-300" />
-          </button>
-        </div>
-        <div className="bg-white p-8">
-          <h3 className="text-3xl font-bold mb-8 text-center">
-            Shift Log-on Form
-          </h3>
-          <LogonForm
-            currentUserDetails={formData?.currentUserDetails}
-            currentUserVehicles={formData?.currentUserVehicles || []}
-            membersInPatrol={
-              formData?.currentPatrolDetails ?? { name: "", members_dev: [] }
-            }
-          />
+          <div className="bg-white p-8">
+            <h3 className="text-3xl font-bold mb-8 text-center">
+              Shift Log-on Form
+            </h3>
+            <LogonForm
+              currentUserDetails={formData.currentUserDetails}
+              currentUserVehicles={formData.currentUserVehicles}
+              patrolDetails={formData.currentPatrolDetails}
+            />
+          </div>
         </div>
       </div>
-    </div>
-  );
+    );
+  }
 }

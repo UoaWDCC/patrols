@@ -33,10 +33,12 @@ import axios from "axios";
 import { cn } from "../../lib/utils";
 
 interface LogonFormProps {
-  currentUserDetails?: z.infer<typeof userDetailsSchema>;
+  currentUserDetails: z.infer<typeof userDetailsSchema>;
   currentUserVehicles: z.infer<typeof vehicleDetailsSchema>[];
-  membersInPatrol: z.infer<typeof patrolDetailsSchema>;
+  patrolDetails: z.infer<typeof patrolDetailsSchema>;
 }
+
+type VehicleDetails = z.infer<typeof vehicleDetailsSchema>;
 
 export default function LogonForm(props: LogonFormProps) {
   const [driver, setDriver] = useState<string>("");
@@ -47,8 +49,8 @@ export default function LogonForm(props: LogonFormProps) {
   const [submitting, setSubmitting] = useState<boolean>(false);
   const navigate = useNavigate();
 
-  const membersFullName = props.membersInPatrol["members_dev"]
-    .filter((m) => m.cpnz_id !== props.currentUserDetails?.cpnz_id)
+  const membersFullName = props.patrolDetails["members_dev"]
+    .filter((m) => m.cpnz_id !== props.currentUserDetails.cpnz_id)
     .map((m) => ({
       name: `${m.first_names} ${m.surname}`,
     }));
@@ -56,7 +58,6 @@ export default function LogonForm(props: LogonFormProps) {
   const addGuestPatrol = () => {
     setGuestPatrols([...guestPatrols, { name: "", number: "" }]);
   };
-  type VehicleDetails = z.infer<typeof vehicleDetailsSchema>;
 
   const formSchema = z.object({
     startTime: z.string().min(1),
@@ -77,14 +78,14 @@ export default function LogonForm(props: LogonFormProps) {
     defaultValues: {
       startTime: "",
       endTime: "",
-      policeStationBase: props.currentUserDetails?.police_station.replace(
+      policeStationBase: props.currentUserDetails.police_station.replace(
         /_/g,
         " "
       ),
       cpCallSign: props.currentUserDetails?.call_sign,
-      patrol: props.membersInPatrol.name.replace(/_/g, " "),
-      observerName: `${props.currentUserDetails?.first_names} ${props.currentUserDetails?.surname}`,
-      observerNumber: props.currentUserDetails?.mobile_phone,
+      patrol: props.patrolDetails.name.replace(/_/g, " "),
+      observerName: `${props.currentUserDetails.first_names} ${props.currentUserDetails.surname}`,
+      observerNumber: props.currentUserDetails.mobile_phone,
       driver: "",
       vehicle:
         (props.currentUserVehicles.find((v: VehicleDetails) => v.selected)
@@ -99,26 +100,26 @@ export default function LogonForm(props: LogonFormProps) {
   });
 
   const onSubmit = async (data: z.infer<typeof formSchema>) => {
-      try {
-        setSubmitting(true);
-        await axios.post(`${import.meta.env.VITE_API_URL}/send-email`, {
-          recipientEmail: "jasonabc0626@gmail.com",
-          email: props.currentUserDetails?.email,
-          cpnzID: props.currentUserDetails?.cpnz_id,
-          formData: data,
-          driver: props.membersInPatrol["members_dev"].find(
-            (m) => m.first_names + " " + m.surname === driver
-          ),
-        });
-        console.log(data);
-        setSubmitting(false);
-        // Navigates to Loghome if succesfully logged on.
-        navigate("/LogHome");
-      } catch (error) {
-        axios.isAxiosError(error)
-          ? console.log(error.response?.data.error)
-          : console.error("Unexpected error during login:", error);
-      }
+    try {
+      setSubmitting(true);
+      await axios.post(`${import.meta.env.VITE_API_URL}/send-email`, {
+        recipientEmail: "jasonabc0626@gmail.com",
+        email: props.currentUserDetails.email,
+        cpnzID: props.currentUserDetails.cpnz_id,
+        formData: data,
+        driver: props.patrolDetails["members_dev"].find(
+          (m) => m.first_names + " " + m.surname === driver
+        ),
+      });
+      console.log(data);
+      setSubmitting(false);
+      // Navigates to Loghome if succesfully logged on.
+      navigate("/LogHome");
+    } catch (error) {
+      axios.isAxiosError(error)
+        ? console.log(error.response?.data.error)
+        : console.error("Unexpected error during login:", error);
+    }
   };
   return (
     <Form {...form}>
