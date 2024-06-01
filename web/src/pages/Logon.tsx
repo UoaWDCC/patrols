@@ -14,7 +14,7 @@ import {
 interface FormData {
   currentUserDetails: z.infer<typeof userDetailsSchema>;
   currentUserVehicles: z.infer<typeof vehicleDetailsSchema>[];
-  currentPatrolDetails: z.infer<typeof patrolDetailsSchema>;
+  patrolDetails: z.infer<typeof patrolDetailsSchema>;
 }
 
 export default function Logon() {
@@ -34,7 +34,7 @@ export default function Logon() {
         currentUserDetails,
         fullName,
         currentUserVehicles,
-        currentPatrolDetails: {
+        patrolDetails: {
           name: patrolDetails.name,
           members_dev: patrolDetails.members_dev,
         },
