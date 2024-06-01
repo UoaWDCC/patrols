@@ -33,10 +33,12 @@ import axios from "axios";
 import { cn } from "../../lib/utils";
 
 interface LogonFormProps {
-  currentUserDetails?: z.infer<typeof userDetailsSchema>;
+  currentUserDetails: z.infer<typeof userDetailsSchema>;
   currentUserVehicles: z.infer<typeof vehicleDetailsSchema>[];
   patrolDetails: z.infer<typeof patrolDetailsSchema>;
 }
+
+type VehicleDetails = z.infer<typeof vehicleDetailsSchema>;
 
 export default function LogonForm(props: LogonFormProps) {
   const [driver, setDriver] = useState<string>("");
@@ -48,7 +50,7 @@ export default function LogonForm(props: LogonFormProps) {
   const navigate = useNavigate();
 
   const membersFullName = props.patrolDetails["members_dev"]
-    .filter((m) => m.cpnz_id !== props.currentUserDetails?.cpnz_id)
+    .filter((m) => m.cpnz_id !== props.currentUserDetails.cpnz_id)
     .map((m) => ({
       name: `${m.first_names} ${m.surname}`,
     }));
@@ -56,7 +58,6 @@ export default function LogonForm(props: LogonFormProps) {
   const addGuestPatrol = () => {
     setGuestPatrols([...guestPatrols, { name: "", number: "" }]);
   };
-  type VehicleDetails = z.infer<typeof vehicleDetailsSchema>;
 
   const formSchema = z.object({
     startTime: z.string().min(1),
@@ -77,14 +78,14 @@ export default function LogonForm(props: LogonFormProps) {
     defaultValues: {
       startTime: "",
       endTime: "",
-      policeStationBase: props.currentUserDetails?.police_station.replace(
+      policeStationBase: props.currentUserDetails.police_station.replace(
         /_/g,
         " "
       ),
       cpCallSign: props.currentUserDetails?.call_sign,
       patrol: props.patrolDetails.name.replace(/_/g, " "),
-      observerName: `${props.currentUserDetails?.first_names} ${props.currentUserDetails?.surname}`,
-      observerNumber: props.currentUserDetails?.mobile_phone,
+      observerName: `${props.currentUserDetails.first_names} ${props.currentUserDetails.surname}`,
+      observerNumber: props.currentUserDetails.mobile_phone,
       driver: "",
       vehicle:
         (props.currentUserVehicles.find((v: VehicleDetails) => v.selected)
@@ -103,8 +104,8 @@ export default function LogonForm(props: LogonFormProps) {
       setSubmitting(true);
       await axios.post(`${import.meta.env.VITE_API_URL}/send-email`, {
         recipientEmail: "jasonabc0626@gmail.com",
-        email: props.currentUserDetails?.email,
-        cpnzID: props.currentUserDetails?.cpnz_id,
+        email: props.currentUserDetails.email,
+        cpnzID: props.currentUserDetails.cpnz_id,
         formData: data,
         driver: props.patrolDetails["members_dev"].find(
           (m) => m.first_names + " " + m.surname === driver

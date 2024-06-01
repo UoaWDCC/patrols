@@ -31,23 +31,12 @@ const fetchUserData = async () => {
 };
 
 const useUserData = () => {
-  const [loading, setLoading] = useState<boolean>(true);
   const [currentUserDetails, setCurrentUserDetails] = useState<UserDetails>();
   const [patrolDetails, setPatrolDetails] = useState<PatrolDetails>();
   const [fullName, setFullName] = useState<string>("");
-  const [cpnzID, setCPNZID] = useState<string>("");
-  const [email, setEmail] = useState<string>("");
-  const [mobileNumber, setMobileNumber] = useState<string>("");
-  const [callSign, setCallSign] = useState<string>("");
-  const [patrolName, setPatrolName] = useState<string>("");
-  const [policeStation, setPoliceStation] = useState<string>("");
   const [currentUserVehicles, setCurrentUserVehicles] = useState<
     VehicleDetails[]
   >([]);
-  const [selectedVehicle, setSelectedVehicle] = useState<VehicleDetails | null>(
-    null
-  );
-  const [membersInPatrol, setMembersInPatrol] = useState<UserDetails[]>([]);
 
   const { data, refetch } = useQuery({
     queryKey: ["userData"],
@@ -62,59 +51,27 @@ const useUserData = () => {
 
       setCurrentUserDetails(parsedUserDetails);
       setPatrolDetails(parsedPatrolDetails);
-      setCallSign(parsedUserDetails.call_sign);
-      setPatrolName(parsedPatrolDetails.name);
-      setPoliceStation(parsedUserDetails.police_station.replace(/_/g, " "));
-      setEmail(parsedUserDetails.email);
-      setCPNZID(parsedUserDetails.cpnz_id);
-      setMobileNumber(parsedUserDetails.mobile_phone);
+
       setFullName(
         `${parsedUserDetails.first_names} ${parsedUserDetails.surname}`
       );
 
       if (parsedVehicleDetails.length === 0) {
-        setSelectedVehicle(null);
         setCurrentUserVehicles([]);
       } else {
-        setSelectedVehicle(
-          parsedVehicleDetails.find((vehicle) => vehicle.selected) || null
-        );
         const reorderedVehicles = [
           ...parsedVehicleDetails.filter((vehicle) => vehicle.selected),
           ...parsedVehicleDetails.filter((vehicle) => !vehicle.selected),
         ];
         setCurrentUserVehicles(reorderedVehicles);
       }
-      setMembersInPatrol(parsedPatrolDetails.members_dev);
-      setLoading(false);
     }
   }, [data]);
 
   return {
-    loading,
-    setLoading,
     currentUserDetails,
-    setCurrentUserDetails,
     fullName,
-    setFullName,
-    cpnzID,
-    setCPNZID,
-    email,
-    setEmail,
-    mobileNumber,
-    setMobileNumber,
-    callSign,
-    setCallSign,
-    patrolName,
-    setPatrolName,
-    policeStation,
-    setPoliceStation,
     currentUserVehicles,
-    setCurrentUserVehicles,
-    selectedVehicle,
-    setSelectedVehicle,
-    membersInPatrol,
-    setMembersInPatrol,
     patrolDetails,
     refetch,
   };
