@@ -30,11 +30,13 @@ COPY --link . .
 # Define arguments for build time
 ARG VITE_SUPABASE_URL
 ARG VITE_SUPABASE_KEY
+ARG VITE_GOOGLE_MAPS_API_KEY
 
 # Set build time environment variables
 ENV VITE_API_URL="https://wdcc-patrols-api-staging.fly.dev"
 ENV VITE_SUPABASE_URL=${VITE_SUPABASE_URL}
 ENV VITE_SUPABASE_KEY=${VITE_SUPABASE_KEY}
+ENV VITE_GOOGLE_MAPS_API_KEY=${VITE_GOOGLE_MAPS_API_KEY}
 
 
 # Build application

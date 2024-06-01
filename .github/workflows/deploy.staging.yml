@@ -15,7 +15,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - uses: superfly/flyctl-actions/setup-flyctl@master
-      - run: flyctl deploy --build-arg VITE_SUPABASE_URL="${{ secrets.VITE_SUPABASE_URL }}" --build-arg VITE_SUPABASE_KEY="${{ secrets.VITE_SUPABASE_KEY }}" --remote-only --config fly.staging.toml
+      - run: flyctl deploy --build-arg VITE_SUPABASE_URL="${{ secrets.VITE_SUPABASE_URL }}" --build-arg VITE_SUPABASE_KEY="${{ secrets.VITE_SUPABASE_KEY }}" --build-arg VITE_GOOGLE_MAPS_API_KEY="${{ secrets.VITE_GOOGLE_MAPS_API_KEY }}" --remote-only --config fly.staging.toml
         env:
           FLY_API_TOKEN: ${{ secrets.FLY_WEB_STAGING_API_TOKEN }}
 
