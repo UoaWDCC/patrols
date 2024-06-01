@@ -1,12 +1,12 @@
-import axios from 'axios';
-import { useEffect, useState } from 'react';
-import { z } from 'zod';
-import { useQuery } from '@tanstack/react-query';
+import axios from "axios";
+import { useEffect, useState } from "react";
+import { z } from "zod";
+import { useQuery } from "@tanstack/react-query";
 import {
   userDetailsSchema,
   patrolDetailsSchema,
   vehicleDetailsSchema,
-} from '../schemas';
+} from "../schemas";
 
 type UserDetails = z.infer<typeof userDetailsSchema>;
 type VehicleDetails = z.infer<typeof vehicleDetailsSchema>;
@@ -23,7 +23,6 @@ const fetchUserData = async () => {
     const parsedVehicleDetails = vehicleDetailsSchema
       .array()
       .parse(vehicleDetails);
-    console.log("API CALL");
     return { parsedUserDetails, parsedPatrolDetails, parsedVehicleDetails };
   } catch (error) {
     console.log("Error: ", error);
