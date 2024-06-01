@@ -80,7 +80,7 @@ export default function Logon() {
             <LogonForm
               currentUserDetails={formData.currentUserDetails}
               currentUserVehicles={formData.currentUserVehicles}
-              patrolDetails={formData.currentPatrolDetails}
+              patrolDetails={formData.patrolDetails}
             />
           </div>
         </div>
