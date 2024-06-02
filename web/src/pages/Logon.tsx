@@ -3,13 +3,13 @@ import { FaCog } from "react-icons/fa";
 import useUserData from "../hooks/useUserData";
 import LogonForm from "@components/logon/LogonForm";
 import { useEffect, useState } from "react";
-import { Loader2 } from "lucide-react";
 import { z } from "zod";
 import {
   userDetailsSchema,
   vehicleDetailsSchema,
   patrolDetailsSchema,
 } from "../schemas";
+import Loading from "@components/ui/Loading";
 
 interface FormData {
   currentUserDetails: z.infer<typeof userDetailsSchema>;
@@ -45,14 +45,7 @@ export default function Logon() {
   }, [currentUserDetails, fullName, currentUserVehicles, patrolDetails]);
 
   if (loading) {
-    return (
-      <div className="flex justify-center items-center h-screen">
-        <div className="flex flex-col items-center">
-          <Loader2 className="animate-spin" />
-          <p>Loading...</p>
-        </div>
-      </div>
-    );
+    return <Loading />;    
   }
 
   if (formData) {
