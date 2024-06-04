@@ -60,7 +60,7 @@ export default function LogonForm(props: LogonFormProps) {
     patrol: z.string(),
     observerName: z.string(),
     observerNumber: z.string(),
-    guestPatrols: z
+    guestPatrollers: z
       .array(
         z.object({
           name: z.string(),
@@ -84,12 +84,12 @@ export default function LogonForm(props: LogonFormProps) {
         /_/g,
         " "
       ),
-      cpCallSign: props.currentUserDetails?.call_sign,
+      cpCallSign: props.currentUserDetails.call_sign,
       patrol: props.patrolDetails.name.replace(/_/g, " "),
       observerName: `${props.currentUserDetails.first_names} ${props.currentUserDetails.surname}`,
       observerNumber: props.currentUserDetails.mobile_phone,
       driver: "",
-      guestPatrols: [],
+      guestPatrollers: [],
       vehicle:
         (props.currentUserVehicles.find((v: VehicleDetails) => v.selected)
           ?.make || "") +
@@ -104,10 +104,10 @@ export default function LogonForm(props: LogonFormProps) {
 
   const { fields, append, remove } = useFieldArray({
     control: form.control,
-    name: "guestPatrols",
+    name: "guestPatrollers",
   });
 
-  const addGuestPatrol = () => {
+  const addGuestPatroller = () => {
     append({ name: "", number: "", registered: "No" });
   };
 
@@ -363,7 +363,7 @@ export default function LogonForm(props: LogonFormProps) {
               <div className="grid grid-cols-3 gap-4">
                 <FormField
                   control={form.control}
-                  name={`guestPatrols.${index}.name`}
+                  name={`guestPatrollers.${index}.name`}
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>Name</FormLabel>
@@ -379,7 +379,7 @@ export default function LogonForm(props: LogonFormProps) {
                 />
                 <FormField
                   control={form.control}
-                  name={`guestPatrols.${index}.number`}
+                  name={`guestPatrollers.${index}.number`}
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>Mobile Number</FormLabel>
@@ -395,7 +395,7 @@ export default function LogonForm(props: LogonFormProps) {
                 />
                 <FormField
                   control={form.control}
-                  name={`guestPatrols.${index}.registered`}
+                  name={`guestPatrollers.${index}.registered`}
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>
@@ -435,7 +435,7 @@ export default function LogonForm(props: LogonFormProps) {
             <button
               type="button"
               className="px-4 py-2 bg-white text-black border-2 border-[#0f1363] rounded-md font-semibold underline hover:bg-[#0f1363] hover:text-white"
-              onClick={addGuestPatrol}
+              onClick={addGuestPatroller}
             >
               Add Guest Patrols
             </button>
