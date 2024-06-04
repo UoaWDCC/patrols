@@ -44,7 +44,7 @@ export default function LogonForm(props: LogonFormProps) {
   const [driver, setDriver] = useState<string>("");
   const [open, setOpen] = useState(false);
   const [guestPatrols, setGuestPatrols] = useState<
-    { name: string; number: string }[]
+    { name: string; number: string; registered: string }[]
   >([]);
   const [submitting, setSubmitting] = useState<boolean>(false);
   const navigate = useNavigate();
@@ -56,7 +56,10 @@ export default function LogonForm(props: LogonFormProps) {
     }));
 
   const addGuestPatrol = () => {
-    setGuestPatrols([...guestPatrols, { name: "", number: "" }]);
+    setGuestPatrols([
+      ...guestPatrols,
+      { name: "", number: "", registered: "" },
+    ]);
   };
 
   const formSchema = z.object({
@@ -67,6 +70,15 @@ export default function LogonForm(props: LogonFormProps) {
     patrol: z.string(),
     observerName: z.string(),
     observerNumber: z.string(),
+    guestPatrols: z
+      .array(
+        z.object({
+          name: z.string(),
+          number: z.string(),
+          registered: z.string(),
+        })
+      )
+      .optional(),
     driver: z.string(),
     vehicle: z.string(),
     liveryOrSignage: z.string(),
@@ -87,6 +99,7 @@ export default function LogonForm(props: LogonFormProps) {
       observerName: `${props.currentUserDetails.first_names} ${props.currentUserDetails.surname}`,
       observerNumber: props.currentUserDetails.mobile_phone,
       driver: "",
+      guestPatrols: [{ name: "", number: "", registered: "No" }],
       vehicle:
         (props.currentUserVehicles.find((v: VehicleDetails) => v.selected)
           ?.make || "") +
@@ -102,15 +115,15 @@ export default function LogonForm(props: LogonFormProps) {
   const onSubmit = async (data: z.infer<typeof formSchema>) => {
     try {
       setSubmitting(true);
-      await axios.post(`${import.meta.env.VITE_API_URL}/send-email`, {
-        recipientEmail: "jasonabc0626@gmail.com",
-        email: props.currentUserDetails.email,
-        cpnzID: props.currentUserDetails.cpnz_id,
-        formData: data,
-        driver: props.patrolDetails["members_dev"].find(
-          (m) => m.first_names + " " + m.surname === driver
-        ),
-      });
+      // await axios.post(`${import.meta.env.VITE_API_URL}/send-email`, {
+      //   recipientEmail: "jasonabc0626@gmail.com",
+      //   email: props.currentUserDetails.email,
+      //   cpnzID: props.currentUserDetails.cpnz_id,
+      //   formData: data,
+      //   driver: props.patrolDetails["members_dev"].find(
+      //     (m) => m.first_names + " " + m.surname === driver
+      //   ),
+      // });
       console.log(data);
       setSubmitting(false);
       // Navigates to Loghome if succesfully logged on.
@@ -121,6 +134,8 @@ export default function LogonForm(props: LogonFormProps) {
         : console.error("Unexpected error during login:", error);
     }
   };
+  console.log(form.getValues());
+
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)}>
@@ -351,37 +366,68 @@ export default function LogonForm(props: LogonFormProps) {
                   -
                 </button>
               </div>
-              <div className="grid grid-cols-2 gap-4">
-                <FormItem>
-                  <FormLabel>Name</FormLabel>
-                  <FormControl>
-                    <Input
-                      className="w-full"
-                      placeholder="Name"
-                      value={guestPatrols[index].name}
-                      onChange={(e) => {
-                        const newGuestPatrols = [...guestPatrols];
-                        newGuestPatrols[index].name = e.target.value;
-                        setGuestPatrols(newGuestPatrols);
-                      }}
-                    />
-                  </FormControl>
-                </FormItem>
-                <FormItem>
-                  <FormLabel>Mobile Number</FormLabel>
-                  <FormControl>
-                    <Input
-                      className="w-full"
-                      placeholder="Number"
-                      value={guestPatrols[index].number}
-                      onChange={(e) => {
-                        const newGuestPatrols = [...guestPatrols];
-                        newGuestPatrols[index].number = e.target.value;
-                        setGuestPatrols(newGuestPatrols);
-                      }}
-                    />
-                  </FormControl>
-                </FormItem>
+              <div className="grid grid-cols-3 gap-4">
+                <FormField
+                  control={form.control}
+                  name={`guestPatrols.${index}.name`}
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Name</FormLabel>
+                      <FormControl>
+                        <Input
+                          className="w-full"
+                          placeholder="Name"
+                          {...field}
+                        />
+                      </FormControl>
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name={`guestPatrols.${index}.number`}
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Mobile Number</FormLabel>
+                      <FormControl>
+                        <Input
+                          className="w-full"
+                          placeholder="Number"
+                          {...field}
+                        />
+                      </FormControl>
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name={`guestPatrols.${index}.registered`}
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>
+                        Is this guest a registered patroller?
+                      </FormLabel>
+                      <FormControl>
+                        <div className="flex items-center space-x-4">
+                          <label className="flex items-center">
+                            <input type="radio" {...field} className="mr-2" />
+                            Yes
+                          </label>
+                          <label className="flex items-center">
+                            <input
+                              type="radio"
+                              {...field}
+                              className="mr-2"
+                              checked
+                            />
+                            No
+                          </label>
+                        </div>
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
               </div>
             </div>
           ))}
