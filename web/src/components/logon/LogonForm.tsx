@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router-dom";
-import { useForm } from "react-hook-form";
+import { useFieldArray, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { Button } from "@components/ui/button";
@@ -43,9 +43,6 @@ type VehicleDetails = z.infer<typeof vehicleDetailsSchema>;
 export default function LogonForm(props: LogonFormProps) {
   const [driver, setDriver] = useState<string>("");
   const [open, setOpen] = useState(false);
-  const [guestPatrols, setGuestPatrols] = useState<
-    { name: string; number: string; registered: string }[]
-  >([]);
   const [submitting, setSubmitting] = useState<boolean>(false);
   const navigate = useNavigate();
 
@@ -54,13 +51,6 @@ export default function LogonForm(props: LogonFormProps) {
     .map((m) => ({
       name: `${m.first_names} ${m.surname}`,
     }));
-
-  const addGuestPatrol = () => {
-    setGuestPatrols([
-      ...guestPatrols,
-      { name: "", number: "", registered: "" },
-    ]);
-  };
 
   const formSchema = z.object({
     startTime: z.string().min(1),
@@ -99,7 +89,7 @@ export default function LogonForm(props: LogonFormProps) {
       observerName: `${props.currentUserDetails.first_names} ${props.currentUserDetails.surname}`,
       observerNumber: props.currentUserDetails.mobile_phone,
       driver: "",
-      guestPatrols: [{ name: "", number: "", registered: "No" }],
+      guestPatrols: [],
       vehicle:
         (props.currentUserVehicles.find((v: VehicleDetails) => v.selected)
           ?.make || "") +
@@ -112,18 +102,27 @@ export default function LogonForm(props: LogonFormProps) {
     mode: "onSubmit",
   });
 
+  const { fields, append, remove } = useFieldArray({
+    control: form.control,
+    name: "guestPatrols",
+  });
+
+  const addGuestPatrol = () => {
+    append({ name: "", number: "", registered: "No" });
+  };
+
   const onSubmit = async (data: z.infer<typeof formSchema>) => {
     try {
       setSubmitting(true);
-      // await axios.post(`${import.meta.env.VITE_API_URL}/send-email`, {
-      //   recipientEmail: "jasonabc0626@gmail.com",
-      //   email: props.currentUserDetails.email,
-      //   cpnzID: props.currentUserDetails.cpnz_id,
-      //   formData: data,
-      //   driver: props.patrolDetails["members_dev"].find(
-      //     (m) => m.first_names + " " + m.surname === driver
-      //   ),
-      // });
+      await axios.post(`${import.meta.env.VITE_API_URL}/send-email`, {
+        recipientEmail: "jasonabc0626@gmail.com",
+        email: props.currentUserDetails.email,
+        cpnzID: props.currentUserDetails.cpnz_id,
+        formData: data,
+        driver: props.patrolDetails["members_dev"].find(
+          (m) => m.first_names + " " + m.surname === driver
+        ),
+      });
       console.log(data);
       setSubmitting(false);
       // Navigates to Loghome if succesfully logged on.
@@ -134,7 +133,6 @@ export default function LogonForm(props: LogonFormProps) {
         : console.error("Unexpected error during login:", error);
     }
   };
-  console.log(form.getValues());
 
   return (
     <Form {...form}>
@@ -350,18 +348,14 @@ export default function LogonForm(props: LogonFormProps) {
               )}
             />
           </div>
-          {guestPatrols.map((_, index) => (
+          {fields.map((_, index) => (
             <div key={index} className="col-span-2 mt-8">
               <div className="flex items-center justify-between mb-2">
                 <h4 className="text-2xl font-semibold">Guest Patrol</h4>
                 <button
                   type="button"
                   className="px-2 py-1 bg-red-500 text-white rounded-md"
-                  onClick={() => {
-                    const newGuestPatrols = [...guestPatrols];
-                    newGuestPatrols.splice(index, 1);
-                    setGuestPatrols(newGuestPatrols);
-                  }}
+                  onClick={() => remove(index)}
                 >
                   -
                 </button>
@@ -410,7 +404,12 @@ export default function LogonForm(props: LogonFormProps) {
                       <FormControl>
                         <div className="flex items-center space-x-4">
                           <label className="flex items-center">
-                            <input type="radio" {...field} className="mr-2" />
+                            <input
+                              type="radio"
+                              {...field}
+                              className="mr-2"
+                              value={"Yes"}
+                            />
                             Yes
                           </label>
                           <label className="flex items-center">
@@ -418,7 +417,8 @@ export default function LogonForm(props: LogonFormProps) {
                               type="radio"
                               {...field}
                               className="mr-2"
-                              checked
+                              value={"No"}
+                              defaultChecked
                             />
                             No
                           </label>
