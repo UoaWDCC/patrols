@@ -319,11 +319,14 @@ export default function LogonForm(props: LogonFormProps) {
                                   key={member.name}
                                   value={member.name}
                                   onSelect={(currentDriver) => {
-                                    setDriver(
+                                    const newDriver =
                                       currentDriver === driver
                                         ? ""
-                                        : currentDriver
-                                    );
+                                        : currentDriver;
+                                    setDriver(newDriver);
+                                    form.setValue("driver", newDriver, {
+                                      shouldValidate: true,
+                                    });
                                     setOpen(false);
                                   }}
                                 >
