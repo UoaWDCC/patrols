@@ -14,6 +14,15 @@ const formSchema = z.object({
   patrol: z.string(),
   observerName: z.string(),
   observerNumber: z.string(),
+  guestPatrollers: z
+    .array(
+      z.object({
+        name: z.string(),
+        number: z.string(),
+        registered: z.string(),
+      })
+    )
+    .optional(),
   driver: z.string(),
   vehicle: z.string(),
   liveryOrSignage: z.string(),
@@ -55,33 +64,26 @@ export const sendEmail = async (req: Request, res: Response) => {
     driver,
   }: z.infer<typeof emailSchema> = parseResult.data;
 
-  // might be easier if frontend just need to pass a patrol id, all other info availiable in auth session
-
-  // const user = await prisma.patrols.findUnique({
-  //     where: { id: parseInt(patrolID) },
-  //     select: { email: true },
-  // });
-
-  // if (!user) {
-  //     return { error: 'User not found' };
-  // }
-
-  // const patrolName = user.name;
-
-  //end
-
   if (!EMAIL_API_KEY) {
     res
       .status(400)
       .json({ message: "Auth failed: Please provide Resend API key." });
   }
 
-  try {
-    const data = await resend.emails.send({
-      from: `CPNZ <${CPNZ_APP_EMAIL}>`,
-      to: [`${recipientEmail}`],
-      subject: `CPNZ - Log On - Patrol ID: ${cpnzID}`,
-      html: `
+  const guestPatrollersFormatted =
+    formData.guestPatrollers
+      ?.map(
+        (gp) =>
+          `Guest Name: ${gp.name}, Guest Phone Number: ${gp.number}, Registered: ${gp.registered}`
+      )
+      .join("<br>") || "None";
+
+try {
+  const data = await resend.emails.send({
+    from: `CPNZ <${CPNZ_APP_EMAIL}>`,
+    to: [`${recipientEmail}`],
+    subject: `CPNZ - Log On - Patrol ID: ${cpnzID}`,
+    html: `
       <div style="font-family: Arial, sans-serif; line-height: 1.8;">
     <p style="font-size: 1.2em; font-weight: bold;">
       ${
@@ -107,6 +109,7 @@ export const sendEmail = async (req: Request, res: Response) => {
       <strong>Driver Number:</strong> ${
         driver.mobile_phone ? driver.mobile_phone : driver.home_phone
       } <br>
+        <strong>Guest Patrollers:</strong><br> ${guestPatrollersFormatted}<br>
       <strong>Vehicle:</strong> ${formData.vehicle} <br>
       <strong>Livery or Signage:</strong> ${formData.liveryOrSignage} <br>
       <strong>Have Police Radio:</strong> ${formData.havePoliceRadio} <br>
@@ -117,10 +120,10 @@ export const sendEmail = async (req: Request, res: Response) => {
       <a href="mailto:cpnz123@kmail.com" style="color: #1a73e8; text-decoration: none;">CPNZ Patrol Email</a>
     </p>
   </div>`,
-    });
+  });
 
-    res.status(200).json(data);
-  } catch (error) {
-    res.status(400).json(error);
-  }
+  res.status(200).json(data);
+} catch (error) {
+  res.status(400).json(error);
+}
 };

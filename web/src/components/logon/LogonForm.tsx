@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router-dom";
-import { useForm } from "react-hook-form";
+import { useFieldArray, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { Button } from "@components/ui/button";
@@ -43,9 +43,6 @@ type VehicleDetails = z.infer<typeof vehicleDetailsSchema>;
 export default function LogonForm(props: LogonFormProps) {
   const [driver, setDriver] = useState<string>("");
   const [open, setOpen] = useState(false);
-  const [guestPatrols, setGuestPatrols] = useState<
-    { name: string; number: string }[]
-  >([]);
   const [submitting, setSubmitting] = useState<boolean>(false);
   const navigate = useNavigate();
 
@@ -55,10 +52,6 @@ export default function LogonForm(props: LogonFormProps) {
       name: `${m.first_names} ${m.surname}`,
     }));
 
-  const addGuestPatrol = () => {
-    setGuestPatrols([...guestPatrols, { name: "", number: "" }]);
-  };
-
   const formSchema = z.object({
     startTime: z.string().min(1),
     endTime: z.string().min(1),
@@ -67,6 +60,15 @@ export default function LogonForm(props: LogonFormProps) {
     patrol: z.string(),
     observerName: z.string(),
     observerNumber: z.string(),
+    guestPatrollers: z
+      .array(
+        z.object({
+          name: z.string(),
+          number: z.string(),
+          registered: z.string(),
+        })
+      )
+      .optional(),
     driver: z.string(),
     vehicle: z.string(),
     liveryOrSignage: z.string(),
@@ -82,11 +84,12 @@ export default function LogonForm(props: LogonFormProps) {
         /_/g,
         " "
       ),
-      cpCallSign: props.currentUserDetails?.call_sign,
+      cpCallSign: props.currentUserDetails.call_sign,
       patrol: props.patrolDetails.name.replace(/_/g, " "),
       observerName: `${props.currentUserDetails.first_names} ${props.currentUserDetails.surname}`,
       observerNumber: props.currentUserDetails.mobile_phone,
       driver: "",
+      guestPatrollers: [],
       vehicle:
         (props.currentUserVehicles.find((v: VehicleDetails) => v.selected)
           ?.make || "") +
@@ -98,6 +101,15 @@ export default function LogonForm(props: LogonFormProps) {
     },
     mode: "onSubmit",
   });
+
+  const { fields, append, remove } = useFieldArray({
+    control: form.control,
+    name: "guestPatrollers",
+  });
+
+  const addGuestPatroller = () => {
+    append({ name: "", number: "", registered: "No" });
+  };
 
   const onSubmit = async (data: z.infer<typeof formSchema>) => {
     try {
@@ -121,6 +133,7 @@ export default function LogonForm(props: LogonFormProps) {
         : console.error("Unexpected error during login:", error);
     }
   };
+
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)}>
@@ -306,11 +319,14 @@ export default function LogonForm(props: LogonFormProps) {
                                   key={member.name}
                                   value={member.name}
                                   onSelect={(currentDriver) => {
-                                    setDriver(
+                                    const newDriver =
                                       currentDriver === driver
                                         ? ""
-                                        : currentDriver
-                                    );
+                                        : currentDriver;
+                                    setDriver(newDriver);
+                                    form.setValue("driver", newDriver, {
+                                      shouldValidate: true,
+                                    });
                                     setOpen(false);
                                   }}
                                 >
@@ -335,53 +351,86 @@ export default function LogonForm(props: LogonFormProps) {
               )}
             />
           </div>
-          {guestPatrols.map((_, index) => (
+          {fields.map((_, index) => (
             <div key={index} className="col-span-2 mt-8">
               <div className="flex items-center justify-between mb-2">
                 <h4 className="text-2xl font-semibold">Guest Patrol</h4>
                 <button
                   type="button"
                   className="px-2 py-1 bg-red-500 text-white rounded-md"
-                  onClick={() => {
-                    const newGuestPatrols = [...guestPatrols];
-                    newGuestPatrols.splice(index, 1);
-                    setGuestPatrols(newGuestPatrols);
-                  }}
+                  onClick={() => remove(index)}
                 >
                   -
                 </button>
               </div>
-              <div className="grid grid-cols-2 gap-4">
-                <FormItem>
-                  <FormLabel>Name</FormLabel>
-                  <FormControl>
-                    <Input
-                      className="w-full"
-                      placeholder="Name"
-                      value={guestPatrols[index].name}
-                      onChange={(e) => {
-                        const newGuestPatrols = [...guestPatrols];
-                        newGuestPatrols[index].name = e.target.value;
-                        setGuestPatrols(newGuestPatrols);
-                      }}
-                    />
-                  </FormControl>
-                </FormItem>
-                <FormItem>
-                  <FormLabel>Mobile Number</FormLabel>
-                  <FormControl>
-                    <Input
-                      className="w-full"
-                      placeholder="Number"
-                      value={guestPatrols[index].number}
-                      onChange={(e) => {
-                        const newGuestPatrols = [...guestPatrols];
-                        newGuestPatrols[index].number = e.target.value;
-                        setGuestPatrols(newGuestPatrols);
-                      }}
-                    />
-                  </FormControl>
-                </FormItem>
+              <div className="grid grid-cols-3 gap-4">
+                <FormField
+                  control={form.control}
+                  name={`guestPatrollers.${index}.name`}
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Name</FormLabel>
+                      <FormControl>
+                        <Input
+                          className="w-full"
+                          placeholder="Name"
+                          {...field}
+                        />
+                      </FormControl>
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name={`guestPatrollers.${index}.number`}
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Mobile Number</FormLabel>
+                      <FormControl>
+                        <Input
+                          className="w-full"
+                          placeholder="Number"
+                          {...field}
+                        />
+                      </FormControl>
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name={`guestPatrollers.${index}.registered`}
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>
+                        Is this guest a registered patroller?
+                      </FormLabel>
+                      <FormControl>
+                        <div className="flex items-center space-x-4">
+                          <label className="flex items-center">
+                            <input
+                              type="radio"
+                              {...field}
+                              className="mr-2"
+                              value={"Yes"}
+                            />
+                            Yes
+                          </label>
+                          <label className="flex items-center">
+                            <input
+                              type="radio"
+                              {...field}
+                              className="mr-2"
+                              value={"No"}
+                              defaultChecked
+                            />
+                            No
+                          </label>
+                        </div>
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
               </div>
             </div>
           ))}
@@ -389,7 +438,7 @@ export default function LogonForm(props: LogonFormProps) {
             <button
               type="button"
               className="px-4 py-2 bg-white text-black border-2 border-[#0f1363] rounded-md font-semibold underline hover:bg-[#0f1363] hover:text-white"
-              onClick={addGuestPatrol}
+              onClick={addGuestPatroller}
             >
               Add Guest Patrols
             </button>
