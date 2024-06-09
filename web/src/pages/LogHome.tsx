@@ -3,13 +3,19 @@ import { FaCog, FaClipboardList } from "react-icons/fa";
 import BottomNavBar from "@components/BottomNavBar";
 import LargeInfoButton from "@components/ui/LargeInfoButton";
 import SmallInfoButton from "@components/ui/SmallInfoButton";
+import useDraftStatus from "../hooks/useDraftStatus";
 
 export default function ReportSummary() {
   const navigate = useNavigate();
+  const isDraft: boolean = useDraftStatus();
 
   // Function to navigate to the new report page
   const handleNewReport = () => {
     navigate("/Report");
+  };
+
+  const handleDraftReport = () => {
+    navigate("/report");
   };
 
   return (
@@ -23,13 +29,16 @@ export default function ReportSummary() {
         <FaCog className="text-2xl text-black cursor-pointer hover:text-gray-200 transition-colors duration-300" />
       </div>
       <div className="max-w-800 mx-auto px-8 my-8">
-        <LargeInfoButton
-          heading={"Draft report detected"}
-          description={"You have a report you haven't submitted."}
-          className="bg-[#0F1363] p-4 rounded-lg shadow-md mb-6"
-          iconDescription={"Finish your report?"}
-          variant={"dark"}
-        />
+        {isDraft && (
+          <LargeInfoButton
+            heading={"Draft report detected"}
+            description={"You have a report you haven't submitted."}
+            className="bg-[#0F1363] p-4 rounded-lg shadow-md mb-6"
+            iconDescription={"Finish your report?"}
+            onClick={handleDraftReport}
+            variant={"dark"}
+          />
+        )}
         <LargeInfoButton
           heading={"Report your observations"}
           description={"Use this to report your observations during your shift"}
