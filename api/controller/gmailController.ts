@@ -2,8 +2,8 @@ import axios from 'axios';
 import { google } from 'googleapis';
 import { Request, Response } from 'express';
 import { createGetConfig, createPostConfig } from '../auth_util/gmailReqUtil';
-import { any } from 'zod';
-import { env } from 'process';
+import prisma from '../db/database';
+import { listenForMessages } from '../auth_util/listenToMessage';
 
 let isGood = 0
 /**
@@ -17,7 +17,6 @@ const oAuth2Client = new google.auth.OAuth2(
 );
 
 const cpnzEmail = process.env.CPNZ_EMAIL_TEST; //this is our cpnz email used for sending to ECC
-
 /**
  * https://developers.google.com/oauthplayground
  * Go to above website, click on the gear icon on the top right corner
@@ -29,19 +28,46 @@ const cpnzEmail = process.env.CPNZ_EMAIL_TEST; //this is our cpnz email used for
  */
 oAuth2Client.setCredentials({ refresh_token: process.env.REFRESH_TOKEN });
 
+const subscriptionNameOrId: string = process.env.GOOGLE_CLOUD_SUB_ID ?? 'cpnzTestSub1';
+
+listenForMessages(subscriptionNameOrId);
+
 const saveHistoryIdInDb = (historyId: string) => {
     console.log("History ID: " + historyId)
 }
 
 const storeEventIdInDb = async (eventId: string, patrolId: string, logOnId: string) => {
     //store....
-    console.log('\n');
-    console.log("store the following info in db")
-    console.log("eventId: " + eventId);
-    console.log("patrolId: " + patrolId);
-    console.log("logOnId: " + logOnId);
 
-    return true;
+    try {
+        console.log('\n');
+        console.log("store the following info in db")
+        console.log("eventId: " + eventId);
+        console.log("patrolId: " + patrolId);
+        console.log("logOnId: " + logOnId);
+
+        const patrolIdBigInt = parseInt(patrolId);
+        const logOnIdInt = parseInt(logOnId)
+
+        // const storeEventId = await prisma.shift.update({
+        //     where: {
+        //         patrol_id: patrolIdBigInt,
+        //         id: logOnIdInt
+        //     },
+        //     data: {
+        //         //   event_no: eventId, // in the schema, event_no is a int, should be string isnt it
+        //     },
+        // })
+
+        // if (!storeEventId) {
+        //     throw new Error('Unable to store event ID in DB')
+        // }
+
+        return true;
+
+    } catch (error) {
+        throw error;
+    }
 }
 
 const retrievePatrolIdAndLogOnId = (subject: string) => {
@@ -70,7 +96,7 @@ const retrievePatrolIdAndLogOnId = (subject: string) => {
 
 const traverseAllEmailParts = (parts: any) => {
 
-    let eventId;
+    let eventId = undefined;
 
     if (parts && parts.length > 0) {
         for (let i = 0; i < parts.length; i++) {
@@ -91,9 +117,9 @@ const traverseAllEmailParts = (parts: any) => {
 
             //for a email that the parts are hide inside a outer parts, where the actual content splited into several sub-parts
             if (innerParts && innerParts.length > 0) {
-                innerParts.forEach((element: any) => {
-                    if (element.body.data) {
-                        const actualBody = element.body.data
+                innerParts.forEach((part: any) => {
+                    const actualBody = part.body.data
+                    if (actualBody) {
                         eventId = retrieveEventId(actualBody)
 
                         if (eventId) return eventId
@@ -103,13 +129,14 @@ const traverseAllEmailParts = (parts: any) => {
         }
     }
 }
+
 const retrieveEventId = (emailContent: string) => {
 
     const decodedBuffer = Buffer.from(emailContent, 'base64');
     const actualBodyInText = decodedBuffer.toString('utf-8');
     const eventNoPattern = /[Pp]\d{7}/;
     const eventNoMatch = actualBodyInText.match(eventNoPattern);
-    const eventNo = eventNoMatch ? eventNoMatch[0] : null;
+    const eventNo = eventNoMatch ? eventNoMatch[0] : undefined;
 
     return eventNo;
 }
@@ -183,6 +210,9 @@ const getSingleMails = async (messageId: string) => {
                 isGood++;
             }
 
+            const historyID = response.data.historyId
+            return historyID;
+
         } else {
             console.log('error: no token')
         }
@@ -193,21 +223,24 @@ const getSingleMails = async (messageId: string) => {
 }
 
 /**
+ * This function has not completed!
+ * 
  * Lists the history of all changes to the given mailbox. 
  * History results are returned in chronological order (increasing historyId).
  * 
  * If the trigger function failed, we might need to periodically call this function to
- * retrieve the email since @param startedHistoryId til current.
+ * retrieve the email since @param startedHistoryId to present.
  * 
- * A historyId is typically valid for at least a week, but in some rare circumstances may be valid for only a few hours
+ * #From gmail api doc: A historyId is typically valid for at least a week, but in some rare circumstances may be valid for only a few hours
  * If you receive an HTTP 404 error response, your application should perform a full sync. 
  * 
  * Therefore, we might need to periodically call getMails() as well
+ * 
  */
 
 const getHistoryRecords = async (startedHistoryId: string) => {
     try {
-        startedHistoryId = '278156'; //'278156', '278090', '278093'
+        // startedHistoryId = '285074'; //'278156', '278090', '278093'
         const { token } = await oAuth2Client.getAccessToken();
 
         const url = `https://gmail.googleapis.com/gmail/v1/users/${cpnzEmail}/history?startHistoryId=${startedHistoryId}`;
@@ -216,22 +249,25 @@ const getHistoryRecords = async (startedHistoryId: string) => {
             const config = createGetConfig(url, token);
             const response = await axios(config);
             console.log(response.data);
-            const messagesAdded = response.data.history[0].messagesAdded
+            const histories = response.data.history
 
-            if (messagesAdded && messagesAdded.length > 0) {
-                console.log(`\n`)
-                console.log('New Messages:  -----------------')
-                console.log(`\n`)
-                console.log(messagesAdded)
-                const latestMessageId = messagesAdded[0].message.id
-                if (latestMessageId) {
-                    console.log(`\n`)
-                    console.log('New Message[0]:  -----------------')
-                    console.log('Fetched using history call')
-                    console.log(`\n`)
-                    await getSingleMails(latestMessageId)
-                }
+            if(histories && histories.length > 0) {
+                histories.forEach((history: any) => {
+                    const messagesAdded = history.messagesAdded
+                    if(messagesAdded&&messagesAdded.length> 0) {
+                        messagesAdded.forEach(async (item:any) => {
+                            console.log(item);
+                            console.log(item.message.id)
+                            const messageId = item.message.id
+                            await getSingleMails(messageId)
+                        });
+                    }
+                });
             }
+
+            const newHistoryiD = response.data.historyId;
+            saveHistoryIdInDb(newHistoryiD);
+            return true;
         } else {
             throw new Error('Unable to get access token')
         }
@@ -282,10 +318,15 @@ const getMails = async (req: Request, res: Response): Promise<void> => {
  * This is not working yet, insufficient scope or unauthorised states return by the api call, finding a way to work this around now
  * 
  * Reliability:
- * Typically all notifications should be delivered reliably within a few seconds; however in some extreme situations
- * notifications may be delayed or dropped. Make sure to handle this possibility gracefully, so that the application
- * still syncs even if no push messages are received. For example, fall back to periodically calling <history.list> after
- * a period with no notifications for a user.
+ * Typically all notifications should be delivered reliably within a few seconds; however in some
+ * extreme situations
+ * notifications may be delayed or dropped. Make sure to handle this possibility gracefully, so
+ * that the application still syncs even if no push messages are received. For example, fall back
+ * to periodically calling <history.list> after a period with no notifications for a user.
+ * 
+ * You must re-call watch at least every 7 days or else you will stop receiving updates for the
+ * user. We recommend calling watch once per day. The watch response also has an expiration field
+ * with the timestamp for the watch expiration.
  * @param req 
  * @param res 
  */
@@ -295,9 +336,10 @@ const watchMails = async (req: Request, res: Response): Promise<void> => {
         const { token } = await oAuth2Client.getAccessToken();
 
         const url = `https://www.googleapis.com/gmail/v1/users/${cpnzEmail}/watch`;
+        const topic = process.env.GOOGLE_CLOUD_TOPIC_ID ?? 'cpnzTestTopic1'
         const data = {
-            topicName: "projects/cpnztestproj/topics/cpnzTestTopic",
-            labelIds: ["INBOX"],
+            topicName: `projects/cpnztestproj-426002/topics/${topic}`,
+            labelIds: ["UNREAD"],
             labelFilterBehavior: "INCLUDE",
         };
 
@@ -317,5 +359,30 @@ const watchMails = async (req: Request, res: Response): Promise<void> => {
     }
 }
 
+const stopWatchMails = async (req: Request, res: Response): Promise<void> => {
+    try {
 
-export { getMails, watchMails };
+        const { token } = await oAuth2Client.getAccessToken();
+
+        const url = `https://www.googleapis.com/gmail/v1/users/${cpnzEmail}/stop`;
+        const data = {
+        };
+
+        if (token) {
+            const config = createPostConfig(url, token, data);
+            const response = await axios.request(config);
+            res.status(200).json(response.data);
+        } else {
+            res.status(500).json('Unable to get access token');
+        }
+    } catch (error) {
+        if (axios.isAxiosError(error) && error.response) {
+            res.status(error.response.status).json(error.response.data);
+        } else {
+            res.status(500).json('An unknown error occurred');
+        }
+    }
+}
+
+
+export { getMails, watchMails, getHistoryRecords, stopWatchMails, saveHistoryIdInDb };

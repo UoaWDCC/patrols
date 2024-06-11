@@ -10,7 +10,8 @@
     "build": "tsc",
     "start": "node dist/index.js",
     "dev": "nodemon index.ts",
-    "email": "email dev"
+    "email": "email dev",
+    "set-up-email-trigger": "nodemon auth_util/setUpTriggerFunction.ts"
   },
   "devDependencies": {
     "@types/express": "^4.17.21",
