@@ -37,7 +37,7 @@ const saveHistoryIdInDb = async (historyId: bigint) => {
             id: 1
         },
         data: {
-            history_id: historyId, // in the schema, event_no is a int, should be string isnt it
+            history_id: historyId,
         },
     })
 
@@ -129,6 +129,17 @@ const retrievePatrolIdAndLogOnId = (subject: string) => {
     return ids;
 }
 
+const retrieveEventId = (emailContent: string) => {
+
+    const decodedBuffer = Buffer.from(emailContent, 'base64');
+    const actualBodyInText = decodedBuffer.toString('utf-8');
+    const eventNoPattern = /[Pp]\d{7}/;
+    const eventNoMatch = actualBodyInText.match(eventNoPattern);
+    const eventNo = eventNoMatch ? eventNoMatch[0] : undefined;
+
+    return eventNo;
+}
+
 const traverseAllEmailParts = (parts: any) => {
 
     let eventId = undefined;
@@ -163,17 +174,6 @@ const traverseAllEmailParts = (parts: any) => {
             }
         }
     }
-}
-
-const retrieveEventId = (emailContent: string) => {
-
-    const decodedBuffer = Buffer.from(emailContent, 'base64');
-    const actualBodyInText = decodedBuffer.toString('utf-8');
-    const eventNoPattern = /[Pp]\d{7}/;
-    const eventNoMatch = actualBodyInText.match(eventNoPattern);
-    const eventNo = eventNoMatch ? eventNoMatch[0] : undefined;
-
-    return eventNo;
 }
 
 /**
@@ -223,7 +223,7 @@ const getSingleMails = async (messageId: string) => {
                 throw new Error(`Error: At least one required ID is missing in the email message.\nRequire: [event ID, Patrol ID, Logon ID]`)
             }
 
-            //once we store all correct infor in DB, we change this email's lable from UNREAD to READ 
+            //once we store all correct info in DB, we change this email's lable from UNREAD to READ 
             const urlForChangeLabel = `https://gmail.googleapis.com/gmail/v1/users/${cpnzEmail}/messages/${messageId}/modify`;
             const reqBody = {
                 "removeLabelIds": [
