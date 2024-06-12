@@ -367,7 +367,7 @@ model reports {
 
 model shift {
   id                                         BigInt             @id(map: "Shift_pkey") @unique(map: "Shift_id_key") @default(autoincrement())
-  event_no                                   Int?
+  event_no                                   String?
   patrol_id                                  BigInt
   start_time                                 DateTime           @db.Timestamptz(0)
   end_time                                   DateTime           @db.Timestamptz(0)
@@ -513,6 +513,11 @@ model vehicles_model {
   model_name   String?
   vehicle_dev  vehicle_dev[]
   vehicle_make vehicle_make? @relation(fields: [model_name], references: [name], onDelete: NoAction, onUpdate: NoAction, map: "Vehicles_Model_model_name_fkey")
+}
+
+model email_history_dev {
+  id         BigInt  @id @default(autoincrement())
+  history_id BigInt?
 }
 
 enum Call_Sign {

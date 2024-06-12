@@ -1,6 +1,5 @@
 // Imports the Google Cloud client library
-import { PubSub, Topic, Subscription, Message } from '@google-cloud/pubsub';
-import { getHistoryRecords } from '../controller/gmailController';
+import { PubSub, Topic, Subscription } from '@google-cloud/pubsub';
 
 
 async function setUpTopicAndSub(

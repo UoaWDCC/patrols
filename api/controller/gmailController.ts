@@ -4,8 +4,6 @@ import { Request, Response } from 'express';
 import { createGetConfig, createPostConfig } from '../auth_util/gmailReqUtil';
 import prisma from '../db/database';
 import { listenForMessages } from '../auth_util/listenToMessage';
-
-let isGood = 0
 /**
  * After create a oAuth credential in google cloud project using our cpnz email,
  * it will generate three property as shown in 'oAuth2Client' below
@@ -28,12 +26,27 @@ const cpnzEmail = process.env.CPNZ_EMAIL_TEST; //this is our cpnz email used for
  */
 oAuth2Client.setCredentials({ refresh_token: process.env.REFRESH_TOKEN });
 
-const subscriptionNameOrId: string = process.env.GOOGLE_CLOUD_SUB_ID ?? 'cpnzTestSub1';
+const subscriptionNameOrId: string = process.env.GOOGLE_CLOUD_SUB_ID ?? '';
 
 listenForMessages(subscriptionNameOrId);
 
-const saveHistoryIdInDb = (historyId: string) => {
-    console.log("History ID: " + historyId)
+const saveHistoryIdInDb = async (historyId: bigint) => {
+
+    const storeHistoryId = await prisma.email_history_dev.update({
+        where: {
+            id: 1
+        },
+        data: {
+            history_id: historyId, // in the schema, event_no is a int, should be string isnt it
+        },
+    })
+
+    if (!storeHistoryId) {
+        throw new Error('Unable to store history ID in DB');
+    }
+
+    console.log(`\n`)
+    console.log("Store History ID: " + historyId)
 }
 
 const storeEventIdInDb = async (eventId: string, patrolId: string, logOnId: string) => {
@@ -49,19 +62,43 @@ const storeEventIdInDb = async (eventId: string, patrolId: string, logOnId: stri
         const patrolIdBigInt = parseInt(patrolId);
         const logOnIdInt = parseInt(logOnId)
 
-        // const storeEventId = await prisma.shift.update({
-        //     where: {
-        //         patrol_id: patrolIdBigInt,
-        //         id: logOnIdInt
-        //     },
-        //     data: {
-        //         //   event_no: eventId, // in the schema, event_no is a int, should be string isnt it
-        //     },
-        // })
+        /**
+         * fetch event id first is because everytime we receive a new email, we will mark that
+         * email as READ, so when full sync is required, we dont need to read that email again, and
+         * gmail watch() function will detect we remove the UNREAD label of that email and hence a
+         * new history ID will be generated and notify the subscription (trigger function) again,
+         * even though there is only one email received.
+         **/
+        const fetchEventId = await prisma.shift.findUnique({
+            where: {
+                patrol_id: patrolIdBigInt,
+                id: logOnIdInt
+            },
+            select: {
+                event_no: true,
+            },
+        })
 
-        // if (!storeEventId) {
-        //     throw new Error('Unable to store event ID in DB')
-        // }
+        const eventIdInDB: string | null | undefined = fetchEventId?.event_no
+
+        if(eventIdInDB != null || eventIdInDB != undefined) {
+            console.log(`Event ID is already in DB for this shift: ${logOnIdInt}`)
+            return true
+        }
+
+        const storeEventId = await prisma.shift.update({
+            where: {
+                patrol_id: patrolIdBigInt,
+                id: logOnIdInt
+            },
+            data: {
+                event_no: eventId, // in the schema, event_no is a int, should be string isnt it
+            },
+        })
+
+        if (!storeEventId) {
+            throw new Error('Unable to store event ID in DB');
+        }
 
         return true;
 
@@ -71,8 +108,6 @@ const storeEventIdInDb = async (eventId: string, patrolId: string, logOnId: stri
 }
 
 const retrievePatrolIdAndLogOnId = (subject: string) => {
-
-    console.log(subject)
 
     const extractIds = (value: string): { patrolId: string; shiftId: string } | null => {
         const regex = /CPNZ - Log On - Patrol ID: (?<patrolId>\d+) - Shift ID: (?<shiftId>\d+)/; // This format is in our control, so it would be quite predictable.
@@ -185,14 +220,7 @@ const getSingleMails = async (messageId: string) => {
 
 
             if (!eventId || !patrolId || !logOnId) {
-                throw new Error("Failed to fetch Event ID or Patrol ID or LogOn ID")
-            }
-
-            const successfullyStored = await storeEventIdInDb(eventId, patrolId, logOnId)
-
-            if (!successfullyStored) {
-                console.log("failed to store ids info")
-                return null
+                throw new Error(`Error: At least one required ID is missing in the email message.\nRequire: [event ID, Patrol ID, Logon ID]`)
             }
 
             //once we store all correct infor in DB, we change this email's lable from UNREAD to READ 
@@ -206,8 +234,14 @@ const getSingleMails = async (messageId: string) => {
             const postConfig = createPostConfig(urlForChangeLabel, token, reqBody);
             const markReadResponse = await axios(postConfig);
 
-            if (markReadResponse.status === 200) {
-                isGood++;
+            if (!(markReadResponse.status === 200)) {
+                throw new Error('Failed to make this email message as READ')
+            }
+
+            const successfullyStored = await storeEventIdInDb(eventId, patrolId, logOnId)
+
+            if (!successfullyStored) {
+                throw new Error("Failed to store ids info in DB")
             }
 
             const historyID = response.data.historyId
@@ -216,14 +250,12 @@ const getSingleMails = async (messageId: string) => {
         } else {
             console.log('error: no token')
         }
-    } catch (error) {
-        console.error(error);
-
+    } catch (error: any) {
+        console.log(error.message);
     }
 }
 
 /**
- * This function has not completed!
  * 
  * Lists the history of all changes to the given mailbox. 
  * History results are returned in chronological order (increasing historyId).
@@ -231,14 +263,15 @@ const getSingleMails = async (messageId: string) => {
  * If the trigger function failed, we might need to periodically call this function to
  * retrieve the email since @param startedHistoryId to present.
  * 
- * #From gmail api doc: A historyId is typically valid for at least a week, but in some rare circumstances may be valid for only a few hours
+ * #From gmail api doc: A historyId is typically valid for at least a week, but in some rare
+ * circumstances may be valid for only a few hours
  * If you receive an HTTP 404 error response, your application should perform a full sync. 
  * 
  * Therefore, we might need to periodically call getMails() as well
  * 
  */
 
-const getHistoryRecords = async (startedHistoryId: string) => {
+const getHistoryRecords = async (startedHistoryId: bigint) => {
     try {
         // startedHistoryId = '285074'; //'278156', '278090', '278093'
         const { token } = await oAuth2Client.getAccessToken();
@@ -248,26 +281,32 @@ const getHistoryRecords = async (startedHistoryId: string) => {
         if (token) {
             const config = createGetConfig(url, token);
             const response = await axios(config);
-            console.log(response.data);
             const histories = response.data.history
 
-            if(histories && histories.length > 0) {
-                histories.forEach((history: any) => {
-                    const messagesAdded = history.messagesAdded
-                    if(messagesAdded&&messagesAdded.length> 0) {
-                        messagesAdded.forEach(async (item:any) => {
-                            console.log(item);
-                            console.log(item.message.id)
-                            const messageId = item.message.id
-                            await getSingleMails(messageId)
-                        });
-                    }
-                });
+            const traverseHistories = async (histories : Array<object>) => {
+                if (histories && histories.length > 0) {
+                    histories.forEach((history: any) => {
+                        const messagesAdded = history.messagesAdded
+                        if (messagesAdded && messagesAdded.length > 0) {
+                            messagesAdded.forEach(async (item: any) => {
+                                const messageId = item.message.id
+                                await getSingleMails(messageId)
+                            });
+                        }
+                    });
+                }
+
+                return true;
             }
 
-            const newHistoryiD = response.data.historyId;
-            saveHistoryIdInDb(newHistoryiD);
-            return true;
+            const finishFetchingIds = await traverseHistories(histories);
+
+            if(finishFetchingIds) {
+                const newHistoryiD = response.data.historyId;
+                await saveHistoryIdInDb(newHistoryiD);
+                return true;
+            }
+            
         } else {
             throw new Error('Unable to get access token')
         }
@@ -298,8 +337,6 @@ const getMails = async (req: Request, res: Response): Promise<void> => {
                     //save the historyID to DB means latest message
                     saveHistoryIdInDb(historyID)
                 }
-
-                console.log('isgood: ' + isGood)
             }
 
             res.status(200).json(response.data);
@@ -315,8 +352,6 @@ const getMails = async (req: Request, res: Response): Promise<void> => {
 
 
 /**
- * This is not working yet, insufficient scope or unauthorised states return by the api call, finding a way to work this around now
- * 
  * Reliability:
  * Typically all notifications should be delivered reliably within a few seconds; however in some
  * extreme situations
@@ -336,7 +371,7 @@ const watchMails = async (req: Request, res: Response): Promise<void> => {
         const { token } = await oAuth2Client.getAccessToken();
 
         const url = `https://www.googleapis.com/gmail/v1/users/${cpnzEmail}/watch`;
-        const topic = process.env.GOOGLE_CLOUD_TOPIC_ID ?? 'cpnzTestTopic1'
+        const topic = process.env.GOOGLE_CLOUD_TOPIC_ID ?? ''
         const data = {
             topicName: `projects/cpnztestproj-426002/topics/${topic}`,
             labelIds: ["UNREAD"],
