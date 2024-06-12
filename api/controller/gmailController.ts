@@ -1,9 +1,9 @@
 import axios from 'axios';
 import { google } from 'googleapis';
 import { Request, Response } from 'express';
-import { createGetConfig, createPostConfig } from '../auth_util/gmailReqUtil';
+import { createGetConfig, createPostConfig } from '../gmail_util/gmailReqUtil';
 import prisma from '../db/database';
-import { listenForMessages } from '../auth_util/listenToMessage';
+import { listenForMessages } from '../gmail_util/listenToMessage';
 /**
  * After create a oAuth credential in google cloud project using our cpnz email,
  * it will generate three property as shown in 'oAuth2Client' below
