@@ -16,6 +16,7 @@ import SignoutButton from "@components/SignoutButton";
 import BottomNavBar from "@components/BottomNavBar";
 import SmallInfoButton from "@components/ui/SmallInfoButton";
 import LargeInfoButton from "@components/ui/LargeInfoButton";
+import useDraftStatus from "../hooks/useDraftStatus";
 
 const reportsDetailsSchema = z.object({
   message: z.string(),
@@ -37,10 +38,15 @@ export default function Home() {
   const navigate = useNavigate();
   const [data, setData] = useState<reportsDetails>();
   const [id, setId] = useState<number>();
+  const isDraft: boolean = useDraftStatus();
 
   // Function to navigate to the logon page when new report button is clicked
   const handleNewReport = () => {
     navigate("/logon");
+  };
+
+  const handleDraftReport = () => {
+    navigate("/report");
   };
 
   useEffect(() => {
@@ -82,13 +88,16 @@ export default function Home() {
         <FaCog className="text-2xl text-gray-400 cursor-pointer hover:text-gray-200 transition-colors duration-300" />
       </div>
       <div className="max-w-800 mx-auto px-8 my-8">
-        <LargeInfoButton
-          heading={"Draft report detected"}
-          description={"You have a report you haven't submitted."}
-          className="bg-[#EEF6FF] p-4 rounded-lg shadow-md mb-6"
-          iconDescription={"Finish your report?"}
-          variant={"light"}
-        />
+        {isDraft && (
+          <LargeInfoButton
+            heading={"Draft report detected"}
+            description={"You have a report you haven't submitted."}
+            className="bg-[#EEF6FF] p-4 rounded-lg shadow-md mb-6"
+            iconDescription={"Finish your report?"}
+            onClick={handleDraftReport}
+            variant={"light"}
+          />
+        )}
         <LargeInfoButton
           className="bg-[#0F1363] p-4 rounded-lg shadow-md mb-6 text-left"
           heading={"Log on to start a new shift"}

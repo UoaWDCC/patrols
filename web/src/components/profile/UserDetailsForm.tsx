@@ -2,38 +2,44 @@ import { Button } from '@components/ui/button';
 import { Input } from '@components/ui/input';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Form, FormItem, FormLabel } from '@components/ui/form';
-import { z } from 'zod';
-import useUserData from '../../hooks/useUserData';
-import { useEffect, useState } from 'react';
-import { supabaseClient as supabase } from '../../auth-client/SupabaseClient';
-import { useForm } from 'react-hook-form';
-import { formSchema } from '../../schemas';
+import { z } from "zod";
+import useUserData from "../../hooks/useUserData";
+import { useEffect, useState } from "react";
+import { supabaseClient as supabase } from "../../auth-client/SupabaseClient";
+import { useForm } from "react-hook-form";
+import { formSchema, userDetailsSchema } from "../../schemas";
 
-export default function UserDetailsForm() {
+interface UserDetailsFormProps {
+  currentUserDetails: z.infer<typeof userDetailsSchema>;
+}
+
+export default function UserDetailsForm(props: UserDetailsFormProps) {
   const [editable, setEditable] = useState<boolean>(false);
-  const [errorMessage, setErrorMessage] = useState<string>('');
-  const { fullName, cpnzID, email, mobileNumber } = useUserData();
-  const [password, setPassword] = useState<string>('');
-  const [confirmPassword, setConfirmPassword] = useState<string>('');
+  const [errorMessage, setErrorMessage] = useState<string>("");
+  const [password, setPassword] = useState<string>("");
+  const [confirmPassword, setConfirmPassword] = useState<string>("");
+  const { fullName } = useUserData();
+
+  const { cpnz_id, email, mobile_phone } = props.currentUserDetails;
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      cpnzID: '',
-      password: '',
-      confirmPassword: '',
+      cpnzID: "",
+      password: "",
+      confirmPassword: "",
     },
   });
 
   useEffect(() => {
     if (
-      password !== '' &&
-      confirmPassword !== '' &&
+      password !== "" &&
+      confirmPassword !== "" &&
       password !== confirmPassword
     ) {
-      setErrorMessage('Passwords do not match');
+      setErrorMessage("Passwords do not match");
     } else {
-      setErrorMessage('');
+      setErrorMessage("");
     }
   }, [password, confirmPassword]);
 
@@ -49,15 +55,15 @@ export default function UserDetailsForm() {
     if (error) {
       setErrorMessage(`Error changing password: ${error}`);
     }
-    setPassword('');
-    setConfirmPassword('');
+    setPassword("");
+    setConfirmPassword("");
     setEditable(false);
   };
 
   const handleCancel = () => {
     setEditable(false);
-    setPassword('');
-    setConfirmPassword('');
+    setPassword("");
+    setConfirmPassword("");
   };
 
   return (
@@ -82,7 +88,7 @@ export default function UserDetailsForm() {
                 type="text"
                 id="id"
                 name="id"
-                value={cpnzID}
+                value={cpnz_id}
                 disabled
                 className="rounded-md border-[#CBD5E1]"
               />
@@ -110,7 +116,7 @@ export default function UserDetailsForm() {
                 type="text"
                 id="mobileNumber"
                 name="mobileNumber"
-                value={mobileNumber}
+                value={mobile_phone}
                 disabled
                 className="rounded-md border-[#CBD5E1]"
               />
@@ -132,7 +138,7 @@ export default function UserDetailsForm() {
               </FormItem>
               <FormItem className="basis-1/2">
                 <FormLabel htmlFor="confirmPassword" className="font-semibold">
-                  Confirm New Password{' '}
+                  Confirm New Password{" "}
                 </FormLabel>
                 <Input
                   type="password"
@@ -165,7 +171,7 @@ export default function UserDetailsForm() {
               Save
             </Button>
             <Button
-              variant={'outline'}
+              variant={"outline"}
               onClick={handleCancel}
               className="border-cpnz-blue-900 mt-4 w-28"
             >
