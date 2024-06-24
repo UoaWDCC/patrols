@@ -88,7 +88,7 @@ export default function Home() {
         </div>
         <SignoutButton />
       </div>
-      <div className="max-w-800 mx-auto px-12 my-8">
+      <div className="max-w-800 mx-auto px-14 my-8">
         {isDraft && (
           <LargeInfoButton
             heading={"Draft report detected"}
