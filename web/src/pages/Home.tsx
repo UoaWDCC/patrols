@@ -1,5 +1,4 @@
 import { useNavigate } from "react-router-dom";
-import { FaClipboardList, FaCogs, FaPlus } from "react-icons/fa";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { z } from "zod";
@@ -14,7 +13,6 @@ import {
 import { userDetailsSchema } from "../schemas";
 import SignoutButton from "@components/SignoutButton";
 import BottomNavBar from "@components/BottomNavBar";
-import SmallInfoButton from "@components/ui/SmallInfoButton";
 import LargeInfoButton from "@components/ui/LargeInfoButton";
 import useDraftStatus from "../hooks/useDraftStatus";
 import logon from "../assets/images/logon.png";
