@@ -112,22 +112,14 @@ export default function Home() {
             <img src={logon} alt="logon" className="w-32"/>
           </button>
         </div>
-        <LargeInfoButton
-          className="bg-cpnz-blue-900 p-4 rounded-lg shadow-md mb-6 text-left"
-          heading={"Log on to start a new shift"}
-          description={"Create a new report from scratch or select a template."}
-          icon={<FaPlus className="mr-2" />}
-          iconDescription={"Start a New Shift"}
-          onClick={() => handleNewReport()}
-          variant={"dark"}
-        />
-        <LargeInfoButton
-          className="bg-[#EEF6FF] p-4 rounded-lg shadow-md mb-6 text-left"
-          heading={"Patrol vehicles"}
-          description={"Create a new report from scratch or select a template."}
-          iconDescription={"View and Update Patrol Vehicles"}
-          variant={"light"}
-        />
+        <div className="mb-4 text-right px-6">
+          <p className="font-light">Ready to start a patrol?</p>
+        </div>
+        <div className="mb-10">
+          <h2 className="font-bold text-left">Past Reports</h2>
+          <div className="p-10 bg-[#F8F8F8] shadow-md mt-4"></div>
+          <div className="p-6 bg-[#EEF6FF] shadow-md mt-4"></div>
+        </div>
         <div className="flex justify-between gap-10">
           <div className="basis-1/2 flex">
             <Dialog>
