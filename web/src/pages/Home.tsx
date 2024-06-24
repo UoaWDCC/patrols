@@ -79,13 +79,13 @@ export default function Home() {
 
   return (
     <div className="text-center min-h-screen relative bg-[#FFFFFF] max-w-3xl mx-auto">
-      <div className="bg-[#EEF6FF] py-6 flex justify-between items-center px-4">
+      <div className="bg-white py-14 flex justify-between items-center px-8">
         <div>
           <h1 className="text-xl font-bold text-black mx-4">
-            Welcome back, XXXXXXX
+            Welcome, <span className="underline">XXXXXXX</span>
           </h1>
         </div>
-        <FaCog className="text-2xl text-gray-400 cursor-pointer hover:text-gray-200 transition-colors duration-300" />
+        <SignoutButton />
       </div>
       <div className="max-w-800 mx-auto px-8 my-8">
         {isDraft && (
@@ -187,7 +187,6 @@ export default function Home() {
           </div>
         </div>
       </div>
-      <SignoutButton />
       <BottomNavBar />
     </div>
   );
