@@ -372,8 +372,9 @@ const watchMails = async (req: Request, res: Response): Promise<void> => {
 
         const url = `https://www.googleapis.com/gmail/v1/users/${cpnzEmail}/watch`;
         const topic = process.env.GOOGLE_CLOUD_TOPIC_ID ?? ''
+        const projectID = process.env.GOOGLE_CLOUD_PROJECT_ID ?? ''
         const data = {
-            topicName: `projects/cpnztestproj-426002/topics/${topic}`,
+            topicName: `projects/${projectID}/topics/${topic}`,
             labelIds: ["UNREAD"],
             labelFilterBehavior: "INCLUDE",
         };
@@ -381,6 +382,7 @@ const watchMails = async (req: Request, res: Response): Promise<void> => {
         if (token) {
             const config = createPostConfig(url, token, data);
             const response = await axios.request(config);
+            saveHistoryIdInDb(response.data.historyId)// temp
             res.status(200).json(response.data);
         } else {
             res.status(500).json('Unable to get access token');

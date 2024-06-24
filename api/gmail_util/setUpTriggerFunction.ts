@@ -1,15 +1,20 @@
 // Imports the Google Cloud client library
 import { PubSub, Topic, Subscription } from '@google-cloud/pubsub';
+import { config } from "dotenv";
+config();
 
 
-async function setUpTopicAndSub(
-  projectId: string = process.env.GOOGLE_CLOUD_PROJECT_ID ?? '', // Your Google Cloud Platform project ID
-  topicNameOrId: string = process.env.GOOGLE_CLOUD_TOPIC_ID ?? '', // Name for the new topic to create
-  subscriptionName: string = process.env.GOOGLE_CLOUD_SUB_ID ?? '' // Name for the new subscription to create
-): Promise<void> {
+async function setUpTopicAndSub(): Promise<void> {
   try {
     // Instantiates a client
+    const projectId: string = process.env.GOOGLE_CLOUD_PROJECT_ID ?? ''; // Your Google Cloud Platform project ID
+    const topicNameOrId: string = process.env.GOOGLE_CLOUD_TOPIC_ID ?? ''; // Name for the new topic to create
+    const subscriptionName: string = process.env.GOOGLE_CLOUD_SUB_ID ?? ''; // Name for the new subscription to create
+
     const pubsub = new PubSub({ projectId });
+    console.log(projectId);
+    console.log(topicNameOrId);
+    console.log(subscriptionName);
 
     // Creates a new topic
     const [topic]: [Topic, ...any[]] = await pubsub.createTopic(topicNameOrId);
