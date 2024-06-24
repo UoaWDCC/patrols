@@ -117,18 +117,9 @@ export default function Home() {
         </div>
         <div className="mb-10">
           <h2 className="font-bold text-left">Past Reports</h2>
-          <div className="p-10 bg-[#F8F8F8] shadow-md mt-4"></div>
-          <div className="p-6 bg-[#EEF6FF] shadow-md mt-4"></div>
-        </div>
-        <div className="flex justify-between gap-10">
-          <div className="basis-1/2 flex">
-            <Dialog>
-              <DialogTrigger className="flex-1 bg-[#EEF6FF] text-black p-4 rounded-lg hover:bg-[#808080] transition-colors duration-300">
-                <SmallInfoButton
-                  heading="Past Reports"
-                  description="View reports in the past."
-                  icon={<FaClipboardList className="mr-4 text-2xl" />}
-                />
+          <div className="p-10 bg-[#F8F8F8] shadow-md mt-4">
+          <Dialog>
+              <DialogTrigger className="flex-1 text-black p-4">
               </DialogTrigger>
               <DialogContent className="p-8 max-h-[550px] overflow-y-auto">
                 <DialogHeader>
@@ -166,31 +157,7 @@ export default function Home() {
               </DialogContent>
             </Dialog>
           </div>
-          <div className="basis-1/2 flex">
-            <Dialog>
-              <DialogTrigger className="flex-1 bg-[#EEF6FF] text-black p-4 rounded-lg hover:bg-[#808080] transition-colors duration-300">
-                <SmallInfoButton
-                  heading="Report Settings"
-                  description="Modify report templates including templates."
-                  icon={<FaCogs className="mr-4 text-2xl" />}
-                />
-              </DialogTrigger>
-              <DialogContent className="p-8 max-h-[550px] overflow-y-auto">
-                <DialogHeader>
-                  <DialogTitle className="text-center text-subheading pb-12">
-                    Templates
-                  </DialogTitle>
-                  <DialogDescription>
-                    {data == null ? (
-                      <span>No templates found</span>
-                    ) : (
-                      <div>Some data...</div>
-                    )}
-                  </DialogDescription>
-                </DialogHeader>
-              </DialogContent>
-            </Dialog>
-          </div>
+          <div className="p-6 bg-[#EEF6FF] shadow-md mt-4"></div>
         </div>
       </div>
       <BottomNavBar />
