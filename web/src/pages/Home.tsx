@@ -112,7 +112,7 @@ export default function Home() {
             <img src={logon} alt="logon" className="w-32"/>
           </button>
         </div>
-        <div className="mb-4 text-right px-6">
+        <div className="text-right px-6">
           <p className="font-light">Ready to start a patrol?</p>
         </div>
         <div className="mb-10">
