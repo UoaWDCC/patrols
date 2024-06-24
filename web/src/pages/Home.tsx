@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router-dom";
-import { FaCog, FaClipboardList, FaCogs, FaPlus } from "react-icons/fa";
+import { FaClipboardList, FaCogs, FaPlus } from "react-icons/fa";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { z } from "zod";
