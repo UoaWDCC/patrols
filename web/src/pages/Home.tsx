@@ -17,6 +17,7 @@ import BottomNavBar from "@components/BottomNavBar";
 import SmallInfoButton from "@components/ui/SmallInfoButton";
 import LargeInfoButton from "@components/ui/LargeInfoButton";
 import useDraftStatus from "../hooks/useDraftStatus";
+import logon from "../assets/images/logon.png";
 
 const reportsDetailsSchema = z.object({
   message: z.string(),
@@ -79,7 +80,7 @@ export default function Home() {
 
   return (
     <div className="text-center min-h-screen relative bg-[#FFFFFF] max-w-3xl mx-auto">
-      <div className="bg-white py-14 flex justify-between items-center px-8">
+      <div className="bg-white pt-14 pb-4 flex justify-between items-center px-8">
         <div>
           <h1 className="text-xl font-bold text-black mx-4">
             Welcome, <span className="underline">XXXXXXX</span>
@@ -87,7 +88,7 @@ export default function Home() {
         </div>
         <SignoutButton />
       </div>
-      <div className="max-w-800 mx-auto px-8 my-8">
+      <div className="max-w-800 mx-auto px-12 my-8">
         {isDraft && (
           <LargeInfoButton
             heading={"Draft report detected"}
@@ -98,8 +99,21 @@ export default function Home() {
             variant={"light"}
           />
         )}
+        <div className="py-12">
+          <h2 className="text-base font-bold">
+            No patrol in progress.
+          </h2>
+          <p className="font-light">
+            Ready to start a patrol?
+          </p>
+        </div>
+        <div className="bg-cpnz-blue-900 rounded-lg shadow-md mb-6 py-14 items-center">
+          <button onClick={handleNewReport}>
+            <img src={logon} alt="logon" className="w-32"/>
+          </button>
+        </div>
         <LargeInfoButton
-          className="bg-[#0F1363] p-4 rounded-lg shadow-md mb-6 text-left"
+          className="bg-cpnz-blue-900 p-4 rounded-lg shadow-md mb-6 text-left"
           heading={"Log on to start a new shift"}
           description={"Create a new report from scratch or select a template."}
           icon={<FaPlus className="mr-2" />}
