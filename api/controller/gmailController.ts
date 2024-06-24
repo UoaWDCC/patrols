@@ -273,7 +273,7 @@ const getSingleMails = async (messageId: string) => {
 
 const getHistoryRecords = async (startedHistoryId: bigint) => {
     try {
-        // startedHistoryId = '285074'; //'278156', '278090', '278093'
+
         const { token } = await oAuth2Client.getAccessToken();
 
         const url = `https://gmail.googleapis.com/gmail/v1/users/${cpnzEmail}/history?startHistoryId=${startedHistoryId}`;
@@ -323,7 +323,7 @@ const getHistoryRecords = async (startedHistoryId: bigint) => {
 const getMails = async (req: Request, res: Response): Promise<void> => {
 
     try {
-        const url = `https://gmail.googleapis.com/gmail/v1/users/${cpnzEmail}/messages?q=is:unread&maxResults=5`;
+        const url = `https://gmail.googleapis.com/gmail/v1/users/${cpnzEmail}/messages?q=is:unread`;
         const { token } = await oAuth2Client.getAccessToken();
         if (token) {
             const config = createGetConfig(url, token);
