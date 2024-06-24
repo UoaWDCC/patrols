@@ -97,18 +97,20 @@ export default function Home() {
             variant={"light"}
           />
         )}
-        <div className="py-12">
-          <h2 className="text-base font-bold">
-            No patrol in progress.
-          </h2>
-          <p className="font-light">
-            Ready to start a patrol?
-          </p>
-        </div>
-        <div className="bg-cpnz-blue-900 rounded-lg shadow-md mb-6 py-14 items-center">
-          <button onClick={handleNewReport}>
-            <img src={logon} alt="logon" className="w-32"/>
-          </button>
+        <div>
+          <div className="py-12">
+            <h2 className="text-base font-bold">
+              No patrol in progress.
+            </h2>
+            <p className="font-light">
+              Ready to start a patrol?
+            </p>
+          </div>
+          <div className="bg-cpnz-blue-900 rounded-lg shadow-md mb-6 py-14 items-center">
+            <button onClick={handleNewReport}>
+              <img src={logon} alt="logon" className="w-32"/>
+            </button>
+          </div>
         </div>
         <div className="text-right px-6">
           <p className="font-light">Ready to start a patrol?</p>
