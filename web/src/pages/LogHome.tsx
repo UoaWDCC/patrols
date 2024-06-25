@@ -1,8 +1,6 @@
 import { useNavigate } from "react-router-dom";
-import { FaCog, FaClipboardList } from "react-icons/fa";
 import BottomNavBar from "@components/BottomNavBar";
 import LargeInfoButton from "@components/ui/LargeInfoButton";
-import SmallInfoButton from "@components/ui/SmallInfoButton";
 import useDraftStatus from "../hooks/useDraftStatus";
 
 export default function ReportSummary() {
@@ -27,7 +25,7 @@ export default function ReportSummary() {
           </h1>
         </div>
       </div>
-      <div className="max-w-800 mx-auto px-8 my-8">
+      <div className="max-w-800 mx-auto px-14 my-8">
         {isDraft && (
           <LargeInfoButton
             heading={"Draft report detected"}
@@ -43,34 +41,38 @@ export default function ReportSummary() {
             <h2 className="text-base font-bold">
               Patrol in progress.
             </h2>
-            <p className="font-light">
+            <h3 className="font-light">
               Event ID: xxxxxxxxxx
-            </p>
+            </h3>
           </div>
-          <div className="bg-cpnz-blue-900 rounded-lg shadow-md mb-6 py-14 items-center">
-            <button onClick={handleNewReport}>
+          <button onClick={handleNewReport} className="w-full">
+            <div className="bg-cpnz-blue-900 rounded-lg shadow-md mb-6 py-14 items-center w-full space-x-4">
+                <h1 className="text-white font-semibold text-lg">
+                  Start a New Report
+                </h1>
+            </div>
+          </button>
+        </div>
+        <div className="my-6">
+          <div className="font-light mb-8">
+            <p>Police Station Base</p>
+            <p>CP Call Sign</p>
+            <p>Patrols</p>
+            <p>Vehicle</p>
+          </div>
+          <div className="flex flex-row justify-center space-x-2 items-center">
+            <p className="text-xs">Details incorrect?</p>
+            <button className="bg-[#EEF6FF] rounded-lg py-2 px-4 shadow-md">
+              Make Amendment
+            </button>
+          </div>
+          <div>
+            <button className="bg-[#FF8080] my-10 rounded-lg shadow-md p-4 w-full">
+              Submit Report & Log Off
             </button>
           </div>
         </div>
-        <LargeInfoButton
-          heading={"Report your observations"}
-          description={"Use this to report your observations during your shift"}
-          className="bg-[#EEF6FF] p-4 rounded-lg shadow-md mb-6"
-          iconDescription={"Start a New Report"}
-          onClick={handleNewReport}
-          variant={"light"}
-        />
-        <div className="bg-white px-4 py-2 mb-6 flex flex-col items-center">
-          <div className="cursor-pointer bg-[#EEF6FF] text-black p-4 rounded-lg hover:bg-[#808080] transition-colors duration-300">
-            <SmallInfoButton
-              heading="Past Reports"
-              description="View reports in the past."
-              icon={<FaClipboardList className="mr-4 text-2xl" />}
-            />
-          </div>
-        </div>
       </div>
-
       <BottomNavBar />
     </div>
   );

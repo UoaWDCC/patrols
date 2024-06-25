@@ -102,9 +102,9 @@ export default function Home() {
             <h2 className="text-base font-bold">
               No patrol in progress.
             </h2>
-            <p className="font-light">
+            <h3 className="font-light">
               Ready to start a patrol?
-            </p>
+            </h3>
           </div>
           <button onClick={handleNewReport} className="w-full">
             <div className="bg-cpnz-blue-900 rounded-lg shadow-md mb-6 py-14 items-center flex flex-row justify-center w-full space-x-4">
