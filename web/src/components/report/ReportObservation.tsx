@@ -89,6 +89,25 @@ const ReportObservation = ({
 }: ReportObservationProps) => {
   const { address } = useCurrentLocation();
   const [showModal, setShowModal] = useState(false);
+  const [latestObservationIndex, setLatestObservationIndex] = useState<number | null>(null);
+  const handleAddObservation = () => {
+    setShowModal(true);
+    addObservation(
+      type.observation,
+      fields,
+      setObservationsList,
+      append,
+      address
+    );
+    setLatestObservationIndex(fields.length);
+  };
+  const handleRemoveObservation = () => {
+    if (latestObservationIndex !== null) {
+      deleteObservation(latestObservationIndex, fields, setObservationsList, remove);
+    }
+    setShowModal(false);
+    setLatestObservationIndex(null);
+  }
 
   return (
     <div className="mt-8">
@@ -96,17 +115,7 @@ const ReportObservation = ({
         <h2 className="text-left font-semibold text-base">Observations</h2>
         <Button
           className=" mt-2 w-full bg-[#038400] p-7 items-center flex flex-row justify-center"
-          onClick={() => {
-              setShowModal(true);
-              addObservation(
-                type.observation,
-                fields,
-                setObservationsList,
-                append,
-                address
-              );
-            }
-          }
+          onClick={handleAddObservation}
           type="button"
         >
           <img src={plus} alt="plus" className="w-5 mx-2"/>
@@ -116,22 +125,22 @@ const ReportObservation = ({
       {showModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-[#C4C4C4]">
           <div className="relative bg-white rounded-lg shadow-lg p-6 w-full max-w-lg mx-auto">
-            <button
-              onClick={() => setShowModal(false)}
-              className="absolute top-4 right-4 text-gray-500 hover:text-gray-700"
-            >
-              <img src={exit} alt="close" className="w-6" />
-            </button>
-            <h2 className="text-xs text-left font-light mb-4">
-              ADD AN OBSERVATION
-            </h2>
             <div className="flex flex-col gap-4">
+              <button
+                onClick={handleRemoveObservation}
+                className="absolute top-4 right-4 text-gray-500 hover:text-gray-700"
+              >
+                <img src={exit} alt="close" className="w-6" />
+              </button>
+              <h2 className="text-xs text-left font-light mb-4">
+                ADD AN OBSERVATION
+              </h2>
               {fields.map((observation: any, i: number) => (
                 <div
-                  className="flex gap-4 items-start flex-col text-left"
+                  className="flex gap-4 items-start flex-col text-left space-y-2"
                   key={observation.location + i}
                 >
-                  <div className="flex items-center justify-between w-full pr-4 gap-16">
+                  <div className="flex items-center justify-between w-full">
                     <FormField
                       control={form.control}
                       name={`observations.${i}.location`}
@@ -140,6 +149,8 @@ const ReportObservation = ({
                           <FormLabel className="font-semibold text-base">Location</FormLabel>
                           <FormControl>
                             <Input
+                              className="font-light text-xs h-12"
+                              placeholder="Type your message here"
                               type="text"
                               {...field}
                               key={observation.id}
@@ -157,28 +168,71 @@ const ReportObservation = ({
                         </FormItem>
                       )}
                     />
-                    <button
-                      onClick={() =>
-                        deleteObservation(i, fields, setObservationsList, remove)
-                      }
-                      type="button"
-                      className="bg-white"
-                    >
-                      <img src={exit} className="w-6"/>
-                    </button>
                   </div>
-
-                  <div className="flex gap-4">
+                  <div className="flex gap-4 justify-center items-center">
                     <FormField
                       control={form.control}
-                      name={`observations.${i}.description`}
+                      name={`observations.${i}.time`}
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel className="font-semibold text-base">Description</FormLabel>
+                          <FormLabel className="font-semibold text-base">Time</FormLabel>
                           <FormControl>
                             <Input
-                              type="textarea"
+                              className="font-light text-xs h-12"
+                              type="text"
                               {...field}
+                              value={fields[i]?.time || ""}
+                            />
+                          </FormControl>
+                        </FormItem>
+                      )}
+                    />
+                    <FormField
+                        control={form.control}
+                        name={`observations.${i}.category`}
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel className="font-semibold text-base">Category</FormLabel>
+                            <FormControl>
+                              <select
+                                {...field}
+                                className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-slate-400 h-12"
+                                onChange={(e) => {
+                                  const value = e.target.value;
+                                  fields[i].category = value;
+                                  form.setValue(`observations.${i}.category`, value);
+                                  localStorage.setItem(
+                                    "observations",
+                                    JSON.stringify(fields)
+                                  );
+                                }}
+                              >
+                                <option value="" disabled>
+                                  Select an Option
+                                </option>
+                                {observationCategories.map((category) => (
+                                  <option key={category + i} value={category}>
+                                    {category}
+                                  </option>
+                                ))}
+                              </select>
+                            </FormControl>
+                          </FormItem>
+                        )}
+                      />
+                  </div>
+                  <div className="w-full">
+                    <FormField
+                        control={form.control}
+                        name={`observations.${i}.description`}
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel className="font-semibold text-base">Description</FormLabel>
+                            <FormControl>
+                            <textarea
+                              className="font-light text-xs h-40 py-2 px-3 block w-full border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-slate-400 resize-none"
+                              {...field}
+                              placeholder="Type your message here"
                               onChange={(event) => {
                                 const value = event.target.value;
                                 fields[i].description = value;
@@ -189,56 +243,10 @@ const ReportObservation = ({
                                 );
                               }}
                             />
-                          </FormControl>
-                        </FormItem>
-                      )}
-                    />
-                    <FormField
-                      control={form.control}
-                      name={`observations.${i}.time`}
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel className="font-semibold text-base">Time</FormLabel>
-                          <FormControl>
-                            <Input
-                              type="text"
-                              {...field}
-                              value={fields[i]?.time || ""}
-                            />
-                          </FormControl>
-                        </FormItem>
-                      )}
-                    />
-                    <FormField
-                      control={form.control}
-                      name={`observations.${i}.category`}
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel className="font-semibold text-base">Category</FormLabel>
-                          <FormControl>
-                            <select
-                              {...field}
-                              className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                              onChange={(e) => {
-                                const value = e.target.value;
-                                fields[i].category = value;
-                                form.setValue(`observations.${i}.category`, value);
-                                localStorage.setItem(
-                                  "observations",
-                                  JSON.stringify(fields)
-                                );
-                              }}
-                            >
-                              {observationCategories.map((category) => (
-                                <option key={category + i} value={category}>
-                                  {category}
-                                </option>
-                              ))}
-                            </select>
-                          </FormControl>
-                        </FormItem>
-                      )}
-                    />
+                            </FormControl>
+                          </FormItem>
+                        )}
+                      />
                   </div>
                 </div>
               ))}

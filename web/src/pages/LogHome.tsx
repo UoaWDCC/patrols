@@ -26,16 +26,6 @@ export default function ReportSummary() {
         </div>
       </div>
       <div className="max-w-800 mx-auto px-14 my-8">
-        {isDraft && (
-          <LargeInfoButton
-            heading={"Draft report detected"}
-            description={"You have a report you haven't submitted."}
-            className="bg-[#0F1363] p-4 rounded-lg shadow-md mb-6"
-            iconDescription={"Finish your report?"}
-            onClick={handleDraftReport}
-            variant={"dark"}
-          />
-        )}
         <div>
           <div className="py-12">
             <h2 className="text-base font-bold">
@@ -45,6 +35,16 @@ export default function ReportSummary() {
               Event ID: xxxxxxxxxx
             </h3>
           </div>
+          {isDraft && (
+          <LargeInfoButton
+            heading={"Draft report detected"}
+            description={"You have a report you haven't submitted."}
+            className="bg-[#0F1363] p-4 rounded-lg shadow-md mb-6"
+            iconDescription={"Finish your report?"}
+            onClick={handleDraftReport}
+            variant={"dark"}
+          />
+        )}
           <button onClick={handleNewReport} className="w-full">
             <div className="bg-cpnz-blue-900 rounded-lg shadow-md mb-6 py-14 items-center flex justify-center w-full">
                 <h1 className="text-white font-semibold text-lg">

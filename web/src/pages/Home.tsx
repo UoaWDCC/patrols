@@ -85,16 +85,6 @@ export default function Home() {
           <SignoutButton />
       </div>
       <div className="max-w-800 mx-auto px-14 my-8">
-        {isDraft && (
-          <LargeInfoButton
-            heading={"Draft report detected"}
-            description={"You have a report you haven't submitted."}
-            className="bg-[#EEF6FF] p-4 rounded-lg shadow-md mb-6"
-            iconDescription={"Finish your report?"}
-            onClick={handleDraftReport}
-            variant={"light"}
-          />
-        )}
         <div>
           <div className="py-12">
             <h2 className="text-base font-bold">
@@ -113,6 +103,16 @@ export default function Home() {
             </div>
           </button>
         </div>
+        {isDraft && (
+          <LargeInfoButton
+            heading={"Draft report detected"}
+            description={"You have a report you haven't submitted."}
+            className="bg-[#0F1363] p-4 rounded-lg shadow-md mb-6"
+            iconDescription={"Finish your report?"}
+            onClick={handleDraftReport}
+            variant={"dark"}
+          />
+        )}
         <div className="text-right px-6">
           <p className="font-light">Ready to start a patrol?</p>
         </div>
