@@ -79,12 +79,10 @@ export default function Home() {
   return (
     <div className="text-center min-h-screen relative bg-[#FFFFFF] max-w-3xl mx-auto">
       <div className="bg-white pt-14 pb-4 flex justify-between items-center px-8">
-        <div>
           <h1 className="text-xl font-bold text-black mx-4">
             Welcome, <span className="underline">XXXXXXX</span>
           </h1>
-        </div>
-        <SignoutButton />
+          <SignoutButton />
       </div>
       <div className="max-w-800 mx-auto px-14 my-8">
         {isDraft && (

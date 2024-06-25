@@ -46,7 +46,7 @@ export default function ReportSummary() {
             </h3>
           </div>
           <button onClick={handleNewReport} className="w-full">
-            <div className="bg-cpnz-blue-900 rounded-lg shadow-md mb-6 py-14 items-center w-full space-x-4">
+            <div className="bg-cpnz-blue-900 rounded-lg shadow-md mb-6 py-14 items-center flex justify-center w-full">
                 <h1 className="text-white font-semibold text-lg">
                   Start a New Report
                 </h1>
@@ -67,7 +67,7 @@ export default function ReportSummary() {
             </button>
           </div>
           <div>
-            <button className="bg-[#FF8080] my-10 rounded-lg shadow-md p-4 w-full">
+            <button className="bg-[#FF8080] my-10 rounded-lg shadow-md p-4 w-full hover:bg-[#ff4d4d]">
               Submit Report & Log Off
             </button>
           </div>

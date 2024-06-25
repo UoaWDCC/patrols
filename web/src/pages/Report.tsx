@@ -113,60 +113,66 @@ export default function Report() {
   };
 
   return (
-    <div className="relative max-w-3xl mx-auto max-h-screen">
-      <div className="bg-[#1E3A8A] py-6 flex justify-between items-center px-8 rounded-b-3xl">
-        <h1 className="text-xl font-bold text-white">Shift in progress</h1>
-        <p className="text-sm text-white">Event number: #P23848457</p>
+    <div className="text-center min-h-screen relative bg-[#FFFFFF] max-w-3xl mx-auto">
+      <div className="bg-white pt-14 pb-4 flex flex-col items-start px-8">
+          <h1 className="text-xl font-bold text-black mx-4">
+            Welcome, <span className="underline">XXXXXXX</span>
+          </h1>
+          <p className="text-left mx-4 mt-2">
+            Event ID: xxxxxxxxxx
+          </p>
       </div>
-      <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)}>
-          <div>
-            <ReportIntel form={form} setStartOdometer={setStartOdometer} />
-            <ReportObservation
-              form={form}
-              fields={fields}
-              setObservationsList={setObservationsList}
-              append={append}
-              remove={remove}
-            />
-            <ReportFinishDetails
-              form={form}
-              setDebrief={setDebrief}
-              setEndOdometer={setEndOdometer}
-            />
-          </div>
+      <div className="max-w-800 mx-auto px-14 my-8">
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit)}>
+            <div>
+              <ReportIntel form={form} setStartOdometer={setStartOdometer} />
+              <ReportObservation
+                form={form}
+                fields={fields}
+                setObservationsList={setObservationsList}
+                append={append}
+                remove={remove}
+              />
+              <ReportFinishDetails
+                form={form}
+                setDebrief={setDebrief}
+                setEndOdometer={setEndOdometer}
+              />
+            </div>
 
-          <div className="flex justify-between mt-16 pb-12">
-            <Button
-              variant={"outline"}
-              onClick={() => navigate(-1)}
-              type="button"
-            >
-              <ChevronLeft />
-            </Button>
+            <div className="flex justify-between mt-16 pb-12">
+              <Button
+                variant={"outline"}
+                onClick={() => navigate(-1)}
+                type="button"
+              >
+                <ChevronLeft />
+              </Button>
 
-            <Dialog open={openDialog} onOpenChange={setOpenDialog}>
-              <DialogTrigger></DialogTrigger>
-              <DialogContent className="text-center flex flex-col gap-24 p-12">
-                <DialogHeader className="text-lg text-center font-semibold">
-                  Please double check your information before submitting
-                </DialogHeader>
-                <DialogDescription className="flex justify-center">
-                  <Button
-                    className="flex gap-4 px-6 items-center justify-center bg-cpnz-blue-800"
-                    onClick={handleConfirmSubmit}
-                  >
-                    Confirm Submit <ChevronRight />
-                  </Button>
-                </DialogDescription>
-              </DialogContent>
-            </Dialog>
-            <Button className="bg-cpnz-blue-800" type="submit">
-              Submit
-            </Button>
-          </div>
-        </form>
-      </Form>
+              <Dialog open={openDialog} onOpenChange={setOpenDialog}>
+                <DialogTrigger></DialogTrigger>
+                <DialogContent className="text-center flex flex-col gap-24 p-12">
+                  <DialogHeader className="text-lg text-center font-semibold">
+                    Please double check your information before submitting
+                  </DialogHeader>
+                  <DialogDescription className="flex justify-center">
+                    <Button
+                      className="flex gap-4 px-6 items-center justify-center bg-cpnz-blue-800"
+                      onClick={handleConfirmSubmit}
+                    >
+                      Confirm Submit <ChevronRight />
+                    </Button>
+                  </DialogDescription>
+                </DialogContent>
+              </Dialog>
+              <Button className="bg-cpnz-blue-800" type="submit">
+                Submit
+              </Button>
+            </div>
+          </form>
+        </Form>
+      </div>
     </div>
   );
 }
