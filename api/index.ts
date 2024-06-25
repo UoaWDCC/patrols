@@ -10,6 +10,7 @@ import authLoginRoute from "./routes/auth/login";
 import userRoutes from "./routes/UserRoutes";
 import emailRoute from "./routes/email";
 import vehicleRoute from "./routes/VehicleRoutes";
+import locationOfInterestRoute from "./routes/LocationOfInterestRoutes";
 const app = express();
 
 app.use(express.json());
@@ -24,6 +25,7 @@ app.use("/auth", authLoginRoute);
 app.use("/user", userRoutes);
 app.use("/send-email", emailRoute);
 app.use("/vehicle", vehicleRoute);
+app.use("/location-of-interest", locationOfInterestRoute);
 
 const port = Number.parseInt(process.env.PORT || "3000");
 app.listen(port, () => {
