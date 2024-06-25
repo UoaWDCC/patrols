@@ -12,7 +12,7 @@ import { UseFormReturn } from "react-hook-form";
 import useCurrentLocation from "../../hooks/useCurrentLocation";
 import plus from "../../assets/images/plus2.png";
 import exit from "../../assets/images/exit.png";
-import React, { useState } from "react";
+import { useState } from "react";
 
 interface ReportObservationProps {
   form: UseFormReturn<z.infer<typeof reportFormSchema>>;
