@@ -6,6 +6,7 @@ import {
   FormLabel,
 } from "@components/ui/form";
 import { Input } from "@components/ui/input";
+import { Textarea } from "@components/ui/textarea";
 import { z } from "zod";
 import { formObservationSchema, reportFormSchema } from "../../schemas";
 import { UseFormReturn } from "react-hook-form";
@@ -122,6 +123,27 @@ const ReportObservation = ({
           Add Observation
         </Button>
       </div>
+      {fields.map((observation: Observation, i: number) => (
+        <div
+          key={`observation-${i}`}
+          className="shadow-md bg-[#F8F8F8] rounded-lg p-4 my-4 text-left"
+        >
+          <div className="flex justify-between items-center mb-2">
+            <div>
+              <h3 className="text-base font-semibold">{observation.location}</h3>
+              <p className="text-xs text-gray-500 font-light">{observation.time}</p>
+            </div>
+            <button
+              onClick={() => deleteObservation(i, fields, setObservationsList, remove)}
+              className="text-red-500 hover:text-red-700 text-xs"
+            >
+              Delete
+            </button>
+          </div>
+          <p className="text-xs text-gray-500 mt-2">Category: {observation.category}</p>
+          <p className="text-base">{observation.description}</p>
+        </div>
+      ))}
       {showModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-[#C4C4C4]">
           <div className="relative bg-white rounded-lg shadow-lg p-6 w-full max-w-lg mx-auto">
@@ -229,7 +251,7 @@ const ReportObservation = ({
                           <FormItem>
                             <FormLabel className="font-semibold text-base">Description</FormLabel>
                             <FormControl>
-                            <textarea
+                            <Textarea
                               className="font-light text-xs h-40 py-2 px-3 block w-full border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-slate-400 resize-none"
                               {...field}
                               placeholder="Type your message here"
