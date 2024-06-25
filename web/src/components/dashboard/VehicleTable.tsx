@@ -6,7 +6,7 @@ import { z } from "zod";
 type vehicleDetails = z.infer<typeof vehicleDetailsSchema>;
 
 export default function VehicleTable() {
-    const [patrolId, setPatrolId] = useState<Number>();
+    const [patrolId, setPatrolId] = useState<string>();
     const [vehicleData, setVehicleData] = useState<vehicleDetails[]>([]);
 
     useEffect(() => {
@@ -16,8 +16,8 @@ export default function VehicleTable() {
                     `${import.meta.env.VITE_API_URL}/user/getUserDetails`
                 );
             
-                const userDetails = userDetailsSchema.parse(response.data);
-                setPatrolId(Number(userDetails.patrol_id));
+                const userDetails = userDetailsSchema.parse(response.data.userDetails);
+                setPatrolId(String(userDetails.patrol_id));
             } catch (error) {
                 console.error("Error fetching patrol lead ID:", error);
             }
@@ -28,11 +28,11 @@ export default function VehicleTable() {
 
       useEffect(() => {
         const getVehicleByPatrolId = async () => {
+            if (!patrolId) return;
             try {
                 const response = await axios.get(
-                    `${import.meta.env.VITE_API_URL}/vehicle/getVehicleByPatrolId/${patrolId}`
+                    `${import.meta.env.VITE_API_URL}/vehicle/${patrolId}`
                 );
-            
                 const vehicleData = vehicleDetailsSchema.array().parse(response.data);
                 setVehicleData(vehicleData);
             } catch (error) {
@@ -41,10 +41,10 @@ export default function VehicleTable() {
         };
 
         getVehicleByPatrolId();
-      }, []);
+      }, [patrolId]);
 
       function removeVehicle(id: string) {
-        axios.delete(`${import.meta.env.VITE_API_URL}/vehicle/deleteVehicle/${id}`)
+        axios.delete(`${import.meta.env.VITE_API_URL}/vehicle/${id}`)
         .then((response) => {
             console.log(response);
             setVehicleData(vehicleData.filter(vehicle => vehicle.id !== id));
@@ -77,9 +77,9 @@ export default function VehicleTable() {
                             <td>{vehicle.colour}</td>
                             <td>{vehicle.model}</td>
                             <td>{vehicle.make}</td>
-                            <td>{vehicle.has_livery_or_signage}</td>
-                            <td>{vehicle.has_police_radio}</td>
-                            <td>{vehicle.selected}</td>
+                            <td>{vehicle.has_livery_or_signage ? "Yes" : "No"}</td>
+                            <td>{vehicle.has_police_radio ? "Yes" : "No"}</td>
+                            <td>{vehicle.selected ? "Yes" : "No"}</td>
                             <td>
                                 <button className="btn btn-danger" onClick={() => removeVehicle(vehicle.id)}>Delete</button>
                             </td>
@@ -89,4 +89,6 @@ export default function VehicleTable() {
             </table>
         </div>
       );
+
+      
 }
