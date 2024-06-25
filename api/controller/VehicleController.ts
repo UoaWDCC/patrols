@@ -11,3 +11,20 @@ export const createVehicle = async (req: Request, res: Response) => {
         res.status(400).json({ error: error.message });
     }
 };
+
+export const deleteVehicle = async (req: Request, res: Response) => {
+    try {
+        const { id } = req.params;
+        
+        const vehicle = await prisma.vehicle.delete({
+            where: { id: Number(id) },
+        });
+
+        if (!vehicle) {
+            return res.status(404).json({ error: 'No such Vehicle' });
+        }
+        res.status(200).json({ vehicle, message: 'Vehicle deleted' });
+    } catch (error: any) {
+        res.status(400).json({ error: error.message });
+    }
+};
