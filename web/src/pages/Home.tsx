@@ -106,11 +106,14 @@ export default function Home() {
               Ready to start a patrol?
             </p>
           </div>
-          <div className="bg-cpnz-blue-900 rounded-lg shadow-md mb-6 py-14 items-center">
-            <button onClick={handleNewReport}>
-              <img src={logon} alt="logon" className="w-32"/>
-            </button>
-          </div>
+          <button onClick={handleNewReport} className="w-full">
+            <div className="bg-cpnz-blue-900 rounded-lg shadow-md mb-6 py-14 items-center flex flex-row justify-center w-full space-x-4">
+                <img src={logon} alt="logon" className="w-10 h-9"/>
+                <h1 className="text-white font-semibold text-lg">
+                  Log On
+                </h1>
+            </div>
+          </button>
         </div>
         <div className="text-right px-6">
           <p className="font-light">Ready to start a patrol?</p>
