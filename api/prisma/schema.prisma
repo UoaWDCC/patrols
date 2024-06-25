@@ -77,6 +77,11 @@ model districts_prod {
   patrols_prod patrols_prod[]
 }
 
+model email_history_dev {
+  id         BigInt  @id @default(autoincrement())
+  history_id BigInt?
+}
+
 model equipment_checklist {
   id                BigInt           @id(map: "EquipmentChecklist_pkey") @unique(map: "EquipmentChecklist_id_key") @default(autoincrement())
   hi_viz_uniform    Boolean
@@ -367,7 +372,7 @@ model reports {
 
 model shift {
   id                                         BigInt             @id(map: "Shift_pkey") @unique(map: "Shift_id_key") @default(autoincrement())
-  event_no                                   Int?
+  event_no                                   String?
   patrol_id                                  BigInt
   start_time                                 DateTime           @db.Timestamptz(0)
   end_time                                   DateTime           @db.Timestamptz(0)
@@ -486,7 +491,7 @@ model vehicle_details {
   is_vehicle_manager_attention_needed Boolean
   equipment_checklist                 equipment_checklist @relation(fields: [equipment_checklist_id], references: [id], map: "VehicleDetails_equipment_checklist_id_fkey")
   vehicle_checklist                   vehicle_checklist   @relation(fields: [vehicle_checkList_id], references: [id], map: "VehicleDetails_vehicle_checkList_id_fkey")
-  vehicle                             vehicle             @relation(fields: [vehicle_id], references: [id], map: "VehicleDetails_vehicle_id_fkey")
+  vehicle                             vehicle             @relation(fields: [vehicle_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
 }
 
 model vehicle_dev {
