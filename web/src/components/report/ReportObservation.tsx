@@ -11,6 +11,7 @@ import { formObservationSchema, reportFormSchema } from "../../schemas";
 import { UseFormReturn } from "react-hook-form";
 import { X } from "lucide-react";
 import useCurrentLocation from "../../hooks/useCurrentLocation";
+import plus from "../../assets/images/plus2.png";
 
 interface ReportObservationProps {
   form: UseFormReturn<z.infer<typeof reportFormSchema>>;
@@ -92,7 +93,7 @@ const ReportObservation = ({
       <div className="flex flex-col gap-4">
         {fields.map((observation: any, i: number) => (
           <div
-            className="flex gap-4 items-start flex-col "
+            className="flex gap-4 items-start flex-col text-left"
             key={observation.location + i}
           >
             <div className="flex items-center justify-between w-full pr-4 gap-16">
@@ -101,7 +102,7 @@ const ReportObservation = ({
                 name={`observations.${i}.location`}
                 render={({ field }) => (
                   <FormItem className="flex-1">
-                    <FormLabel>Location</FormLabel>
+                    <FormLabel className="font-semibold text-base">Location</FormLabel>
                     <FormControl>
                       <Input
                         type="text"
@@ -138,7 +139,7 @@ const ReportObservation = ({
                 name={`observations.${i}.description`}
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Description</FormLabel>
+                    <FormLabel className="font-semibold text-base">Description</FormLabel>
                     <FormControl>
                       <Input
                         type="textarea"
@@ -162,7 +163,7 @@ const ReportObservation = ({
                 name={`observations.${i}.time`}
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Time</FormLabel>
+                    <FormLabel className="font-semibold text-base">Time</FormLabel>
                     <FormControl>
                       <Input
                         type="text"
@@ -178,7 +179,7 @@ const ReportObservation = ({
                 name={`observations.${i}.category`}
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Category</FormLabel>
+                    <FormLabel className="font-semibold text-base">Category</FormLabel>
                     <FormControl>
                       <select
                         {...field}
@@ -207,22 +208,25 @@ const ReportObservation = ({
           </div>
         ))}
       </div>
-
-      <Button
-        className="mt-6"
-        onClick={() =>
-          addObservation(
-            type.observation,
-            fields,
-            setObservationsList,
-            append,
-            address
-          )
-        }
-        type="button"
-      >
-        Add observation
-      </Button>
+      <div className="mt-4">
+        <h2 className="text-left font-semibold text-base">Observations</h2>
+        <Button
+          className="mt-2 w-full bg-[#038400] p-7 items-center flex flex-row justify-center"
+          onClick={() =>
+            addObservation(
+              type.observation,
+              fields,
+              setObservationsList,
+              append,
+              address
+            )
+          }
+          type="button"
+        >
+          <img src={plus} alt="plus" className="w-5 mx-2"/>
+          Add Observation
+        </Button>
+      </div>
     </div>
   );
 };

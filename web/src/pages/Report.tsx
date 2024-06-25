@@ -17,6 +17,7 @@ import {
   DialogTrigger,
   DialogDescription,
 } from "@components/ui/dialog";
+import BottomNavBar from '@components/BottomNavBar';
 
 export default function Report() {
   const navigate = useNavigate();
@@ -134,11 +135,6 @@ export default function Report() {
                 append={append}
                 remove={remove}
               />
-              <ReportFinishDetails
-                form={form}
-                setDebrief={setDebrief}
-                setEndOdometer={setEndOdometer}
-              />
             </div>
 
             <div className="flex justify-between mt-16 pb-12">
@@ -166,13 +162,14 @@ export default function Report() {
                   </DialogDescription>
                 </DialogContent>
               </Dialog>
-              <Button className="bg-cpnz-blue-800" type="submit">
+              <Button className="bg-cpnz-blue-900" type="submit">
                 Submit
               </Button>
             </div>
           </form>
         </Form>
       </div>
+      <BottomNavBar />
     </div>
   );
 }

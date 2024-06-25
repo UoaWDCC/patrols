@@ -24,7 +24,7 @@ export default function ReportIntel({
         name="startOdometer"
         render={({ field }) => (
           <FormItem>
-            <FormLabel className="font-semibold">Starting Odometer</FormLabel>
+            <FormLabel className="font-semibold text-base">Starting Odometer</FormLabel>
             <FormControl>
               <Input
                 {...field}
