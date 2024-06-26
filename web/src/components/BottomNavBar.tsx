@@ -1,6 +1,7 @@
 import profile from "../assets/images/user.png";
 import home from "../assets/images/home.png";
 import { useNavigate } from "react-router";
+import {ChevronRight } from "lucide-react";
 
 const BottomNavBar = () => {
   const navigate = useNavigate();
@@ -29,8 +30,8 @@ const BottomNavBar = () => {
           <img src={profile} alt="user" className="w-7 h-7" />
           Profile
         </button>
-        <button className="text-white bg-cpnz-blue-900 rounded-lg py-3 px-10 font-base w-full" onClick={handleLogon}>
-          LOG ON 
+        <button className="text-white bg-cpnz-blue-900 rounded-lg py-3 px-10 font-base w-full flex gap-2 items-center justify-center" onClick={handleLogon}>
+          LOG ON <ChevronRight/>
         </button>
       </div>
     </div>

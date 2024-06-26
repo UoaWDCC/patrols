@@ -137,6 +137,13 @@ export default function Report() {
             </div>
 
             <div className="flex justify-between mt-16 pb-12">
+            <Button
+              variant={"outline"}
+              onClick={() => navigate(-1)}
+              type="button"
+            >
+              <ChevronLeft />
+            </Button>
               <Dialog open={openDialog} onOpenChange={setOpenDialog}>
                 <DialogTrigger></DialogTrigger>
                 <DialogContent className="text-center flex flex-col gap-24 p-12">

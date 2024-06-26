@@ -145,7 +145,7 @@ const ReportObservation = ({
         </div>
       ))}
       {showModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-[#C4C4C4]">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-[#C4C4C4] bg-opacity-90">
           <div className="relative bg-white rounded-lg shadow-lg p-6 w-full max-w-lg mx-auto">
             <div className="flex flex-col gap-4">
               <button
@@ -167,7 +167,7 @@ const ReportObservation = ({
                       control={form.control}
                       name={`observations.${i}.location`}
                       render={({ field }) => (
-                        <FormItem className="flex-1">
+                        <FormItem className="w-full">
                           <FormLabel className="font-semibold text-base">Location</FormLabel>
                           <FormControl>
                             <Input
@@ -191,7 +191,7 @@ const ReportObservation = ({
                       )}
                     />
                   </div>
-                  <div className="flex gap-4 justify-center items-center">
+                  <div className="flex gap-5 justify-center items-center w-full">
                     <FormField
                       control={form.control}
                       name={`observations.${i}.time`}
@@ -213,7 +213,7 @@ const ReportObservation = ({
                         control={form.control}
                         name={`observations.${i}.category`}
                         render={({ field }) => (
-                          <FormItem>
+                          <FormItem className="w-full">
                             <FormLabel className="font-semibold text-base">Category</FormLabel>
                             <FormControl>
                               <select
@@ -273,6 +273,13 @@ const ReportObservation = ({
                 </div>
               ))}
             </div>
+            <Button
+              className=" mt-6 w-full bg-[#038400] p-7 items-center flex flex-row justify-center"
+              type="button"
+            >
+              <img src={plus} alt="plus" className="w-5 mx-2"/>
+              Add Observation
+            </Button>
           </div>
         </div>
       )}
