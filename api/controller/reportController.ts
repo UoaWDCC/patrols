@@ -1,5 +1,6 @@
 import type { Request, Response } from 'express';
 import prisma from '../db/database';
+import { report } from 'process';
 
 /*
 Replacer Function:
@@ -14,7 +15,59 @@ function toObject(report: any){
 export const getAllReport = async (req: Request, res: Response) => {
     try{
         const reports = await prisma.reports.findMany();
-        res.status(200).send(toObject(reports));
+        
+        if (!reports || reports.length === 0){
+            return res.status(404).json({error : "There are no reports"});
+        }
+
+        const shifts: any[] = [];
+        const vehicles: any[] = [];
+
+        for (const report of reports){
+            const shift = await prisma.shift.findUnique({
+                where: {id: report?.shift_id},
+                select: {
+                    event_no: true,
+                    patrol_id: true,
+                    start_time: true,
+                    end_time: true,
+                    police_station_base: true,
+                    observer_id: true,
+                    driver_id: true, 
+                    vehicle_id: true,
+                }
+            })
+            if (!shift) { 
+                return res.status(404).json({ error: 'Shift not found'});
+            }
+
+            const vehicle = await prisma.vehicle.findUnique({
+                where: {id : report?.vehicle_details_id},
+                select:{
+                    // No patrol_id as the driver id would be the same
+                    registration_no: true,
+                    colour: true,
+                    model: true,
+                    make: true,
+                    has_police_radio: true,
+                    selected : true,
+                }
+            })
+            if (!vehicle) { 
+                return res.status(404).json({ error: 'Vehicle not found'});
+            }
+
+            shifts.push(toObject(shift));
+            vehicles.push(toObject(vehicle));
+        }
+        const reportsWithDetails = reports.map((report, index) => ({
+            report: toObject(report),
+            shift: shifts[index],
+            vehicle: vehicles[index],
+        }));
+        
+        res.status(200).json({ reports: reportsWithDetails });
+        
     } catch (error: any) {
         res.status(400).json({ error: error.message });
     }
@@ -25,16 +78,7 @@ export const getSingleReport = async (req: Request, res: Response) => {
     try {
         const { id } = req.params;
         const report = await prisma.reports.findUnique({
-            where: { id: Number(id) },
-            // select:{
-            //     member_id: true,
-            //     vehicle_details_id: true,
-            //     odometer_initial_reading: true,
-            //     odometer_final_reading: true,
-            //     weather_condition: true,
-            //     is_foot_patrol: true,
-            //     notes: true,
-            // }
+            where: { id: Number(id) }
         });
 
         if (!report) {
@@ -43,19 +87,39 @@ export const getSingleReport = async (req: Request, res: Response) => {
         const shift = await prisma.shift.findUnique({
             where: {id: report?.shift_id},
             select: {
-                // event_no: true,
+                event_no: true,
                 patrol_id: true,
                 start_time: true,
                 end_time: true,
                 police_station_base: true,
                 observer_id: true,
+                driver_id: true, 
                 vehicle_id: true,
             }
         })
+        if (!shift) { 
+            return res.status(404).json({ error: 'Shift not found'});
+        }
+        const vehicle = await prisma.vehicle.findUnique({
+            where: {id : report?.vehicle_details_id},
+            select:{
+                // No patrol_id as the driver id would be the same
+                registration_no: true,
+                colour: true,
+                model: true,
+                make: true,
+                has_police_radio: true,
+                selected : true,
+            }
+        })
+        if (!vehicle) { 
+            return res.status(404).json({ error: 'Vehicle not found'});
+        }
 
         res.status(200).json({
             report: toObject(report),
             shift: toObject(shift),
+            vehicle: toObject(vehicle),
         }
         );
     } catch (error: any) {
