@@ -9,6 +9,7 @@ import authLoginRoute from "./routes/auth/login";
 // import reportRoutes from './routes/report';
 import userRoutes from "./routes/UserRoutes";
 import emailRoute from "./routes/email";
+import reportRoutes from "./routes/report";
 const app = express();
 
 app.use(express.json());
@@ -19,7 +20,7 @@ app.use(express.urlencoded({ extended: false }));
 // Routes
 app.use("/hello", helloRoutes);
 app.use("/auth", authLoginRoute);
-// app.use('/report', reportRoutes);
+app.use('/report', reportRoutes);
 app.use("/user", userRoutes);
 app.use("/send-email", emailRoute);
 

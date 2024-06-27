@@ -1,73 +1,113 @@
-// import type { Request, Response } from 'express';
-// import prisma from '../db/database';
-// import { Role } from '@prisma/client';
+import type { Request, Response } from 'express';
+import prisma from '../db/database';
 
-// export const getAllReport = async (req: Request, res: Response) => {
-//     const reports = await prisma.reports.findMany();
-//     res.status(200).send(reports);
-// };
+/*
+Replacer Function:
+Replacing all fields that are BigInt to String
+*/
+function toObject(report: any){
+    return JSON.parse(
+        JSON.stringify(report,(key, value) => (typeof value === "bigint" ? value.toString() : value))
+    );
+}
 
-// export const getSingleReport = async (req: Request, res: Response) => {
-//     try {
-//         const { id } = req.params;
-//         const report = await prisma.reports.findUnique({
-//             where: { id: Number(id) },
-//         });
+export const getAllReport = async (req: Request, res: Response) => {
+    try{
+        const reports = await prisma.reports.findMany();
+        res.status(200).send(toObject(reports));
+    } catch (error: any) {
+        res.status(400).json({ error: error.message });
+    }
+    
+};
 
-//         if (!report) {
-//             return res.status(404).json({ error: 'No such report' });
-//         }
-//         res.status(200).json(report);
-//     } catch (error: any) {
-//         res.status(400).json({ error: error.message });
-//     }
-// };
+export const getSingleReport = async (req: Request, res: Response) => {
+    try {
+        const { id } = req.params;
+        const report = await prisma.reports.findUnique({
+            where: { id: Number(id) },
+            // select:{
+            //     member_id: true,
+            //     vehicle_details_id: true,
+            //     odometer_initial_reading: true,
+            //     odometer_final_reading: true,
+            //     weather_condition: true,
+            //     is_foot_patrol: true,
+            //     notes: true,
+            // }
+        });
 
-// export const createReport = async (req: Request, res: Response) => {
-//     try {
-//         const newReport = req.body;
-//         const report = await prisma.reports.create({ data: newReport });
-//         res.status(200).json(report);
-//         res.status(200).json({ message: 'Report created' });
-//     } catch (error: any) {
-//         res.status(400).json({ error: error.message });
-//     }
-// };
+        if (!report) {
+            return res.status(404).json({ error: 'No such report' });
+        }
+        const shift = await prisma.shift.findUnique({
+            where: {id: report?.shift_id},
+            select: {
+                // event_no: true,
+                patrol_id: true,
+                start_time: true,
+                end_time: true,
+                police_station_base: true,
+                observer_id: true,
+                vehicle_id: true,
+            }
+        })
 
-// export const updateReport = async (req: Request, res: Response) => {
-//     try {
-//         const { id } = req.params;
-//         const updateData = req.body;
-//         const report = await prisma.reports.update({
-//             where: { id: Number(id) },
-//             data: updateData,
-//         });
+        res.status(200).json({
+            report: toObject(report),
+            shift: toObject(shift),
+        }
+        );
+    } catch (error: any) {
+        res.status(400).json({ error: error.message });
+    }
+};
 
-//         if (!report) {
-//             return res.status(404).json({ error: 'No such Report' });
-//         }
-//         res.status(200).json(report);
-//     } catch (error: any) {
-//         res.status(400).json({ error: error.message });
-//     }
-// };
+export const createReport = async (req: Request, res: Response) => {
+    try {
+        const newReport = req.body;
+        const report = await prisma.reports.create({ data: newReport });
+        res.status(200).json(report);
+        res.status(200).json({ message: 'Report created' });
+    } catch (error: any) {
+        res.status(400).json({ error: error.message });
+    }
+};
 
-// export const deleteReport = async (req: Request, res: Response) => {
-//     try {
-//         const { id } = req.params;
+export const updateReport = async (req: Request, res: Response) => {
+    try {
+        const { id } = req.params;
+        const updateData = req.body;
+        const report = await prisma.reports.update({
+            where: { id: Number(id) },
+            data: updateData,
+        });
 
-//         const report = await prisma.reports.delete({
-//             where: { id: Number(id) },
-//         });
+        if (!report) {
+            return res.status(404).json({ error: 'No such Report' });
+        }
+        res.status(200).json(report);
+    } catch (error: any) {
+        res.status(400).json({ error: error.message });
+    }
+};
 
-//         if (!report) {
-//             return res.status(404).json({ error: 'No such Report' });
-//         }
-//         res.status(200).json({ report, message: 'Report deleted' });
-//     } catch (error: any) {
-//         res.status(400).json({ error: error.message });
-//     }
-// };
+export const deleteReport = async (req: Request, res: Response) => {
+    try {
+        const { id } = req.params;
+
+        const report = await prisma.reports.delete({
+            where: { id: Number(id) },
+        });
+
+        if (!report) {
+            return res.status(404).json({ error: 'No such Report' });
+        }
+        res.status(200).json({ report, message: 'Report deleted' });
+    } catch (error: any) {
+        res.status(400).json({ error: error.message });
+    }
+};
 
 // export const getAllReportForLead = async (req: Request, res: Response) => {
 //     try {
@@ -121,33 +161,3 @@
 //         res.status(400).json({ error: error.message });
 //     }
 // };
-
-// // async function main() {
-// //     const report = await prisma.report.findMany();
-// //     console.log(report);
-// // }
-
-// // main()
-// // .then(async () => {
-// //     await prisma.$disconnect();
-// // })
-// // .catch(async (e) => {
-// //     console.error(e);
-// //     await prisma.$disconnect();
-// //     process.exit(1);
-
-// // });
-
-// // Middleware to validate the ID
-// // async function validateIdMiddleware(req: Request, res: Response, next: NextFunction, id: string) {
-// //    try {
-// //        // Validate the ID against the schema
-// //        prisma.reports.id.parse(id);
-// //        // If valid, attach the ID to the request and proceed
-// //        req.params.id = id;
-// //        next();
-// //    } catch (error) {
-// //        // If validation fails, return an error response
-// //        return res.status(404).json({ error: 'Invalid ID' });
-// //    }
-// // }
