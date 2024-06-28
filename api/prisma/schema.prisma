@@ -317,21 +317,22 @@ model observations {
 }
 
 model patrols_dev {
-  id            BigInt        @id @unique @default(autoincrement())
-  created_at    DateTime?     @db.Timestamptz(6)
-  updated_at    DateTime?     @db.Timestamptz(6)
-  name          region
-  active        Int           @db.SmallInt
-  district_id   BigInt
-  notes         String?
-  call_sign     String?
-  year_joined   String?
-  email         String        @default("office@cpnz.org.nz")
-  members_dev   members_dev[]
-  districts_dev districts_dev @relation(fields: [district_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  shift         shift[]
-  vehicle       vehicle[]
-  vehicle_dev   vehicle_dev[]
+  id                   BigInt                 @id @unique @default(autoincrement())
+  created_at           DateTime?              @db.Timestamptz(6)
+  updated_at           DateTime?              @db.Timestamptz(6)
+  name                 region
+  active               Int                    @db.SmallInt
+  district_id          BigInt
+  notes                String?
+  call_sign            String?
+  year_joined          String?
+  email                String                 @default("office@cpnz.org.nz")
+  location_of_interest location_of_interest[]
+  members_dev          members_dev[]
+  districts_dev        districts_dev          @relation(fields: [district_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  shift                shift[]
+  vehicle              vehicle[]
+  vehicle_dev          vehicle_dev[]
 }
 
 model patrols_prod {
@@ -363,6 +364,7 @@ model reports {
   observations             observations[]
   members_dev              members_dev    @relation(fields: [member_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "report_member_id_fkey")
   shift                    shift          @relation(fields: [shift_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "report_shift_id_fkey")
+  vehicle                  vehicle        @relation(fields: [vehicle_details_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
 }
 
 model shift {
@@ -460,6 +462,7 @@ model vehicle {
   has_livery_or_signage Boolean
   has_police_radio      Boolean
   selected              Boolean           @default(false)
+  reports               reports[]
   patrols_dev           patrols_dev       @relation(fields: [patrol_id], references: [id], map: "Vehicle_patrol_id_fkey")
   vehicle_details       vehicle_details[]
 }
@@ -486,7 +489,7 @@ model vehicle_details {
   is_vehicle_manager_attention_needed Boolean
   equipment_checklist                 equipment_checklist @relation(fields: [equipment_checklist_id], references: [id], map: "VehicleDetails_equipment_checklist_id_fkey")
   vehicle_checklist                   vehicle_checklist   @relation(fields: [vehicle_checkList_id], references: [id], map: "VehicleDetails_vehicle_checkList_id_fkey")
-  vehicle                             vehicle             @relation(fields: [vehicle_id], references: [id], map: "VehicleDetails_vehicle_id_fkey")
+  vehicle                             vehicle             @relation(fields: [vehicle_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "VehicleDetails_vehicle_id_fkey")
 }
 
 model vehicle_dev {
@@ -518,6 +521,20 @@ model vehicles_model {
 model email_history_dev {
   id         BigInt  @id @default(autoincrement())
   history_id BigInt?
+}
+
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+model location_of_interest {
+  id                            BigInt      @id @default(autoincrement())
+  patrol_id                     BigInt
+  start_time                    DateTime?   @db.Timestamp(6)
+  end_time                      DateTime?   @db.Timestamp(6)
+  location                      String?
+  is_police_or_security_present Boolean?
+  incident_category             String?
+  incident_sub_category         String?
+  description                   String?
+  patrols_dev                   patrols_dev @relation(fields: [patrol_id], references: [id], onDelete: Cascade)
 }
 
 enum Call_Sign {
