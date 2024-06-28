@@ -9,7 +9,6 @@ import { Input } from "@components/ui/input";
 import { z } from "zod";
 import { formObservationSchema, reportFormSchema } from "../../schemas";
 import { UseFormReturn } from "react-hook-form";
-import { X } from "lucide-react";
 import useCurrentLocation from "../../hooks/useCurrentLocation";
 import plus from "../../assets/images/plus2.png";
 import exit from "../../assets/images/exit.png";
@@ -17,9 +16,9 @@ import { Textarea } from "@components/ui/textarea";
 import {
   Dialog,
   DialogContent,
-  DialogHeader,
   DialogTrigger,
-  DialogDescription,
+  DialogClose,
+  DialogFooter
 } from "@components/ui/dialog";
 import { useState } from "react";
 
@@ -97,7 +96,6 @@ const ReportObservation = ({
   remove,
 }: ReportObservationProps) => {
   const { address } = useCurrentLocation();
-  const [openDialog, setOpenDialog] = useState<boolean>(false);
   const [latestObservationIndex, setLatestObservationIndex] = useState<number | null>(null);
   const handleAddObservation = () => {
     addObservation(
@@ -133,12 +131,14 @@ const ReportObservation = ({
       </DialogTrigger>
       <DialogContent>
       <div className="flex flex-col gap-4">
-        <button
-          onClick={handleRemoveObservation}
-          className="absolute top-4 right-4 text-gray-500 hover:text-gray-700"
-        >
-          <img src={exit} alt="close" className="w-6" />
-        </button>
+        <DialogClose>
+          <button
+            onClick={handleRemoveObservation}
+            className="absolute top-4 right-4 text-gray-500 hover:text-gray-700"
+          >
+            <img src={exit} alt="close" className="w-6" />
+          </button>
+        </DialogClose>
         <h2 className="text-xs text-left font-light mb-4">
           ADD AN OBSERVATION
         </h2>
@@ -258,6 +258,18 @@ const ReportObservation = ({
             </div>
           ))}
         </div>
+        <DialogFooter className="sm:justify-start">
+          <DialogClose asChild>
+            <Button
+              className=" mt-2 w-full bg-[#038400] p-7 items-center flex flex-row justify-center"
+              onClick={handleAddObservation}
+              type="button"
+            >
+              <img src={plus} alt="plus" className="w-5 mx-2"/>
+              Add Observation
+            </Button>
+          </DialogClose>
+        </DialogFooter>
       </DialogContent>
     </Dialog>
   );
