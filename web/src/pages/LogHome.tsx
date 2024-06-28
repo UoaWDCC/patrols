@@ -5,6 +5,7 @@ import BottomNavBar from "@components/BottomNavBar";
 import LargeInfoButton from "@components/ui/LargeInfoButton";
 import SmallInfoButton from "@components/ui/SmallInfoButton";
 import useDraftStatus from "../hooks/useDraftStatus";
+import axios from "axios";
 
 export default function ReportSummary() {
   const navigate = useNavigate();
@@ -29,10 +30,19 @@ export default function ReportSummary() {
     setAmendmentText("");
   };
 
-  const handleConfirmAmendment = () => {
-    // Here you would typically send the POST request
-    console.log("Amendment submitted:", amendmentText);
-    handleCloseDialog();
+  const handleConfirmAmendment = async () => {
+    try {
+      const response = await axios.post(
+        "http://localhost:3000/user/amendment",
+        {
+          text: amendmentText,
+        }
+      );
+      console.log("Amendment submitted successfully:", response.data);
+      handleCloseDialog();
+    } catch (error) {
+      console.error("Error submitting amendment:", error);
+    }
   };
 
   return (
