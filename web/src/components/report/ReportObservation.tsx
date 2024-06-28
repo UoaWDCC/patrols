@@ -98,27 +98,68 @@ const ReportObservation = ({
 }: ReportObservationProps) => {
   const { address } = useCurrentLocation();
   const [openDialog, setOpenDialog] = useState<boolean>(false);
+  const [latestObservationIndex, setLatestObservationIndex] = useState<number | null>(null);
+  const handleAddObservation = () => {
+    addObservation(
+      type.observation,
+      fields,
+      setObservationsList,
+      append,
+      address
+    );
+    setLatestObservationIndex(fields.length);
+  };
+  const handleRemoveObservation = () => {
+    if (latestObservationIndex !== null) {
+      deleteObservation(latestObservationIndex, fields, setObservationsList, remove);
+    }
+    setLatestObservationIndex(null);
+  }
 
   return (
     <div className="mt-8">
-      <div className="flex flex-col gap-4">
+      <div className="my-4">
         <h2 className="text-left font-semibold text-base">Observations</h2>
-          <Button
-            className=" mt-2 w-full bg-[#038400] p-7 items-center flex flex-row justify-center"
-            onClick={() =>
-              addObservation(
-                type.observation,
-                fields,
-                setObservationsList,
-                append,
-                address
-              )
-            }
-            type="button"
-          >
-            <img src={plus} alt="plus" className="w-5 mx-2"/>
-            Add Observation
-          </Button>
+        <Button
+          className=" mt-2 w-full bg-[#038400] p-7 items-center flex flex-row justify-center"
+          onClick={handleAddObservation}
+          type="button"
+        >
+          <img src={plus} alt="plus" className="w-5 mx-2"/>
+          Add Observation
+        </Button>
+      </div>
+      {fields.map((observation: Observation, i: number) => (
+        <div
+          key={`observation-${i}`}
+          className="shadow-md bg-[#F8F8F8] rounded-lg p-4 my-4 text-left"
+        >
+          <div className="flex justify-between items-center mb-2">
+            <div>
+              <h3 className="text-base font-semibold">{observation.location}</h3>
+              <p className="text-xs text-gray-500 font-light">{observation.time}</p>
+            </div>
+            <button
+              onClick={() => deleteObservation(i, fields, setObservationsList, remove)}
+              className="text-red-500 hover:text-red-700 text-xs"
+            >
+              Delete
+            </button>
+          </div>
+          <p className="text-xs text-gray-500 mt-2">Category: {observation.category}</p>
+          <p className="text-base">{observation.description}</p>
+        </div>
+      ))}
+      <div className="flex flex-col gap-4">
+        <button
+          onClick={handleRemoveObservation}
+          className="absolute top-4 right-4 text-gray-500 hover:text-gray-700"
+        >
+          <img src={exit} alt="close" className="w-6" />
+        </button>
+        <h2 className="text-xs text-left font-light mb-4">
+          ADD AN OBSERVATION
+        </h2>
         {fields.map((observation: any, i: number) => (
         <div
           className="flex gap-4 items-start flex-col text-left space-y-2"
@@ -150,7 +191,7 @@ const ReportObservation = ({
                     />
                   </FormControl>
                 </FormItem>
-              )}
+              )} 
             />
           </div>
           <div className="flex gap-5 justify-center items-center w-full">
