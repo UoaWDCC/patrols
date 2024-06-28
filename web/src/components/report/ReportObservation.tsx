@@ -131,13 +131,7 @@ const ReportObservation = ({
       </DialogTrigger>
       <DialogContent>
       <div className="flex flex-col gap-4">
-        <DialogClose>
-          <button
-            onClick={handleRemoveObservation}
-            className="absolute top-4 right-4 text-gray-500 hover:text-gray-700"
-          >
-            <img src={exit} alt="close" className="w-6" />
-          </button>
+        <DialogClose onClick={handleRemoveObservation}>
         </DialogClose>
         <h2 className="text-xs text-left font-light mb-4">
           ADD AN OBSERVATION
