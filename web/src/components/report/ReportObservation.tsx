@@ -11,7 +11,6 @@ import { formObservationSchema, reportFormSchema } from "../../schemas";
 import { UseFormReturn } from "react-hook-form";
 import useCurrentLocation from "../../hooks/useCurrentLocation";
 import plus from "../../assets/images/plus2.png";
-import exit from "../../assets/images/exit.png";
 import { Textarea } from "@components/ui/textarea";
 import {
   Dialog,
