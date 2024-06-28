@@ -1,6 +1,5 @@
 import type { Request, Response } from 'express';
 import prisma from '../db/database';
-import { report } from 'process';
 
 /*
 Replacer Function:
