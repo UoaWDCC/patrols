@@ -97,6 +97,7 @@ const ReportObservation = ({
 }: ReportObservationProps) => {
   const { address } = useCurrentLocation();
   const [latestObservationIndex, setLatestObservationIndex] = useState<number | null>(null);
+
   const handleAddObservation = () => {
     addObservation(
       type.observation,
@@ -107,6 +108,7 @@ const ReportObservation = ({
     );
     setLatestObservationIndex(fields.length);
   };
+
   const handleRemoveObservation = () => {
     if (latestObservationIndex !== null) {
       deleteObservation(latestObservationIndex, fields, setObservationsList, remove);
@@ -121,7 +123,7 @@ const ReportObservation = ({
           <h2 className="text-left font-semibold text-base">Observations</h2>
           <Button
             className=" mt-2 w-full bg-[#038400] p-7 items-center flex flex-row justify-center"
-            onClick={handleAddObservation}
+            //onClick={handleAddObservation}
             type="button"
           >
             <img src={plus} alt="plus" className="w-5 mx-2"/>
