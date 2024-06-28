@@ -5,6 +5,13 @@ import { sendEmail } from './emailController';
 import { z } from "zod";
 
 
+function toObject(data: any) {
+  return JSON.parse(
+    JSON.stringify(data, (key, value) => (typeof value === "bigint" ? value.toString() : value))
+  );
+}
+
+
 function extractCPNZIDFromEmail(userEmail: string) {
   const atSymbolIndex: number = userEmail.indexOf("@");
   return parseInt(userEmail.substring(0, atSymbolIndex));
@@ -101,12 +108,12 @@ export const handleAmendment = async (req: Request, res: Response) => {
       },
     });
 
-    // Send email to ECC using email controller
+    // Prepare email request data
     const emailRequest = {
       body: {
         email: 'ecc@cpnz.org.nz',
         recipientEmail: 'jbac208@aucklanduni.ac.nz',  // test address
-        cpnzID: 'test cpnzID',
+        cpnzID: amendment.id.toString(),  // Assuming cpnzID is the amendment ID
         formData: {
           startTime: 'start test',
           endTime: 'end test',
@@ -137,9 +144,9 @@ export const handleAmendment = async (req: Request, res: Response) => {
 
     await sendEmail(emailRequest as unknown as Request, res);
 
-    return res.status(201).json({ message: 'Amendment submitted successfully', amendment });
+    res.status(201).json({ message: 'Amendment submitted successfully', amendment: toObject(amendment) });
   } catch (error) {
     console.error('Error handling amendment:', error);
-    return res.status(500).json({ message: 'Internal server error' });
+    res.status(500).json({ message: 'Internal server error' });
   }
 };

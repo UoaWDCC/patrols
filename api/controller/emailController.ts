@@ -53,7 +53,8 @@ export const sendEmail = async (req: Request, res: Response) => {
   const parseResult = emailSchema.safeParse(req.body);
 
   if (!parseResult.success) {
-    return res.status(400).json({ error: parseResult.error.flatten() });
+    //return res.status(400).json({ error: parseResult.error.flatten() });
+    throw new Error(`Invalid email data: ${JSON.stringify(parseResult.error.flatten())}`);
   }
 
   const {
@@ -65,9 +66,8 @@ export const sendEmail = async (req: Request, res: Response) => {
   }: z.infer<typeof emailSchema> = parseResult.data;
 
   if (!EMAIL_API_KEY) {
-    res
-      .status(400)
-      .json({ message: "Auth failed: Please provide Resend API key." });
+    //res.status(400).json({ message: "Auth failed: Please provide Resend API key." });
+    throw new Error("Auth failed: Please provide Resend API key.");
   }
 
   const guestPatrollersFormatted =
@@ -122,8 +122,9 @@ try {
   </div>`,
   });
 
-  res.status(200).json(data);
+  //res.status(200).json(data);
 } catch (error) {
-  res.status(400).json(error);
+  //res.status(400).json(error);
+  throw new Error(`Error sending email: ${error}`);
 }
 };
