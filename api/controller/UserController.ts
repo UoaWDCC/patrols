@@ -67,10 +67,21 @@ export const getUserDetailsByCPNZID = async (req: Request, res: Response) => {
       );
     }
 
+    const userRole = await prisma.members_dev.findFirst({
+      where: {
+        email: user?.email,
+        cpnz_id: extractCPNZIDFromEmail(user?.email as string),
+      },
+      select: {
+        officer_type: true,
+      },
+    });
+
     res.status(200).json({
       userDetails: toObject(userDetails),
       vehicleDetails: toObject(vehicleDetails),
       patrolDetails: toObject(patrolDetails),
+      userRole: toObject(userRole),
     });
   } catch (error) {
     console.error("Error:", error);

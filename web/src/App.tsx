@@ -9,6 +9,8 @@ import Login from "@pages/Login";
 import AuthProvider from "./providers/AuthProvider";
 import ProtectedRoute from "@components/ProtectedRoute";
 import Profile from "@pages/Profile";
+import VehicleTable from "@components/dashboard/VehicleTable";
+import ChairmanProtectedRoute from "@components/ChairmanProtectedRoute";
 
 const router = createBrowserRouter([
   {
@@ -56,6 +58,16 @@ const router = createBrowserRouter([
     element: (
       <ProtectedRoute>
         <Profile />
+      </ProtectedRoute>
+    ),
+  },
+  {
+    path: "/dashboard",
+    element: (
+      <ProtectedRoute>
+        <ChairmanProtectedRoute>
+          <VehicleTable />
+        </ChairmanProtectedRoute>
       </ProtectedRoute>
     ),
   },
