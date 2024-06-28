@@ -1,6 +1,9 @@
 import prisma from "../db/database";
 import supabase from "../supabase/supabase_client";
 import type { Request, Response } from "express";
+import { sendEmail } from './emailController';
+import { z } from "zod";
+
 
 function extractCPNZIDFromEmail(userEmail: string) {
   const atSymbolIndex: number = userEmail.indexOf("@");
@@ -74,5 +77,69 @@ export const getUserDetailsByCPNZID = async (req: Request, res: Response) => {
     });
   } catch (error) {
     console.error("Error:", error);
+  }
+};
+
+const amendmentSchema = z.object({
+  text: z.string(),
+});
+
+export const handleAmendment = async (req: Request, res: Response) => {
+  const parseResult = amendmentSchema.safeParse(req.body);
+
+  if (!parseResult.success) {
+    return res.status(400).json({ error: parseResult.error.flatten() });
+  }
+
+  const { text } = parseResult.data;
+
+  try {
+    // Store text in the database
+    const amendment = await prisma.amendment.create({
+      data: {
+        description: text,
+      },
+    });
+
+    // Send email to ECC using email controller
+    const emailRequest = {
+      body: {
+        email: 'ecc@cpnz.org.nz',
+        recipientEmail: 'jbac208@aucklanduni.ac.nz',  // test address
+        cpnzID: 'test cpnzID',
+        formData: {
+          startTime: 'start test',
+          endTime: 'end test',
+          policeStationBase: 'Example Station',
+          cpCallSign: 'Example CallSign',
+          patrol: 'Example Patrol',
+          observerName: 'Example Observer',
+          observerNumber: '1234567890',
+          guestPatrollers: [],
+          driver: 'Example Driver',
+          vehicle: 'Example Vehicle',
+          liveryOrSignage: 'Example Livery',
+          havePoliceRadio: 'Yes',
+        },
+        driver: {
+          cpnz_id: '123',
+          email: 'driver-email@gmail.com',
+          first_names: 'Driver First Names',
+          surname: 'Driver Surname',
+          mobile_phone: '1234567890',
+          home_phone: '0987654321',
+          call_sign: 'Example CallSign',
+          police_station: 'Example Station',
+          patrol_id: '123',
+        },
+      },
+    };
+
+    await sendEmail(emailRequest as unknown as Request, res);
+
+    return res.status(201).json({ message: 'Amendment submitted successfully', amendment });
+  } catch (error) {
+    console.error('Error handling amendment:', error);
+    return res.status(500).json({ message: 'Internal server error' });
   }
 };
