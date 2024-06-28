@@ -1,4 +1,5 @@
 import ReportIntel from "@components/report/ReportIntel";
+import ReportFinishDetails from "@components/report/ReportFinishDetails";
 import { Button } from "@components/ui/button";
 import { Form } from "@components/ui/form";
 import { zodResolver } from "@hookform/resolvers/zod";
