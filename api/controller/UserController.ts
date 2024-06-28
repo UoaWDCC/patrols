@@ -113,7 +113,7 @@ export const handleAmendment = async (req: Request, res: Response) => {
       body: {
         email: 'ecc@cpnz.org.nz',
         recipientEmail: 'jbac208@aucklanduni.ac.nz',  // test address
-        cpnzID: amendment.id.toString(),  // Assuming cpnzID is the amendment ID
+        cpnzID: amendment.id.toString(),  // cpnzID is the amendment ID?
         formData: {
           startTime: 'start test',
           endTime: 'end test',
