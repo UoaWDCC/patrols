@@ -275,6 +275,7 @@ const ReportObservation = ({
             </div>
             <Button
               className=" mt-6 w-full bg-[#038400] p-7 items-center flex flex-row justify-center"
+              onClick={() => setShowModal(false)}
               type="button"
             >
               <img src={plus} alt="plus" className="w-5 mx-2"/>
