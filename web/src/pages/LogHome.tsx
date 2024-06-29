@@ -4,6 +4,8 @@ import BottomNavBar from "@components/BottomNavBar";
 import LargeInfoButton from "@components/ui/LargeInfoButton";
 import SmallInfoButton from "@components/ui/SmallInfoButton";
 import useDraftStatus from "../hooks/useDraftStatus";
+import useUserData from "../hooks/useUserData";
+import { useEffect } from "react";
 
 export default function ReportSummary() {
   const navigate = useNavigate();
@@ -17,6 +19,15 @@ export default function ReportSummary() {
   const handleDraftReport = () => {
     navigate("/report");
   };
+
+  const { currentUserDetails } = useUserData();
+
+  // Check the curent user's logon status, if "Yes", then redirect to logon home
+  useEffect(() => {
+    if (currentUserDetails && currentUserDetails.logon_status != "Yes") {
+      navigate("/home");
+    }
+  }, [currentUserDetails?.logon_status]);
 
   return (
     <div className="text-center min-h-screen relative bg-[#FFFFFF] max-w-3xl mx-auto">

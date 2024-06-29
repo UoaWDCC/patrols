@@ -70,6 +70,8 @@ export const sendEmail = async (req: Request, res: Response) => {
       .json({ message: "Auth failed: Please provide Resend API key." });
   }
 
+  console.log(EMAIL_API_KEY);
+
   const guestPatrollersFormatted =
     formData.guestPatrollers
       ?.map(
@@ -78,12 +80,13 @@ export const sendEmail = async (req: Request, res: Response) => {
       )
       .join("<br>") || "None";
 
-try {
-  const data = await resend.emails.send({
-    from: `CPNZ <${CPNZ_APP_EMAIL}>`,
-    to: [`${recipientEmail}`],
-    subject: `CPNZ - Log On - Patrol ID: ${cpnzID}`,
-    html: `
+  try {
+    console.log(123);
+    const data = await resend.emails.send({
+      from: `CPNZ <${CPNZ_APP_EMAIL}>`,
+      to: [`${recipientEmail}`],
+      subject: `CPNZ - Log On - Patrol ID: 1 - Shift ID: 100003`,
+      html: `
       <div style="font-family: Arial, sans-serif; line-height: 1.8;">
     <p style="font-size: 1.2em; font-weight: bold;">
       ${
@@ -120,10 +123,10 @@ try {
       <a href="mailto:cpnz123@kmail.com" style="color: #1a73e8; text-decoration: none;">CPNZ Patrol Email</a>
     </p>
   </div>`,
-  });
+    });
 
-  res.status(200).json(data);
-} catch (error) {
-  res.status(400).json(error);
-}
+    res.status(200).json(data);
+  } catch (error) {
+    res.status(400).json(error);
+  }
 };
