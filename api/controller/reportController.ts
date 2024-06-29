@@ -102,7 +102,7 @@ export const getSingleReport = async (req: Request, res: Response) => {
         const vehicle = await prisma.vehicle.findUnique({
             where: {id : report?.vehicle_details_id},
             select:{
-                // No patrol_id as the driver id would be the same
+                patrol_id: true,
                 registration_no: true,
                 colour: true,
                 model: true,

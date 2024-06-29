@@ -1,6 +1,7 @@
 import type { Request, Response } from "express";
 import { z } from "zod";
 import { Resend } from "resend";
+import prisma from "../db/database";
 
 const EMAIL_API_KEY: string = process.env.RESEND_API_KEY as string;
 const CPNZ_APP_EMAIL = "ecc@cpnz.org.nz";
@@ -55,6 +56,45 @@ export const sendEmail = async (req: Request, res: Response) => {
   if (!parseResult.success) {
     return res.status(400).json({ error: parseResult.error.flatten() });
   }
+  try {
+  const observer_id = await prisma.members_dev.findFirst({
+    where: { 
+      first_names: parseResult.data.formData.observerName.split(" ")[0],
+      surname: parseResult.data.formData.observerName.split(" ")[1],
+      email: parseResult.data.email,
+    },
+    select: { id : true }
+  })
+
+  if (!observer_id) {
+    return res.status(400).json({ error: "Observer not found." });
+  }
+
+  const driver_id = await prisma.members_dev.findFirst({
+    where: { 
+      cpnz_id: Number(parseResult.data.driver.cpnz_id),
+    },
+    select: { id : true }
+  })
+  
+  if (!driver_id) {
+    return res.status(400).json({ error: "Driver not found." });
+  }
+
+  const report = await prisma.shift.create({
+    data: {
+      patrol_id: Number(parseResult.data.driver.patrol_id),
+      start_time: parseResult.data.formData.startTime,
+      end_time: parseResult.data.formData.endTime,
+      police_station_base: parseResult.data.formData.policeStationBase,
+      observer_id: observer_id.id,
+      driver_id: driver_id.id,
+      vehicle_id: Number(parseResult.data.formData.vehicle),
+    },
+  });
+} catch (error) {
+  res.status(400).json(error);
+}
 
   const {
     email,
