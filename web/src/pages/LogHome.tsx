@@ -73,12 +73,12 @@ export default function Home() {
   };
 
   const renderBottomNavBar = () => (
-      <button 
-        className="bg-blue-900 text-white px-4 py-2 rounded w-1/3"
-        onClick={handleLogOn}
-      >
-        LOG ON &gt;
-      </button>
+    <button
+      className="bg-blue-900 text-white px-4 py-2 rounded w-1/3"
+      onClick={handleLogOn}
+    >
+      LOG ON &gt;
+    </button>
   );
 
   if (showPatrolInfo) {
@@ -88,14 +88,14 @@ export default function Home() {
           <h1 className="text-xl font-bold">Welcome, XXXXXXX</h1>
           <FaCog className="text-2xl text-black cursor-pointer hover:text-gray-200 transition-colors duration-300" />
         </header>
-        
+
         <main className="p-4 flex flex-col gap-6">
           <div className="text-left">
             <p className="font-semibold">Patrol in progress.</p>
             <p>Event ID: xxxxxxxxxx</p>
           </div>
-          
-          <button 
+
+          <button
             className="w-full bg-blue-900 text-white p-4 rounded-lg"
             onClick={handleNewReport}
           >
@@ -111,7 +111,7 @@ export default function Home() {
 
           <div className="flex justify-between items-center">
             <span>Details incorrect?</span>
-            <button 
+            <button
               className="bg-gray-200 text-black px-4 py-1 rounded"
               onClick={handleMakeAmendment}
             >
@@ -119,7 +119,7 @@ export default function Home() {
             </button>
           </div>
 
-          <button 
+          <button
             className="w-full bg-red-400 text-white p-4 rounded-lg"
             onClick={handleLogOut}
           >
@@ -158,7 +158,7 @@ export default function Home() {
           description={"Your log on form has been submitted."}
           className=""
           iconDescription={""}
-          onClick={handleNewReport}
+          // onClick={handleNewReport}
           variant={"light"}
         />
         <div className="bg-white px-4 py-2 mb-6 flex flex-col items-center">
