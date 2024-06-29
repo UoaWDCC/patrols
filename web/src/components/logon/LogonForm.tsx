@@ -126,7 +126,7 @@ export default function LogonForm(props: LogonFormProps) {
       console.log(data);
       setSubmitting(false);
       // Navigates to Loghome if succesfully logged on.
-      navigate("/LogHome");
+      navigate("/home");
     } catch (error) {
       axios.isAxiosError(error)
         ? console.log(error.response?.data.error)
