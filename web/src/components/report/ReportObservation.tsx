@@ -140,8 +140,12 @@ const ReportObservation = ({
         >
           <div className="flex justify-between items-center mb-2">
             <div>
-              <h3 className="text-base font-semibold">{observation.location}</h3>
-              <p className="text-xs text-gray-500 font-light">{observation.time}</p>
+              <h3 className="text-base font-semibold">
+                {observation.location}
+              </h3>
+              <p className="text-xs text-gray-500 font-light">
+                {observation.time}
+              </p>
             </div>
             <button
               onClick={() => deleteObservation(i, fields, setObservationsList, remove)}
@@ -150,13 +154,19 @@ const ReportObservation = ({
               Delete
             </button>
           </div>
-          <p className="text-xs text-gray-500 mt-2">Category: {observation.category}</p>
-          <p className="text-base">{observation.description}</p>
+          <p className="text-xs text-gray-500 mt-2">
+            Category: {observation.category}
+          </p>
+          <p className="text-base">
+            {observation.description}
+          </p>
         </div>
       ))}
       <DialogContent>
         <div className="flex flex-col gap-4">
-          <h2 className="text-xs text-left font-light mb-4">ADD AN OBSERVATION</h2>
+          <h2 className="text-xs text-left font-light mb-4">
+            ADD AN OBSERVATION
+          </h2>
           <div className="flex gap-4 items-start flex-col text-left space-y-2">
             <div className="flex items-center justify-between w-full">
               <FormField
