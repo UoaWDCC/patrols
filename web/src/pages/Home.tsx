@@ -158,7 +158,13 @@ export default function Home() {
               </DialogContent>
             </Dialog>
           </div>
-          <div className="p-6 bg-[#EEF6FF] shadow-md mt-4"></div>
+          <button className="w-full">
+            <div className="p-4 bg-[#EEF6FF] shadow-md mt-4">
+              <p>
+               View More
+              </p>
+            </div>
+          </button>
         </div>
       </div>
       <BottomNavBar />

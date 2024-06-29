@@ -135,6 +135,11 @@ export default function Report() {
                 append={append}
                 remove={remove}
               />
+              <ReportFinishDetails
+              form={form}
+              setDebrief={setDebrief}
+              setEndOdometer={setEndOdometer}
+            />
             </div>
 
             <div className="flex justify-between mt-16 pb-12">

@@ -130,6 +130,27 @@ const ReportObservation = ({
           </Button>
         </div>
       </DialogTrigger>
+      {fields.map((observation: Observation, i: number) => (
+        <div
+          key={`observation-${i}`}
+          className="shadow-md bg-[#F8F8F8] rounded-lg p-4 my-4 text-left"
+        >
+          <div className="flex justify-between items-center mb-2">
+            <div>
+              <h3 className="text-base font-semibold">{observation.location}</h3>
+              <p className="text-xs text-gray-500 font-light">{observation.time}</p>
+            </div>
+            <button
+              onClick={() => deleteObservation(i, fields, setObservationsList, remove)}
+              className="text-red-500 hover:text-red-700 text-xs"
+            >
+              Delete
+            </button>
+          </div>
+          <p className="text-xs text-gray-500 mt-2">Category: {observation.category}</p>
+          <p className="text-base">{observation.description}</p>
+        </div>
+      ))}
       <DialogContent>
       <div className="flex flex-col gap-4">
         <DialogClose onClick={handleRemoveObservation}>
@@ -260,7 +281,6 @@ const ReportObservation = ({
               onClick={handleAddObservation}
               type="button"
             >
-              <img src={plus} alt="plus" className="w-5 mx-2"/>
               Add Observation
             </Button>
           </DialogClose>

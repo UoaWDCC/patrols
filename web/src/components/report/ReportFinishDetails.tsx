@@ -80,8 +80,12 @@ export default function ReportFinishDetails({
             )}
           />
         </div>
+        <div>
+            <button className="bg-[#FF8080] my-10 rounded-lg shadow-md p-4 w-full hover:bg-[#ff4d4d]">
+              Submit Report & Log Off
+            </button>
+          </div>
       </div>
-      <BottomNavBar/>
     </div>
   );
 }
