@@ -80,6 +80,13 @@ export default function Home() {
 
   const { currentUserDetails } = useUserData();
 
+  // Check the curent user's logon status, if "Yes", then redirect to logon home
+  useEffect(() => {
+    if (currentUserDetails?.logon_status == "Yes") {
+      navigate("/logHome");
+    }
+  }, [currentUserDetails?.logon_status]);
+
   return (
     <div className="text-center min-h-screen relative bg-[#FFFFFF] max-w-3xl mx-auto">
       <div className="bg-[#EEF6FF] py-6 flex justify-between items-center px-4">
