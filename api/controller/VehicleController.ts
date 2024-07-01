@@ -4,9 +4,12 @@ import prisma from "../db/database";
 export const createVehicle = async (req: Request, res: Response) => {
     try {
         const newVehicle = req.body;
-        const report = await prisma.vehicle.create({ data: newVehicle });
-        res.status(200).json(report);
-        res.status(200).json({ message: 'Vehicle created' });
+        const createdVehicle = await prisma.vehicle.create({ data: newVehicle });
+        const createdVehicleWithBigInt = {
+            ...createdVehicle,
+            patrol_id: BigInt(createdVehicle.patrol_id),
+        };
+        res.status(201).json({ vehicle: createdVehicleWithBigInt, message: 'Vehicle created' });
     } catch (error: any) {
         res.status(400).json({ error: error.message });
     }

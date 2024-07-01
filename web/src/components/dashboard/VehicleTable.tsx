@@ -45,21 +45,21 @@ const VehicleTable = () => {
             const response = await axios.post(`${import.meta.env.VITE_API_URL}/vehicle`, newVehicle);
             const addedVehicle = response.data;
             setVehicleData([...vehicleData, addedVehicle]);
-            setIsModalOpen(false); // Close modal after adding vehicle
+            setIsModalOpen(false); 
         } catch (error) {
             console.error('Error adding vehicle:', error);
         }
     };
 
-    const removeVehicle = (id: string) => {
-        axios.delete(`${import.meta.env.VITE_API_URL}/vehicle/${id}`)
-            .then(() => {
-                setVehicleData(vehicleData.filter(vehicle => vehicle.id !== id));
-            })
-            .catch((error) => {
-                console.error('Error deleting vehicle:', error);
-            });
+    const removeVehicle = async (id: string) => {
+        try {
+            await axios.delete(`${import.meta.env.VITE_API_URL}/vehicle/${id}`);
+            setVehicleData(prev => prev.filter(vehicle => vehicle.id !== id));
+        } catch (error) {
+            console.error('Error deleting vehicle:', error);
+        }
     };
+    
 
     const openModal = () => {
         setIsModalOpen(true);
