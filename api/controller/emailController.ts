@@ -54,20 +54,20 @@ export const sendEmail = async (req: Request, res: Response) => {
   const parseResult = emailSchema.safeParse(req.body);
 
   if (!parseResult.success) {
+    // throw new Error(`Invalid email data: ${JSON.stringify(parseResult.error.flatten())}`);
     return res.status(400).json({ error: parseResult.error.flatten() });
   }
-  try {
+
+
   const observer_id = await prisma.members_dev.findFirst({
     where: { 
-      first_names: parseResult.data.formData.observerName.split(" ")[0],
-      surname: parseResult.data.formData.observerName.split(" ")[1],
-      email: parseResult.data.email,
+      cpnz_id: Number(parseResult.data.cpnzID),
     },
     select: { id : true }
   })
 
   if (!observer_id) {
-    return res.status(400).json({ error: "Observer not found." });
+    throw new Error("Observer not found");
   }
 
   const driver_id = await prisma.members_dev.findFirst({
@@ -78,24 +78,28 @@ export const sendEmail = async (req: Request, res: Response) => {
   })
   
   if (!driver_id) {
-    return res.status(400).json({ error: "Driver not found." });
+    throw new Error("Driver not found.");
   }
 
-  const report = await prisma.shift.create({
-    data: {
+  try {
+    const startDateTime = new Date(parseResult.data.formData.startTime);
+    const endDateTime = new Date(parseResult.data.formData.endTime);
+
+    await prisma.shift.create({
+      data: {
       patrol_id: Number(parseResult.data.driver.patrol_id),
-      start_time: parseResult.data.formData.startTime,
-      end_time: parseResult.data.formData.endTime,
+      start_time: startDateTime,
+      end_time: endDateTime,
       police_station_base: parseResult.data.formData.policeStationBase,
       observer_id: observer_id.id,
       driver_id: driver_id.id,
       vehicle_id: Number(parseResult.data.formData.vehicle),
-    },
-  });
-} catch (error) {
-  res.status(400).json(error);
-}
-
+      }
+    });
+  } catch (error) {
+    res.status(400).json(error);
+  }
+  
   const {
     email,
     recipientEmail,
@@ -108,6 +112,7 @@ export const sendEmail = async (req: Request, res: Response) => {
     res
       .status(400)
       .json({ message: "Auth failed: Please provide Resend API key." });
+    // throw new Error("Auth failed: Please provide Resend API key.");
   }
 
   const guestPatrollersFormatted =
