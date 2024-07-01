@@ -100,6 +100,49 @@ const storeEventIdInDb = async (eventId: string, patrolId: string, logOnId: stri
             throw new Error('Unable to store event ID in DB');
         }
 
+        const retrievePatrollersId = await prisma.shift.findUnique({
+            where: {
+                patrol_id: patrolIdBigInt,
+                id: logOnIdInt
+            },
+            select: {
+                observer_id: true,
+                driver_id: true
+            },
+        })
+
+        if(!retrievePatrollersId) {
+            throw new Error(`Unable to fetch patrollers\' IDs for shift ID: ${logOnIdInt} in DB, hence logon status might fail to update`);
+        }
+        const observerId = retrievePatrollersId.observer_id
+        const driverId = retrievePatrollersId.driver_id
+
+        const updateObseverLogonStatus = await prisma.members_dev.update({
+            where: {
+                id: observerId
+            },
+            data: {
+                logon_status: 'Yes'
+            }
+        })
+
+        const updateDriverLogonStatus = await prisma.members_dev.update({
+            where: {
+                id: driverId
+            },
+            data: {
+                logon_status: 'Yes'
+            }
+        })
+
+        if(!updateObseverLogonStatus) {
+            throw new Error(`Unable to update observer ID: ${observerId} 's logon status for shift ID: ${logOnIdInt} in DB`);
+        }
+
+        if(!updateDriverLogonStatus) {
+            throw new Error(`Unable to update driver ID: ${driverId} 's logon status for shift ID: ${logOnIdInt} in DB`);
+        }
+
         return true;
 
     } catch (error) {
@@ -281,6 +324,16 @@ const getHistoryRecords = async (startedHistoryId: bigint) => {
         if (token) {
             const config = createGetConfig(url, token);
             const response = await axios(config);
+
+            const isInvalidHistoryId = response.status === 404;
+
+            if(isInvalidHistoryId) {
+                const fullSyncCompleted = await getMails();
+                if(fullSyncCompleted) {
+                    return true;
+                }
+            }
+
             const histories = response.data.history
 
             const traverseHistories = async (histories : Array<object>) => {
@@ -320,7 +373,7 @@ const getHistoryRecords = async (startedHistoryId: bigint) => {
  * @param req 
  * @param res 
  */
-const getMails = async (req: Request, res: Response): Promise<void> => {
+const getMails = async () => {
 
     try {
         const url = `https://gmail.googleapis.com/gmail/v1/users/${cpnzEmail}/messages?q=is:unread`;
@@ -339,14 +392,13 @@ const getMails = async (req: Request, res: Response): Promise<void> => {
                 }
             }
 
-            res.status(200).json(response.data);
+            return true;
 
         } else {
-            res.status(500).send('Unable to get access token');
+            throw new Error('Unable to get access token');
         }
     } catch (error) {
         console.error(error);
-        res.status(500).send(error);
     }
 }
 
