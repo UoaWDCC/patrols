@@ -1,9 +1,12 @@
 import { Router } from 'express';
-import { sendEmail } from '../controller/emailController';
+import { sendLogOnEmail, handleAmendment } from '../controller/emailController';
 
 const emailRoute = Router();
 
 emailRoute.route('/')
-    .post(sendEmail);
+    .post(sendLogOnEmail);
+
+emailRoute.route('/amendment')
+    .post(handleAmendment);
 
 export default emailRoute;
