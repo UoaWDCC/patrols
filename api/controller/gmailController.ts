@@ -474,4 +474,4 @@ const stopWatchMails = async (req: Request, res: Response): Promise<void> => {
 }
 
 
-export { getMails, watchMails, getHistoryRecords, stopWatchMails, saveHistoryIdInDb };
+export { watchMails, getHistoryRecords, stopWatchMails, saveHistoryIdInDb };
