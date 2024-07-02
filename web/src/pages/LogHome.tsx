@@ -16,6 +16,10 @@ export default function ReportSummary() {
     navigate("/report");
   };
 
+  const handleConfirmation = () => {
+    navigate("/confirmation");
+  }
+
   return (
     <div className="text-center min-h-screen relative bg-[#FFFFFF] max-w-3xl mx-auto">
       <div className="bg-white pt-14 pb-4 flex justify-between items-center px-8">
@@ -67,7 +71,9 @@ export default function ReportSummary() {
             </button>
           </div>
           <div>
-            <button className="bg-[#FF8080] my-10 rounded-lg shadow-md p-4 w-full hover:bg-[#ff4d4d]">
+            <button className="bg-[#FF8080] my-10 rounded-lg shadow-md p-4 w-full hover:bg-[#ff4d4d]"
+            onClick={handleConfirmation}
+            >
               Submit Report & Log Off
             </button>
           </div>

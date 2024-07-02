@@ -1,6 +1,4 @@
 import ReportIntel from "@components/report/ReportIntel";
-import ReportFinishDetails from "@components/report/ReportFinishDetails";
-import { Button } from "@components/ui/button";
 import { Form } from "@components/ui/form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useFieldArray, useForm } from "react-hook-form";
@@ -8,15 +6,7 @@ import { z } from "zod";
 import { formObservationSchema, reportFormSchema } from "../schemas";
 import { ReportObservation } from "@components/report/ReportObservation";
 import { useState } from "react";
-import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useNavigate } from "react-router";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTrigger,
-  DialogDescription,
-} from "@components/ui/dialog";
 import BottomNavBar from '@components/BottomNavBar';
 
 export default function Report() {
@@ -135,43 +125,12 @@ export default function Report() {
                 append={append}
                 remove={remove}
               />
-              <ReportFinishDetails
-              form={form}
-              setDebrief={setDebrief}
-              setEndOdometer={setEndOdometer}
-            />
-            </div>
-
-            <div className="flex justify-between mt-16 pb-12">
-            <Button
-              variant={"outline"}
-              onClick={() => navigate(-1)}
-              type="button"
-            >
-              <ChevronLeft />
-            </Button>
-              <Dialog open={openDialog} onOpenChange={setOpenDialog}>
-                <DialogTrigger></DialogTrigger>
-                <DialogContent className="text-center flex flex-col gap-24 p-12">
-                  <DialogHeader className="text-lg text-center font-semibold">
-                    Please double check your information before submitting
-                  </DialogHeader>
-                  <DialogDescription className="flex justify-center">
-                    <Button
-                      className="flex gap-4 px-6 items-center justify-center bg-cpnz-blue-800"
-                      onClick={handleConfirmSubmit}
-                    >
-                      Confirm Submit <ChevronRight />
-                    </Button>
-                  </DialogDescription>
-                </DialogContent>
-              </Dialog>
-              <Button className="bg-cpnz-blue-900" type="submit">
-                Submit
-              </Button>
             </div>
           </form>
         </Form>
+        <button className="bg-[#FF8080] my-10 rounded-lg shadow-md p-4 w-full hover:bg-[#ff4d4d]">
+            Submit Report & Log Off
+        </button>
       </div>
       <BottomNavBar />
     </div>

@@ -9,7 +9,6 @@ import { Textarea } from "@components/ui/textarea";
 import { UseFormReturn } from "react-hook-form";
 import { z } from "zod";
 import { reportFormSchema } from "../../schemas";
-import BottomNavBar from "@components/BottomNavBar";
 
 interface ReportFinishProps {
   form: UseFormReturn<z.infer<typeof reportFormSchema>>;
@@ -80,11 +79,6 @@ export default function ReportFinishDetails({
             )}
           />
         </div>
-        <div>
-            <button className="bg-[#FF8080] my-10 rounded-lg shadow-md p-4 w-full hover:bg-[#ff4d4d]">
-              Submit Report & Log Off
-            </button>
-          </div>
       </div>
     </div>
   );
