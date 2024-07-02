@@ -11,6 +11,9 @@ import BottomNavBar from '@components/BottomNavBar';
 
 export default function Report() {
   const navigate = useNavigate();
+  const handleConfirmation = () => {
+    navigate("/confirmation");
+  }
   const [observationsList, setObservationsList] = useState<
     z.infer<typeof formObservationSchema>
   >(
@@ -128,8 +131,10 @@ export default function Report() {
             </div>
           </form>
         </Form>
-        <button className="bg-[#FF8080] my-10 rounded-lg shadow-md p-4 w-full hover:bg-[#ff4d4d]">
-            Submit Report & Log Off
+        <button className="bg-[#FF8080] my-10 rounded-lg shadow-md p-4 w-full hover:bg-[#ff4d4d]"
+        onClick={handleConfirmation}
+        >
+          Submit Report & Log Off
         </button>
       </div>
       <BottomNavBar />
