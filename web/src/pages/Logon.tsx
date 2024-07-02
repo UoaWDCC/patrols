@@ -52,7 +52,7 @@ export default function Logon() {
     return (
       <div className=" bg-white flex items-center justify-center">
         <div className="max-w-3xl w-full">
-          <div className="bg-white p-8">
+          <div className="bg-white py-8 max-w-800 mx-auto px-14 my-8">
             <div className="my-12 flex flex-row space-x-2 justify-center items-center">
               <img
                 src={login}

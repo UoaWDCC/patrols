@@ -8,6 +8,8 @@ import { ReportObservation } from "@components/report/ReportObservation";
 import { useState } from "react";
 import { useNavigate } from "react-router";
 import BottomNavBar from '@components/BottomNavBar';
+import { Button } from "@components/ui/button";
+import { ChevronLeft} from "lucide-react";
 
 export default function Report() {
   const navigate = useNavigate();
