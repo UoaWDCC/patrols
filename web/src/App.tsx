@@ -11,6 +11,7 @@ import ProtectedRoute from "@components/ProtectedRoute";
 import Profile from "@pages/Profile";
 import VehicleTable from "@components/dashboard/VehicleTable";
 import ChairmanProtectedRoute from "@components/ChairmanProtectedRoute";
+import LocationOfInterestTable from "@components/dashboard/LocationOfInterestTable";
 
 const router = createBrowserRouter([
   {
@@ -67,6 +68,16 @@ const router = createBrowserRouter([
       <ProtectedRoute>
         <ChairmanProtectedRoute>
           <VehicleTable />
+        </ChairmanProtectedRoute>
+      </ProtectedRoute>
+    ),
+  },
+  {
+    path: "/location-of-interest",
+    element: (
+      <ProtectedRoute>
+        <ChairmanProtectedRoute>
+          <LocationOfInterestTable />
         </ChairmanProtectedRoute>
       </ProtectedRoute>
     ),

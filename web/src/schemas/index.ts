@@ -70,3 +70,15 @@ export const reportFormSchema = z.object({
   endOdometer: z.string().min(3, "Odometer must be at least 3 digits"),
   debrief: z.string(),
 });
+
+export const locationOfInterestSchema = z.object({
+  id: z.string(),
+  patrol_id: z.string(),
+  location: z.string(),
+  start_time: z.string(),
+  end_time: z.string(),
+  is_police_or_security_present: z.boolean(),
+  incident_category: z.string(),
+  incident_sub_category: z.string(),
+  description: z.string(),
+});
