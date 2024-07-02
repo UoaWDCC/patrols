@@ -34,4 +34,14 @@ export const getLocationOfInterestByPatrolId = async (req: Request, res: Respons
     } catch (error: any) {
         res.status(400).json({ error: error.message });
     }
-}
+};
+
+export const deleteLocationOfInterest = async (req: Request, res: Response) => {
+    try {
+        const { id } = req.params;
+        await prisma.location_of_interest.delete({ where: { id: BigInt(id) } });
+        res.status(200).json({ message: 'Location of interest deleted' });
+    } catch (error: any) {
+        res.status(400).json({ error: error.message });
+    }
+};

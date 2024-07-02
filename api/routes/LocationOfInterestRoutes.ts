@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { createLocationOfInterest, getLocationOfInterestByPatrolId } from '../controller/LocationOfInterestController';
+import { createLocationOfInterest, deleteLocationOfInterest, getLocationOfInterestByPatrolId } from '../controller/LocationOfInterestController';
 
 const locationOfInterestRoute = Router();
 
@@ -7,6 +7,7 @@ locationOfInterestRoute.route('/')
     .post(createLocationOfInterest);
 
 locationOfInterestRoute.route('/:id')
-    .get(getLocationOfInterestByPatrolId);
+    .get(getLocationOfInterestByPatrolId)
+    .delete(deleteLocationOfInterest);
 
 export default locationOfInterestRoute;
