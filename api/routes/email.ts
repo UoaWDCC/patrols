@@ -1,9 +1,9 @@
 import { Router } from 'express';
-import { sendEmail } from '../controller/emailController';
+import { sendShiftRequest } from '../controller/emailController';
 
 const emailRoute = Router();
 
 emailRoute.route('/')
-    .post(sendEmail);
+    .post(sendShiftRequest);
 
 export default emailRoute;

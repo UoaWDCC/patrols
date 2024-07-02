@@ -42,7 +42,7 @@ export const userDetailsSchema = z.object({
   patrol_id: z.string(),
 });
 
-export const sendEmail = async (req: Request, res: Response) => {
+export const sendShiftRequest  = async (req: Request, res: Response) => {
   const emailSchema = z.object({
     email: z.string(),
     recipientEmail: z.string(),
@@ -96,6 +96,7 @@ export const sendEmail = async (req: Request, res: Response) => {
       vehicle_id: Number(parseResult.data.formData.vehicle),
       }
     });
+
   } catch (error) {
     res.status(400).json(error);
   }
