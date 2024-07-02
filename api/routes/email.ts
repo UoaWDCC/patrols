@@ -1,10 +1,10 @@
 import { Router } from 'express';
-import { sendLogOnEmail, handleAmendment } from '../controller/emailController';
+import { sendEmail, handleAmendment } from '../controller/emailController';
 
 const emailRoute = Router();
 
 emailRoute.route('/')
-    .post(sendLogOnEmail);
+    .post(sendEmail);
 
 emailRoute.route('/amendment')
     .post(handleAmendment);

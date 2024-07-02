@@ -49,7 +49,7 @@ export const userDetailsSchema = z.object({
   patrol_id: z.string(),
 });
 
-export const sendLogOnEmail = async (req: Request, res: Response) => {
+export const sendEmail = async (req: Request, res: Response) => {
   const emailSchema = z.object({
     email: z.string(),
     recipientEmail: z.string(),
