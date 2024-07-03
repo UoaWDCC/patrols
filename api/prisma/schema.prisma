@@ -191,7 +191,7 @@ model members_dev {
   active_member                        Int           @db.SmallInt
   patrol_id                            BigInt
   district_id                          BigInt
-  cpnz_id                              BigInt
+  cpnz_id                              BigInt        @unique
   surname                              String
   first_names                          String
   known_as                             String?
