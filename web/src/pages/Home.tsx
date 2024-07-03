@@ -17,6 +17,7 @@ import BottomNavBar from "@components/BottomNavBar";
 import SmallInfoButton from "@components/ui/SmallInfoButton";
 import LargeInfoButton from "@components/ui/LargeInfoButton";
 import useDraftStatus from "../hooks/useDraftStatus";
+import useUserData from "../hooks/useUserData";
 
 const reportsDetailsSchema = z.object({
   message: z.string(),
@@ -77,6 +78,15 @@ export default function Home() {
     }
   }, [id]);
 
+  const { currentUserDetails } = useUserData();
+
+  // Check the curent user's logon status, if "Yes", then redirect to logon home
+  useEffect(() => {
+    if (currentUserDetails && currentUserDetails.logon_status == "Yes") {
+      navigate("/logHome");
+    }
+  }, [currentUserDetails?.logon_status]);
+
   return (
     <div className="text-center min-h-screen relative bg-[#FFFFFF] max-w-3xl mx-auto">
       <div className="bg-[#EEF6FF] py-6 flex justify-between items-center px-4">
@@ -98,15 +108,23 @@ export default function Home() {
             variant={"light"}
           />
         )}
-        <LargeInfoButton
-          className="bg-[#0F1363] p-4 rounded-lg shadow-md mb-6 text-left"
-          heading={"Log on to start a new shift"}
-          description={"Create a new report from scratch or select a template."}
-          icon={<FaPlus className="mr-2" />}
-          iconDescription={"Start a New Shift"}
-          onClick={() => handleNewReport()}
-          variant={"dark"}
-        />
+
+        {currentUserDetails?.logon_status == "Pending" ? (
+          <div className="py-8 my-6 border-2">Waiting for Event Id...</div>
+        ) : (
+          <LargeInfoButton
+            className="bg-[#0F1363] p-4 rounded-lg shadow-md mb-6 text-left"
+            heading={"Log on to start a new shift"}
+            description={
+              "Create a new report from scratch or select a template."
+            }
+            icon={<FaPlus className="mr-2" />}
+            iconDescription={"Start a New Shift"}
+            onClick={() => handleNewReport()}
+            variant={"dark"}
+          />
+        )}
+
         <LargeInfoButton
           className="bg-[#EEF6FF] p-4 rounded-lg shadow-md mb-6 text-left"
           heading={"Patrol vehicles"}

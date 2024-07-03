@@ -22,8 +22,9 @@ app.use("/hello", helloRoutes);
 app.use("/auth", authLoginRoute);
 app.use('/report', reportRoutes);
 app.use("/user", userRoutes);
-app.use("/send-email", emailRoute);
 app.use("/logOff", logOffRoutes);
+app.use("/email", emailRoute);
+
 
 const port = Number.parseInt(process.env.PORT || "3000");
 app.listen(port, () => {
