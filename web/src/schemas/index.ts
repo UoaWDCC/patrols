@@ -22,6 +22,7 @@ export const userDetailsSchema = z.object({
   call_sign: z.string(),
   police_station: z.string(),
   patrol_id: z.string(),
+  logon_status: z.enum(["No", "Pending", "Yes"]),
 });
 
 export const tokenSchema = z.object({

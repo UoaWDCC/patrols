@@ -36,6 +36,7 @@ export const getUserDetailsByCPNZID = async (req: Request, res: Response) => {
         surname: true,
         call_sign: true,
         police_station: true,
+        logon_status: true,
       },
     });
 

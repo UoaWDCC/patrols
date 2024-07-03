@@ -1,3 +1,5 @@
 *node_modules
 *.env
 */dist
+*/api/cpnz-ecc-communication-29039fadd61b.json
+
