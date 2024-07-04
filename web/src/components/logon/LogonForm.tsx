@@ -114,8 +114,10 @@ export default function LogonForm(props: LogonFormProps) {
   const onSubmit = async (data: z.infer<typeof formSchema>) => {
     try {
       setSubmitting(true);
-      await axios.post(`${import.meta.env.VITE_API_URL}/send-email`, {
+
+      await axios.post(`${import.meta.env.VITE_API_URL}/email/`, {
         recipientEmail: "jasonabc0626@gmail.com",
+
         email: props.currentUserDetails.email,
         cpnzID: props.currentUserDetails.cpnz_id,
         formData: data,
@@ -126,7 +128,7 @@ export default function LogonForm(props: LogonFormProps) {
       console.log(data);
       setSubmitting(false);
       // Navigates to Loghome if succesfully logged on.
-      navigate("/LogHome");
+      navigate("/home");
     } catch (error) {
       axios.isAxiosError(error)
         ? console.log(error.response?.data.error)
