@@ -12,6 +12,7 @@ import Profile from "@pages/Profile";
 import VehicleTable from "@components/dashboard/VehicleTable";
 import ChairmanProtectedRoute from "@components/ChairmanProtectedRoute";
 import LocationOfInterestTable from "@components/dashboard/LocationOfInterestTable";
+import Dashboard from "@pages/Dashboard";
 
 const router = createBrowserRouter([
   {
@@ -67,17 +68,7 @@ const router = createBrowserRouter([
     element: (
       <ProtectedRoute>
         <ChairmanProtectedRoute>
-          <VehicleTable />
-        </ChairmanProtectedRoute>
-      </ProtectedRoute>
-    ),
-  },
-  {
-    path: "/location-of-interest",
-    element: (
-      <ProtectedRoute>
-        <ChairmanProtectedRoute>
-          <LocationOfInterestTable />
+          <Dashboard />
         </ChairmanProtectedRoute>
       </ProtectedRoute>
     ),
