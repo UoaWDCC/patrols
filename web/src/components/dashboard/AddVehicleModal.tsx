@@ -1,10 +1,14 @@
 import axios from 'axios';
 import React, { useState } from 'react';
+import TextInputField from './TextInputField';
+import CheckboxInputField from './CheckboxInputField';
+import CancelButton from './CancelButton';
+import SubmitButton from './SubmitButton';
 
 interface AddVehicleModalProps {
     isOpen: boolean;
     onClose: () => void;
-    onAddVehicle: (newVehicle: any) => void; // Replace 'any' with the type of newVehicle
+    onAddVehicle: (newVehicle: any) => void;
     patrolId: string;
 }
 
@@ -56,92 +60,49 @@ const AddVehicleModal: React.FC<AddVehicleModalProps> = ({ isOpen, onClose, onAd
                             </div>
                             <div className="relative p-6 flex-auto">
                                 <form onSubmit={handleSubmit}>
-                                    <div className="mb-4">
-                                        <label htmlFor="registrationNo" className="block text-sm font-medium text-gray-700">Registration No</label>
-                                        <input
-                                            type="text"
-                                            id="registrationNo"
-                                            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-                                            placeholder="Enter registration number"
-                                            value={registrationNo}
-                                            onChange={(e) => setRegistrationNo(e.target.value)}
-                                            required
-                                        />
-                                    </div>
-                                    <div className="mb-4">
-                                        <label htmlFor="colour" className="block text-sm font-medium text-gray-700">Colour</label>
-                                        <input
-                                            type="text"
-                                            id="colour"
-                                            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-                                            placeholder="Enter colour"
-                                            value={colour}
-                                            onChange={(e) => setColour(e.target.value)}
-                                            required
-                                        />
-                                    </div>
-                                    <div className="mb-4">
-                                        <label htmlFor="model" className="block text-sm font-medium text-gray-700">Model</label>
-                                        <input
-                                            type="text"
-                                            id="model"
-                                            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-                                            placeholder="Enter model"
-                                            value={model}
-                                            onChange={(e) => setModel(e.target.value)}
-                                            required
-                                        />
-                                    </div>
-                                    <div className="mb-4">
-                                        <label htmlFor="make" className="block text-sm font-medium text-gray-700">Make</label>
-                                        <input
-                                            type="text"
-                                            id="make"
-                                            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-                                            placeholder="Enter make"
-                                            value={make}
-                                            onChange={(e) => setMake(e.target.value)}
-                                            required
-                                        />
-                                    </div>
-                                    <div className="mb-4">
-                                        <div className="flex items-center">
-                                            <input
-                                                id="hasLiveryOrSignage"
-                                                type="checkbox"
-                                                className="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded"
-                                                checked={hasLiveryOrSignage}
-                                                onChange={(e) => setHasLiveryOrSignage(e.target.checked)}
-                                            />
-                                            <label htmlFor="hasLiveryOrSignage" className="ml-2 block text-sm text-gray-900">Has Livery or Signage</label>
-                                        </div>
-                                    </div>
-                                    <div className="mb-4">
-                                        <div className="flex items-center">
-                                            <input
-                                                id="hasPoliceRadio"
-                                                type="checkbox"
-                                                className="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded"
-                                                checked={hasPoliceRadio}
-                                                onChange={(e) => setHasPoliceRadio(e.target.checked)}
-                                            />
-                                            <label htmlFor="hasPoliceRadio" className="ml-2 block text-sm text-gray-900">Has Police Radio</label>
-                                        </div>
-                                    </div>
+                                    <TextInputField
+                                        id="registrationNo"
+                                        label="Registration No"
+                                        placeholder="Enter registration number"
+                                        value={registrationNo}
+                                        onChange={(e) => setRegistrationNo(e.target.value)}
+                                    />
+                                    <TextInputField
+                                        id="colour"
+                                        label="Colour"
+                                        placeholder="Enter colour"
+                                        value={colour}
+                                        onChange={(e) => setColour(e.target.value)}
+                                    />
+                                    <TextInputField
+                                        id="model"
+                                        label="Model"
+                                        placeholder="Enter model"
+                                        value={model}
+                                        onChange={(e) => setModel(e.target.value)}
+                                    />
+                                    <TextInputField
+                                        id="make"
+                                        label="Make"
+                                        placeholder="Enter make"
+                                        value={make}
+                                        onChange={(e) => setMake(e.target.value)}
+                                    />
+                                    <CheckboxInputField 
+                                        id="hasLiveryOrSignage"
+                                        label="Has Livery or Signage"
+                                        checked={hasLiveryOrSignage}
+                                        onChange={(e) => setHasLiveryOrSignage(e.target.checked)}
+                                    />
+                                    <CheckboxInputField 
+                                        id="hasPoliceRadio"
+                                        label="Has Police Radio"
+                                        checked={hasPoliceRadio}
+                                        onChange={(e) => setHasPoliceRadio(e.target.checked)}
+                                    />
                                     <div className="flex items-center justify-end mt-6">
-                                        <button
-                                            type="button"
-                                            className="mr-3 px-4 py-2 text-sm text-white bg-red-500 rounded-md hover:bg-red-600 focus:outline-none focus:bg-red-600"
-                                            onClick={onClose}
-                                        >
-                                            Cancel
-                                        </button>
-                                        <button
-                                            type="submit"
-                                            className="px-4 py-2 text-sm text-white bg-green-500 rounded-md hover:bg-green-600 focus:outline-none focus:bg-green-600"
-                                        >
-                                            Add Vehicle
-                                        </button>
+                                        <CancelButton onClick={onClose} />
+                                        <SubmitButton label='Add Vehicle' />
                                     </div>
                                 </form>
                             </div>
