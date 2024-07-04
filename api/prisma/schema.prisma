@@ -196,7 +196,7 @@ model members_dev {
   active_member                        Int           @db.SmallInt
   patrol_id                            BigInt
   district_id                          BigInt
-  cpnz_id                              BigInt
+  cpnz_id                              BigInt        @unique
   surname                              String
   first_names                          String
   known_as                             String?
@@ -369,6 +369,7 @@ model reports {
   observations             observations[]
   members_dev              members_dev    @relation(fields: [member_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "report_member_id_fkey")
   shift                    shift          @relation(fields: [shift_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "report_shift_id_fkey")
+  vehicle                  vehicle        @relation(fields: [vehicle_details_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
 }
 
 model shift {
@@ -466,6 +467,7 @@ model vehicle {
   has_livery_or_signage Boolean
   has_police_radio      Boolean
   selected              Boolean           @default(false)
+  reports               reports[]
   patrols_dev           patrols_dev       @relation(fields: [patrol_id], references: [id], map: "Vehicle_patrol_id_fkey")
   vehicle_details       vehicle_details[]
 }
@@ -492,7 +494,7 @@ model vehicle_details {
   is_vehicle_manager_attention_needed Boolean
   equipment_checklist                 equipment_checklist @relation(fields: [equipment_checklist_id], references: [id], map: "VehicleDetails_equipment_checklist_id_fkey")
   vehicle_checklist                   vehicle_checklist   @relation(fields: [vehicle_checkList_id], references: [id], map: "VehicleDetails_vehicle_checkList_id_fkey")
-  vehicle                             vehicle             @relation(fields: [vehicle_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  vehicle                             vehicle             @relation(fields: [vehicle_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "VehicleDetails_vehicle_id_fkey")
 }
 
 model vehicle_dev {
@@ -519,6 +521,11 @@ model vehicles_model {
   model_name   String?
   vehicle_dev  vehicle_dev[]
   vehicle_make vehicle_make? @relation(fields: [model_name], references: [name], onDelete: NoAction, onUpdate: NoAction, map: "Vehicles_Model_model_name_fkey")
+}
+
+model email_history_dev {
+  id         BigInt  @id @default(autoincrement())
+  history_id BigInt?
 }
 
 /// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.

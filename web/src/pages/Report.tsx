@@ -1,5 +1,4 @@
 import ReportIntel from "@components/report/ReportIntel";
-import { Button } from "@components/ui/button";
 import { Form } from "@components/ui/form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useFieldArray, useForm } from "react-hook-form";
@@ -8,18 +7,23 @@ import { formObservationSchema, reportFormSchema } from "../schemas";
 import { ReportObservation } from "@components/report/ReportObservation";
 import { useState } from "react";
 import ReportFinishDetails from "@components/report/ReportFinishDetails";
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import { ChevronRight, Loader2 } from "lucide-react";
 import { useNavigate } from "react-router";
 import {
   Dialog,
   DialogContent,
-  DialogHeader,
   DialogTrigger,
   DialogDescription,
 } from "@components/ui/dialog";
 import LocationOfInterestTable from "@components/dashboard/LocationOfInterestTable";
+import useUserData from "../hooks/useUserData";
+import axios from "axios";
 
 export default function Report() {
+  const [submitting, setSubmitting] = useState(false);
+
+  const { currentUserDetails } = useUserData();
+
   const navigate = useNavigate();
   const [observationsList, setObservationsList] = useState<
     z.infer<typeof formObservationSchema>
@@ -33,10 +37,10 @@ export default function Report() {
     localStorage.getItem("startOdometer") || ""
   );
   const [endOdometer, setEndOdometer] = useState<string>(
-    localStorage.getItem("endOdometer") || ""
+    localStorage.getItem("endOdometer") || "1000"
   );
   const [debrief, setDebrief] = useState<string>(
-    localStorage.getItem("debrief") || ""
+    localStorage.getItem("debrief") || "message"
   );
 
   const [openDialog, setOpenDialog] = useState<boolean>(false);
@@ -66,7 +70,7 @@ export default function Report() {
     setOpenDialog(true);
   };
 
-  const handleConfirmSubmit = () => {
+  const handleConfirmSubmit = async () => {
     if (!formData) return;
 
     const [
@@ -101,16 +105,33 @@ export default function Report() {
       totalIncidents,
       otherIncidents,
     };
-    console.log(formData, statistics);
 
-    localStorage.removeItem("observations");
-    localStorage.removeItem("startOdometer");
-    localStorage.removeItem("endOdometer");
-    localStorage.removeItem("debrief");
+    try {
+      setSubmitting(true);
+      await axios.post(`${import.meta.env.VITE_API_URL}/logoff/`, {
+        recipientEmail: "jasonabc0626@gmail.com",
 
-    form.reset();
-    setOpenDialog(false);
-    navigate("/logHome");
+        email: currentUserDetails?.email,
+        cpnzID: currentUserDetails?.cpnz_id,
+        formData,
+        statistics,
+      });
+      console.log(formData, statistics);
+      setSubmitting(false);
+
+      localStorage.removeItem("observations");
+      localStorage.removeItem("startOdometer");
+      localStorage.removeItem("endOdometer");
+      localStorage.removeItem("debrief");
+
+      form.reset();
+      setOpenDialog(false);
+      navigate("/home");
+    } catch (error) {
+      axios.isAxiosError(error)
+        ? console.log(error.response?.data.error)
+        : console.error("Unexpected error during logoff:", error);
+    }
   };
 
   return (
@@ -131,41 +152,42 @@ export default function Report() {
               append={append}
               remove={remove}
             />
-            <ReportFinishDetails
-              form={form}
-              setDebrief={setDebrief}
-              setEndOdometer={setEndOdometer}
-            />
+            <button className="bg-[#FF8080] my-10 rounded-lg shadow-md p-4 w-full hover:bg-[#ff4d4d]">
+              Submit Report & Log Off
+            </button>
           </div>
 
-          <div className="flex justify-between mt-16 pb-12">
-            <Button
-              variant={"outline"}
-              onClick={() => navigate(-1)}
-              type="button"
-            >
-              <ChevronLeft />
-            </Button>
-
+          <div>
             <Dialog open={openDialog} onOpenChange={setOpenDialog}>
               <DialogTrigger></DialogTrigger>
-              <DialogContent className="text-center flex flex-col gap-24 p-12">
-                <DialogHeader className="text-lg text-center font-semibold">
-                  Please double check your information before submitting
-                </DialogHeader>
+              <DialogContent>
                 <DialogDescription className="flex justify-center">
-                  <Button
-                    className="flex gap-4 px-6 items-center justify-center bg-cpnz-blue-800"
-                    onClick={handleConfirmSubmit}
-                  >
-                    Confirm Submit <ChevronRight />
-                  </Button>
+                  <div>
+                    <ReportFinishDetails
+                      form={form}
+                      setDebrief={setDebrief}
+                      setEndOdometer={setEndOdometer}
+                    />
+
+                    <button
+                      onClick={handleConfirmSubmit}
+                      className="bg-[#FF8080] flex gap-4 items-center justify-center font-semibold text-[16px] text-black my-10 rounded-lg shadow-md p-4 w-full hover:bg-[#ff4d4d]"
+                    >
+                      {submitting ? (
+                        <p className="flex gap-4">
+                          Submitting <Loader2 className="animate-spin" />
+                        </p>
+                      ) : (
+                        <p className="flex gap-4">
+                          {" "}
+                          Submit Report & Log Off <ChevronRight />
+                        </p>
+                      )}{" "}
+                    </button>
+                  </div>
                 </DialogDescription>
               </DialogContent>
             </Dialog>
-            <Button className="bg-cpnz-blue-800" type="submit">
-              Submit
-            </Button>
           </div>
         </form>
       </Form>
