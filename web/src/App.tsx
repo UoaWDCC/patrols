@@ -9,9 +9,7 @@ import Login from "@pages/Login";
 import AuthProvider from "./providers/AuthProvider";
 import ProtectedRoute from "@components/ProtectedRoute";
 import Profile from "@pages/Profile";
-import VehicleTable from "@components/dashboard/VehicleTable";
 import ChairmanProtectedRoute from "@components/ChairmanProtectedRoute";
-import LocationOfInterestTable from "@components/dashboard/LocationOfInterestTable";
 import Dashboard from "@pages/Dashboard";
 
 const router = createBrowserRouter([
