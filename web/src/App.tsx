@@ -9,7 +9,6 @@ import Login from "@pages/Login";
 import AuthProvider from "./providers/AuthProvider";
 import ProtectedRoute from "@components/ProtectedRoute";
 import Profile from "@pages/Profile";
-import Confirmation from "@pages/Confirmation";
 
 const router = createBrowserRouter([
   {
@@ -63,10 +62,6 @@ const router = createBrowserRouter([
   {
     path: "/login",
     element: <Login />,
-  },
-  {
-    path: "/confirmation",
-    element: <Confirmation />,
   },
 ]);
 
