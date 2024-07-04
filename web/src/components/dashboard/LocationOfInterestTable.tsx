@@ -6,6 +6,21 @@ import AddLocationOfInterestModal from './AddLocationOfInterestModal';
 
 type LocationOfInterestDetails = z.infer<typeof locationOfInterestSchema>;
 
+const formatDate = (isoString: string): string => {
+    const date = new Date(isoString);
+    const options: Intl.DateTimeFormatOptions = {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+      second: '2-digit',
+      hour12: false,
+    };
+    return new Intl.DateTimeFormat('en-US', options).format(date);
+};
+
+
 const VehicleTable = () => {
     const [patrolId, setPatrolId] = useState<string>('');
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -95,8 +110,8 @@ const VehicleTable = () => {
                 <tbody>
                     {locationOfInterestData.map(location_of_interest => (
                         <tr key={location_of_interest.id}>
-                            <td className="border border-gray-400 px-4 py-2">{location_of_interest.start_time}</td>
-                            <td className="border border-gray-400 px-4 py-2">{location_of_interest.end_time}</td>
+                            <td className="border border-gray-400 px-4 py-2">{formatDate(location_of_interest.start_time)}</td>
+                            <td className="border border-gray-400 px-4 py-2">{formatDate(location_of_interest.end_time)}</td>
                             <td className="border border-gray-400 px-4 py-2">{location_of_interest.location}</td>
                             <td className="border border-gray-400 px-4 py-2">{location_of_interest.is_police_or_security_present ? 'Yes' : 'No'}</td>
                             <td className="border border-gray-400 px-4 py-2">{location_of_interest.incident_category}</td>
