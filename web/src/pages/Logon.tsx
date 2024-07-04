@@ -1,5 +1,3 @@
-import userIcon from "../assets/images/gorilla.png";
-import { FaCog } from "react-icons/fa";
 import useUserData from "../hooks/useUserData";
 import LogonForm from "@components/logon/LogonForm";
 import { useEffect, useState } from "react";
@@ -10,6 +8,8 @@ import {
   patrolDetailsSchema,
 } from "../schemas";
 import Loading from "@components/ui/Loading";
+import login from '../assets/images/login.png';
+import BottomNavBar from "@components/BottomNavBar";
 
 interface FormData {
   currentUserDetails: z.infer<typeof userDetailsSchema>;
@@ -51,33 +51,28 @@ export default function Logon() {
   if (formData) {
     return (
       <div className=" bg-white flex items-center justify-center">
-        <div className="max-w-6xl w-full">
-          <div className="bg-[#EEF6FF] px-8 py-6 flex items-center justify-between">
-            <div className="flex items-center">
+        <div className="max-w-3xl w-full">
+          <div className="bg-white py-8 max-w-800 mx-auto px-14 my-8">
+            <div className="my-12 flex flex-row space-x-2 justify-center items-center">
               <img
-                src={userIcon}
-                alt="User Icon"
-                className="w-16 h-16 mr-4 rounded-full"
+                src={login}
+                alt="login"
+                className="w-8 h-8"
               />
-              <h2 className="text-2xl font-bold">Welcome back, {fullName}</h2>
+              <h3 className="text-3xl font-semibold text-center">
+                Shift Log-on Form
+              </h3>
             </div>
-            <button className="flex items-center">
-              <span className="mr-2 text-lg font-semibold">Settings</span>
-              <FaCog className="text-2xl text-gray-400 cursor-pointer hover:text-gray-200 transition-colors duration-300" />
-            </button>
-          </div>
-          <div className="bg-white p-8">
-            <h3 className="text-3xl font-bold mb-8 text-center">
-              Shift Log-on Form
-            </h3>
             <LogonForm
               currentUserDetails={formData.currentUserDetails}
               currentUserVehicles={formData.currentUserVehicles}
               patrolDetails={formData.patrolDetails}
             />
           </div>
+          <BottomNavBar />
         </div>
       </div>
+      
     );
   }
 }

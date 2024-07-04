@@ -12,9 +12,9 @@ const SignoutButton = () => {
     <div>
       <Button
         onClick={handleSignOut}
-        className="bg-cpnz-blue-900 text-md font-semibold hover:bg-cpnz-blue-800"
+        className="bg-[#FC9191] text-base font-medium hover:bg-[#ff4d4d]"
       >
-        Sign Out
+        Log Out
       </Button>
     </div>
   );

@@ -114,7 +114,8 @@ export default function LogonForm(props: LogonFormProps) {
   const onSubmit = async (data: z.infer<typeof formSchema>) => {
     try {
       setSubmitting(true);
-      await axios.post(`${import.meta.env.VITE_API_URL}/send-email`, {
+
+      await axios.post(`${import.meta.env.VITE_API_URL}/email/`, {
         recipientEmail: "jasonabc0626@gmail.com",
         //recipientEmail: "jbac208@auckland.ac.nz",
         //recipientEmail: "makjoshua2003@gmail.com",
@@ -439,7 +440,7 @@ export default function LogonForm(props: LogonFormProps) {
           <div className="col-span-2 mt-2">
             <button
               type="button"
-              className="px-4 py-2 bg-white text-black border-2 border-[#0f1363] rounded-md font-semibold underline hover:bg-[#0f1363] hover:text-white"
+              className="px-4 py-2 bg-white text-black border-2 border-[#038400] rounded-md font-semibold underline hover:bg-[#038400] hover:text-white"
               onClick={addGuestPatroller}
             >
               Add Guest Patrols
@@ -512,7 +513,7 @@ export default function LogonForm(props: LogonFormProps) {
             name="havePoliceRadio"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Do you have a Police Radio</FormLabel>
+                <FormLabel className="">Do you have a Police Radio</FormLabel>
                 <FormControl>
                   <div className="flex items-center space-x-4">
                     <label className="flex items-center">
@@ -541,10 +542,10 @@ export default function LogonForm(props: LogonFormProps) {
             )}
           />
         </div>
-        <div className="mt-8">
+        <div className="mt-12 flex justify-center">
           <Button
             type="submit"
-            className="w-full bg-[#0f1363] text-white hover:bg-[#0a0d4a]"
+            className="bg-cpnz-blue-900 text-white hover:bg-[#0a0d4a] py-7 w-full"
           >
             {submitting ? (
               <>
