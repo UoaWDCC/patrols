@@ -2,7 +2,6 @@ import prisma from "../db/database";
 import type { Request, Response } from "express";
 import { z } from "zod";
 import { Resend } from "resend";
-import prisma from "../db/database";
 
 const EMAIL_API_KEY: string = process.env.RESEND_API_KEY as string;
 const CPNZ_APP_EMAIL = "ecc@cpnz.org.nz";
