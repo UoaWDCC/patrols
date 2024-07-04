@@ -6,14 +6,24 @@ import { z } from "zod";
 import { formObservationSchema, reportFormSchema } from "../schemas";
 import { ReportObservation } from "@components/report/ReportObservation";
 import { useState } from "react";
+import ReportFinishDetails from "@components/report/ReportFinishDetails";
+import { ChevronRight, Loader2 } from "lucide-react";
 import { useNavigate } from "react-router";
-import BottomNavBar from '@components/BottomNavBar';
+import {
+  Dialog,
+  DialogContent,
+  DialogTrigger,
+  DialogDescription,
+} from "@components/ui/dialog";
+import useUserData from "../hooks/useUserData";
+import axios from "axios";
 
 export default function Report() {
+  const [submitting, setSubmitting] = useState(false);
+
+  const { currentUserDetails } = useUserData();
+
   const navigate = useNavigate();
-  const handleConfirmation = () => {
-    navigate("/confirmation");
-  }
   const [observationsList, setObservationsList] = useState<
     z.infer<typeof formObservationSchema>
   >(
@@ -26,10 +36,10 @@ export default function Report() {
     localStorage.getItem("startOdometer") || ""
   );
   const [endOdometer, setEndOdometer] = useState<string>(
-    localStorage.getItem("endOdometer") || ""
+    localStorage.getItem("endOdometer") || "1000"
   );
   const [debrief, setDebrief] = useState<string>(
-    localStorage.getItem("debrief") || ""
+    localStorage.getItem("debrief") || "message"
   );
 
   const [openDialog, setOpenDialog] = useState<boolean>(false);
@@ -59,7 +69,7 @@ export default function Report() {
     setOpenDialog(true);
   };
 
-  const handleConfirmSubmit = () => {
+  const handleConfirmSubmit = async () => {
     if (!formData) return;
 
     const [
@@ -94,50 +104,91 @@ export default function Report() {
       totalIncidents,
       otherIncidents,
     };
-    console.log(formData, statistics);
 
-    localStorage.removeItem("observations");
-    localStorage.removeItem("startOdometer");
-    localStorage.removeItem("endOdometer");
-    localStorage.removeItem("debrief");
+    try {
+      setSubmitting(true);
+      await axios.post(`${import.meta.env.VITE_API_URL}/logoff/`, {
+        recipientEmail: "jasonabc0626@gmail.com",
 
-    form.reset();
-    setOpenDialog(false);
-    navigate("/logHome");
+        email: currentUserDetails?.email,
+        cpnzID: currentUserDetails?.cpnz_id,
+        formData,
+        statistics,
+      });
+      console.log(formData, statistics);
+      setSubmitting(false);
+
+      localStorage.removeItem("observations");
+      localStorage.removeItem("startOdometer");
+      localStorage.removeItem("endOdometer");
+      localStorage.removeItem("debrief");
+
+      form.reset();
+      setOpenDialog(false);
+      navigate("/home");
+    } catch (error) {
+      axios.isAxiosError(error)
+        ? console.log(error.response?.data.error)
+        : console.error("Unexpected error during logoff:", error);
+    }
   };
 
   return (
-    <div className="text-center min-h-screen relative bg-[#FFFFFF] max-w-3xl mx-auto">
-      <div className="bg-white pt-14 pb-4 flex flex-col items-start px-8">
-          <h1 className="text-xl font-bold text-black mx-4">
-            Welcome, <span className="underline">XXXXXXX</span>
-          </h1>
-          <p className="text-left mx-4 mt-2">
-            Event ID: xxxxxxxxxx
-          </p>
+    <div className="relative max-w-3xl mx-auto max-h-screen">
+      <div className="bg-[#1E3A8A] py-6 flex justify-between items-center px-8 rounded-b-3xl">
+        <h1 className="text-xl font-bold text-white">Shift in progress</h1>
+        <p className="text-sm text-white">Event number: #P23848457</p>
       </div>
-      <div className="max-w-800 mx-auto px-14 my-8">
-        <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)}>
-            <div>
-              <ReportIntel form={form} setStartOdometer={setStartOdometer} />
-              <ReportObservation
-                form={form}
-                fields={fields}
-                setObservationsList={setObservationsList}
-                append={append}
-                remove={remove}
-              />
-            </div>
-          </form>
-        </Form>
-        <button className="bg-[#FF8080] my-10 rounded-lg shadow-md p-4 w-full hover:bg-[#ff4d4d]"
-        onClick={handleConfirmation}
-        >
-          Submit Report & Log Off
-        </button>
-      </div>
-      <BottomNavBar />
+      <Form {...form}>
+        <form onSubmit={form.handleSubmit(onSubmit)}>
+          <div>
+            <ReportIntel form={form} setStartOdometer={setStartOdometer} />
+            <ReportObservation
+              form={form}
+              fields={fields}
+              setObservationsList={setObservationsList}
+              append={append}
+              remove={remove}
+            />
+            <button className="bg-[#FF8080] my-10 rounded-lg shadow-md p-4 w-full hover:bg-[#ff4d4d]">
+              Submit Report & Log Off
+            </button>
+          </div>
+
+          <div>
+            <Dialog open={openDialog} onOpenChange={setOpenDialog}>
+              <DialogTrigger></DialogTrigger>
+              <DialogContent>
+                <DialogDescription className="flex justify-center">
+                  <div>
+                    <ReportFinishDetails
+                      form={form}
+                      setDebrief={setDebrief}
+                      setEndOdometer={setEndOdometer}
+                    />
+
+                    <button
+                      onClick={handleConfirmSubmit}
+                      className="bg-[#FF8080] flex gap-4 items-center justify-center font-semibold text-[16px] text-black my-10 rounded-lg shadow-md p-4 w-full hover:bg-[#ff4d4d]"
+                    >
+                      {submitting ? (
+                        <p className="flex gap-4">
+                          Submitting <Loader2 className="animate-spin" />
+                        </p>
+                      ) : (
+                        <p className="flex gap-4">
+                          {" "}
+                          Submit Report & Log Off <ChevronRight />
+                        </p>
+                      )}{" "}
+                    </button>
+                  </div>
+                </DialogDescription>
+              </DialogContent>
+            </Dialog>
+          </div>
+        </form>
+      </Form>
     </div>
   );
 }
