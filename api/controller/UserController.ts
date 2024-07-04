@@ -2,6 +2,7 @@ import prisma from "../db/database";
 import supabase from "../supabase/supabase_client";
 import type { Request, Response } from "express";
 
+
 function extractCPNZIDFromEmail(userEmail: string) {
   const atSymbolIndex: number = userEmail.indexOf("@");
   return parseInt(userEmail.substring(0, atSymbolIndex));
