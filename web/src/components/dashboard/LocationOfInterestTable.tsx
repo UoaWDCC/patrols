@@ -4,6 +4,10 @@ import { locationOfInterestSchema, userDetailsSchema } from '../../schemas';
 import { z } from 'zod';
 import AddLocationOfInterestModal from './AddLocationOfInterestModal';
 
+interface LocationOfInterTableProps {
+    showActions: boolean;
+}
+
 type LocationOfInterestDetails = z.infer<typeof locationOfInterestSchema>;
 
 const formatDate = (isoString: string): string => {
@@ -20,8 +24,7 @@ const formatDate = (isoString: string): string => {
     return new Intl.DateTimeFormat('en-US', options).format(date);
 };
 
-
-const VehicleTable = () => {
+const LocationOfInteretTable: React.FC<LocationOfInterTableProps> = ({ showActions }) => {
     const [patrolId, setPatrolId] = useState<string>('');
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [locationOfInterestData, setLocationOfInterest] = useState<LocationOfInterestDetails[]>([]);
@@ -85,15 +88,21 @@ const VehicleTable = () => {
         setIsModalOpen(false);
     };
 
+    if (!locationOfInterestData.length && !showActions) {
+        return null; // Render nothing if data is empty and showActions is false
+    }
+
     return (
         <div className="container mx-auto">
-            <h2 className="text-center text-2xl font-bold my-4">Location Of Interest List</h2>
-            <button
-                className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded mb-4"
-                onClick={openModal}
-            >
-                Add Vehicle
-            </button>
+            <h2 className="text-center text-2xl font-bold my-4">Location Of Interest</h2>
+            {showActions && (
+                <button
+                    className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded mb-4"
+                    onClick={openModal}
+                >
+                    Add Location Of Interest
+                </button>
+            )}
             <table className="table-auto w-full border-collapse border border-gray-400">
                 <thead>
                     <tr className="bg-gray-200">
@@ -104,7 +113,7 @@ const VehicleTable = () => {
                         <th className="border border-gray-400 px-4 py-2">Incident Category</th>
                         <th className="border border-gray-400 px-4 py-2">Incident Sub Category</th>
                         <th className="border border-gray-400 px-4 py-2">Description</th>
-                        <th className="border border-gray-400 px-4 py-2">Actions</th>
+                        {showActions && <th className="border border-gray-400 px-4 py-2">Actions</th>}
                     </tr>
                 </thead>
                 <tbody>
@@ -117,27 +126,31 @@ const VehicleTable = () => {
                             <td className="border border-gray-400 px-4 py-2">{location_of_interest.incident_category}</td>
                             <td className="border border-gray-400 px-4 py-2">{location_of_interest.incident_sub_category}</td>
                             <td className="border border-gray-400 px-4 py-2">{location_of_interest.description}</td>
-                            <td className="border border-gray-400 px-4 py-2">
-                                <button
-                                    className="bg-red-500 hover:bg-red-600 text-white font-bold py-1 px-2 rounded"
-                                    onClick={() => removeVehicle(location_of_interest.id)}
-                                >
-                                    Delete
-                                </button>
-                            </td>
+                            {showActions && (
+                                <td className="border border-gray-400 px-4 py-2">
+                                    <button
+                                        className="bg-red-500 hover:bg-red-600 text-white font-bold py-1 px-2 rounded"
+                                        onClick={() => removeVehicle(location_of_interest.id)}
+                                    >
+                                        Delete
+                                    </button>
+                                </td>
+                            )}
                         </tr>
                     ))}
                 </tbody>
             </table>
 
-            <AddLocationOfInterestModal
-                isOpen={isModalOpen}
-                onClose={closeModal}
-                onAddLocationOfInterest={handleAddVehicle}
-                patrolId={patrolId}
-            />
+            {showActions && (
+                <AddLocationOfInterestModal
+                    isOpen={isModalOpen}
+                    onClose={closeModal}
+                    onAddLocationOfInterest={handleAddVehicle}
+                    patrolId={patrolId}
+                />
+            )}
         </div>
     );
 };
 
-export default VehicleTable;
+export default LocationOfInteretTable;

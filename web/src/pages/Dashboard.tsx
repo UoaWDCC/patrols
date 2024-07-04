@@ -5,7 +5,7 @@ const Dashboard = () => {
     return (
         <>
             <VehicleTable />
-            <LocationOfInterestTable />
+            <LocationOfInterestTable showActions={true} />
         </>
     );
 }
