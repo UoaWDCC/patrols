@@ -12,6 +12,7 @@ import {
 import SignoutButton from "@components/SignoutButton";
 import BottomNavBar from "@components/BottomNavBar";
 import logon from "../assets/images/logon.png";
+
 import useUserData from "../hooks/useUserData";
 
 // const reportsDetailsSchema = z.object({
@@ -62,6 +63,15 @@ export default function Home() {
   // Check the current user's logon status, if "Yes", then redirect to logon home
   useEffect(() => {
     if (currentUserDetails && currentUserDetails.logon_status === "Yes") {
+      navigate("/logHome");
+    }
+  }, [currentUserDetails?.logon_status]);
+
+  const { currentUserDetails } = useUserData();
+
+  // Check the curent user's logon status, if "Yes", then redirect to logon home
+  useEffect(() => {
+    if (currentUserDetails && currentUserDetails.logon_status == "Yes") {
       navigate("/logHome");
     }
   }, [currentUserDetails?.logon_status]);
