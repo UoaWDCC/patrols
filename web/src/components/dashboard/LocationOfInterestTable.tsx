@@ -118,7 +118,7 @@ const VehicleTable = () => {
             <AddLocationOfInterestModal
                 isOpen={isModalOpen}
                 onClose={closeModal}
-                onAddVehicle={handleAddVehicle}
+                onAddLocationOfInterest={handleAddVehicle}
                 patrolId={patrolId}
             />
         </div>

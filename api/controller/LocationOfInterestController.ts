@@ -3,7 +3,11 @@ import prisma from "../db/database";
 
 export const createLocationOfInterest = async (req: Request, res: Response) => {
     try {
-        const newLocationOfInterest = req.body;
+        const newLocationOfInterest =  {
+            ...req.body,
+            start_time: new Date(req.body.start_time),
+            end_time: new Date(req.body.end_time),
+        };
         const locationOfInterest = await prisma.location_of_interest.create({ data: newLocationOfInterest });
         res.status(200).json(locationOfInterest);
         res.status(200).json({ message: 'Location of interest created' });

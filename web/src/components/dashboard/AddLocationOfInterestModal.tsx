@@ -1,144 +1,124 @@
+import axios from 'axios';
 import React, { useState } from 'react';
-import { z } from 'zod';
-import { locationOfInterestSchema } from '../../schemas';
-
-type LocationOfInterestDetails = z.infer<typeof locationOfInterestSchema>;
+import TextInputField from './TextInputField';
+import CheckboxInputField from './CheckboxInputField';
+import CancelButton from './CancelButton';
+import SubmitButton from './SubmitButton';
+import DateTimeInputField from './DateTimeInputField';
 
 interface AddLocationOfInterestModalProps {
     isOpen: boolean;
     onClose: () => void;
-    onAddVehicle: (newLocationOfInterest: LocationOfInterestDetails) => void;
+    onAddLocationOfInterest: (newLocationOfInterest: any) => void;
     patrolId: string;
 }
 
-const AddLocationOfInterestModal: React.FC<AddLocationOfInterestModalProps> = ({ isOpen, onClose, onAddVehicle, patrolId }) => {
-    const [newLocationOfInterest, setNewLocationOfInterest] = useState<LocationOfInterestDetails>({
-        id: '',
-        patrol_id: patrolId,
-        start_time: '',
-        end_time: '',
-        location: '',
-        is_police_or_security_present: false,
-        incident_category: '',
-        incident_sub_category: '',
-        description: '',
-    });
+const AddLocationOfInterestModal: React.FC<AddLocationOfInterestModalProps> = ({ isOpen, onClose, onAddLocationOfInterest, patrolId }) => {
+    const [startTime, setStartTime] = useState('');
+    const [endTime, setEndTime] = useState('');
+    const [location, setLocation] = useState('');
+    const [isPoliceOrSecurityPresent, setIsPoliceOrSecurityPresent] = useState(false);
+    const [incidentCategory, setIncidentCategory] = useState('');
+    const [incidentSubCategory, setIncidentSubCategory] = useState('');       
+    const [description, setDesciption] = useState('');
 
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-        const { name, value, type, checked } = e.target as HTMLInputElement & HTMLTextAreaElement;
-        setNewLocationOfInterest((prev) => ({
-            ...prev,
-            [name]: type === 'checkbox' ? checked : value,
-        }));
-    };
-
-    const handleSubmit = () => {
-        // Validate and add new location of interest
+    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
+        const newLocationOfInterest = {
+            patrol_id: patrolId,
+            start_time: startTime,
+            end_time: endTime,
+            location: location,
+            is_police_or_security_present: isPoliceOrSecurityPresent,
+            incident_category: incidentCategory,
+            incident_sub_category: incidentSubCategory,
+            description: description,
+        };
         try {
-            const validatedData = locationOfInterestSchema.parse(newLocationOfInterest);
-            onAddVehicle(validatedData);
+            const response = await axios.post(`${import.meta.env.VITE_API_URL}/location-of-interest`, newLocationOfInterest);
+            const addedLocationOfInterest = response.data;
+            onAddLocationOfInterest(addedLocationOfInterest);
+            onClose();
         } catch (error) {
-            console.error('Validation error:', error);
+            console.error('Error adding location of interest:', error);
         }
     };
 
-    if (!isOpen) {
-        return null;
-    }
-
     return (
-        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
-            <div className="bg-white p-6 rounded-lg shadow-lg w-full max-w-md">
-                <h2 className="text-xl font-bold mb-4">Add New Location of Interest</h2>
-                <form>
-                    <div className="mb-4">
-                        <label className="block text-sm font-bold mb-2">Start Time</label>
-                        <input
-                            type="datetime-local"
-                            name="start_time"
-                            value={newLocationOfInterest.start_time}
-                            onChange={handleChange}
-                            className="w-full px-3 py-2 border border-gray-300 rounded"
-                        />
+        <>
+            {isOpen && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center overflow-x-hidden overflow-y-auto outline-none focus:outline-none">
+                    <div className="relative w-auto max-w-lg mx-auto my-6">
+                        <div className="relative flex flex-col bg-white border-0 rounded-lg shadow-lg outline-none focus:outline-none">
+                            <div className="flex items-start justify-between p-5 border-b border-solid rounded-t border-blueGray-200">
+                                <h3 className="text-3xl font-semibold">Add Location Of Interest</h3>
+                                <button
+                                    className="p-1 ml-auto bg-transparent border-0 text-black float-right text-3xl leading-none font-semibold outline-none focus:outline-none"
+                                    onClick={onClose}
+                                >
+                                    <span className="text-black h-6 w-6 text-2xl block outline-none focus:outline-none">×</span>
+                                </button>
+                            </div>
+                            <div className="relative p-6 flex-auto">
+                                <form onSubmit={handleSubmit}>
+                                    <DateTimeInputField 
+                                        name="startTime"
+                                        label="Start Time"
+                                        value={startTime}
+                                        onChange={(e) => setStartTime(e.target.value)}
+                                    />
+                                    <DateTimeInputField
+                                        name="endTime"
+                                        label="End Time"
+                                        value={endTime}
+                                        onChange={(e) => setEndTime(e.target.value)}
+                                    />
+                                    <TextInputField
+                                        id="location"
+                                        label="Location"
+                                        placeholder="Enter location"
+                                        value={location}
+                                        onChange={(e) => setLocation(e.target.value)}
+                                    />
+                                    <CheckboxInputField 
+                                        id="isPoliceOrSecurityPresent"
+                                        label="Is Police or Security Present"
+                                        checked={isPoliceOrSecurityPresent}
+                                        onChange={(e) => setIsPoliceOrSecurityPresent(e.target.checked)}
+                                    />
+                                    <TextInputField
+                                        id="incidentCategory"
+                                        label="Incident Category"
+                                        placeholder="Enter incident category"
+                                        value={incidentCategory}
+                                        onChange={(e) => setIncidentCategory(e.target.value)}
+                                    />
+                                    <TextInputField
+                                        id="incidentSubCategory"
+                                        label="Incident Sub Category"
+                                        placeholder="Enter incident sub category"
+                                        value={incidentSubCategory}
+                                        onChange={(e) => setIncidentSubCategory(e.target.value)}
+                                    />
+                                    <TextInputField
+                                        id="description"
+                                        label="Description"
+                                        placeholder="Enter description"
+                                        value={description}
+                                        onChange={(e) => setDesciption(e.target.value)}
+                                    />
+                                    <div className="flex items-center justify-end mt-6">
+                                        <CancelButton onClick={onClose} />
+                                        <SubmitButton label='Add Location Of Interest' />
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
                     </div>
-                    <div className="mb-4">
-                        <label className="block text-sm font-bold mb-2">End Time</label>
-                        <input
-                            type="datetime-local"
-                            name="end_time"
-                            value={newLocationOfInterest.end_time}
-                            onChange={handleChange}
-                            className="w-full px-3 py-2 border border-gray-300 rounded"
-                        />
-                    </div>
-                    <div className="mb-4">
-                        <label className="block text-sm font-bold mb-2">Location</label>
-                        <input
-                            type="text"
-                            name="location"
-                            value={newLocationOfInterest.location}
-                            onChange={handleChange}
-                            className="w-full px-3 py-2 border border-gray-300 rounded"
-                        />
-                    </div>
-                    <div className="mb-4">
-                        <label className="block text-sm font-bold mb-2">Is Police or Security Present?</label>
-                        <input
-                            type="checkbox"
-                            name="is_police_or_security_present"
-                            checked={newLocationOfInterest.is_police_or_security_present}
-                            onChange={handleChange}
-                            className="mr-2"
-                        />
-                    </div>
-                    <div className="mb-4">
-                        <label className="block text-sm font-bold mb-2">Incident Category</label>
-                        <input
-                            type="text"
-                            name="incident_category"
-                            value={newLocationOfInterest.incident_category}
-                            onChange={handleChange}
-                            className="w-full px-3 py-2 border border-gray-300 rounded"
-                        />
-                    </div>
-                    <div className="mb-4">
-                        <label className="block text-sm font-bold mb-2">Incident Subcategory</label>
-                        <input
-                            type="text"
-                            name="incident_sub_category"
-                            value={newLocationOfInterest.incident_sub_category}
-                            onChange={handleChange}
-                            className="w-full px-3 py-2 border border-gray-300 rounded"
-                        />
-                    </div>
-                    <div className="mb-4">
-                        <label className="block text-sm font-bold mb-2">Description</label>
-                        <textarea
-                            name="description"
-                            value={newLocationOfInterest.description}
-                            onChange={handleChange}
-                            className="w-full px-3 py-2 border border-gray-300 rounded"
-                        />
-                    </div>
-                    <div className="flex justify-end">
-                        <button
-                            type="button"
-                            onClick={handleSubmit}
-                            className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded mr-2"
-                        >
-                            Add
-                        </button>
-                        <button
-                            type="button"
-                            onClick={onClose}
-                            className="bg-gray-500 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded"
-                        >
-                            Cancel
-                        </button>
-                    </div>
-                </form>
-            </div>
-        </div>
+                </div>
+            )}
+            <div className={`${isOpen ? 'opacity-25 fixed inset-0 z-40 bg-black' : 'hidden'}`}></div>
+        </>
     );
 };
 
