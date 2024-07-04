@@ -17,7 +17,7 @@ import {
   DialogContent,
   DialogTrigger,
   DialogClose,
-  DialogFooter
+  DialogFooter,
 } from "@components/ui/dialog";
 import { useState } from "react";
 
@@ -94,7 +94,12 @@ const ReportObservation = ({
     displayed: true,
   });
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>, field: keyof Observation) => {
+  const handleInputChange = (
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+    >,
+    field: keyof Observation
+  ) => {
     setNewObservation({
       ...newObservation,
       [field]: e.target.value,
@@ -148,8 +153,11 @@ const ReportObservation = ({
               </p>
             </div>
             <button
-              onClick={() => deleteObservation(i, fields, setObservationsList, remove)}
+              onClick={() =>
+                deleteObservation(i, fields, setObservationsList, remove)
+              }
               className="text-red-500 hover:text-red-700 text-xs"
+              type="button"
             >
               Delete
             </button>
@@ -157,9 +165,7 @@ const ReportObservation = ({
           <p className="text-xs text-gray-500 mt-2">
             Category: {observation.category}
           </p>
-          <p className="text-base">
-            {observation.description}
-          </p>
+          <p className="text-base">{observation.description}</p>
         </div>
       ))}
       <DialogContent>
@@ -174,7 +180,9 @@ const ReportObservation = ({
                 name="observations.0.location"
                 render={() => (
                   <FormItem className="w-full">
-                    <FormLabel className="font-semibold text-base">Location</FormLabel>
+                    <FormLabel className="font-semibold text-base">
+                      Location
+                    </FormLabel>
                     <FormControl>
                       <Input
                         className="font-light text-xs h-12"
@@ -194,7 +202,9 @@ const ReportObservation = ({
                 name="observations.0.time"
                 render={() => (
                   <FormItem>
-                    <FormLabel className="font-semibold text-base">Time</FormLabel>
+                    <FormLabel className="font-semibold text-base">
+                      Time
+                    </FormLabel>
                     <FormControl>
                       <Input
                         className="font-light text-xs h-12"
@@ -211,7 +221,9 @@ const ReportObservation = ({
                 name="observations.0.category"
                 render={() => (
                   <FormItem className="w-full">
-                    <FormLabel className="font-semibold text-base">Category</FormLabel>
+                    <FormLabel className="font-semibold text-base">
+                      Category
+                    </FormLabel>
                     <FormControl>
                       <select
                         className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-slate-400 h-12"
@@ -238,7 +250,9 @@ const ReportObservation = ({
                 name="observations.0.description"
                 render={() => (
                   <FormItem>
-                    <FormLabel className="font-semibold text-base">Description</FormLabel>
+                    <FormLabel className="font-semibold text-base">
+                      Description
+                    </FormLabel>
                     <FormControl>
                       <Textarea
                         className="font-light text-xs h-40 py-2 px-3 block w-full border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-slate-400 resize-none"
