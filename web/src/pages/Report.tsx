@@ -15,6 +15,7 @@ import {
   DialogTrigger,
   DialogDescription,
 } from "@components/ui/dialog";
+import LocationOfInterestTable from "@components/dashboard/LocationOfInterestTable";
 import useUserData from "../hooks/useUserData";
 import axios from "axios";
 
@@ -141,8 +142,9 @@ export default function Report() {
       </div>
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)}>
-          <div>
+          <div> 
             <ReportIntel form={form} setStartOdometer={setStartOdometer} />
+            <LocationOfInterestTable showActions={false} />
             <ReportObservation
               form={form}
               fields={fields}
