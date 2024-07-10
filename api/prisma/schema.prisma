@@ -387,7 +387,7 @@ model shift {
   police_station_base                        String
   observer_id                                BigInt
   driver_id                                  BigInt
-  vehicle_id                                 BigInt
+  vehicle_id                                 BigInt?
   amendment                                  amendment[]
   guest_patrollers                           guest_patrollers[]
   reports                                    reports[]
