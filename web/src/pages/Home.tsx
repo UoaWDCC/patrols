@@ -58,13 +58,6 @@ export default function Home() {
 
   const { currentUserDetails } = useUserData();
 
-  // Check the current user's logon status, if "Yes", then redirect to logon home
-  useEffect(() => {
-    if (currentUserDetails && currentUserDetails.logon_status === "Yes") {
-      navigate("/logHome");
-    }
-  }, [currentUserDetails?.logon_status]);
-
   // Check the curent user's logon status, if "Yes", then redirect to logon home
   useEffect(() => {
     if (currentUserDetails && currentUserDetails.logon_status == "Yes") {
