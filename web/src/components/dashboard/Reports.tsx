@@ -12,6 +12,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@components/ui/dialog";
+import { formatDate } from "@utils/formateDate";
 
 export default function Reports() {
   const { currentUserDetails } = useUserData();
@@ -128,10 +129,13 @@ export default function Reports() {
                               <div>
                                 <p>
                                   Start time:{" "}
-                                  {observation.start_time.toString()}
+                                  {formatDate(
+                                    observation.start_time.toString()
+                                  )}
                                 </p>
                                 <p>
-                                  End time: {observation.end_time.toString()}
+                                  End time:{" "}
+                                  {formatDate(observation.end_time.toString())}
                                 </p>
                                 <p>Location: {observation.location}</p>
                                 <p>Description: {observation.description}</p>
