@@ -106,6 +106,18 @@ export const sendShiftRequest = async (req: Request, res: Response) => {
     const startDateTime = new Date(parseResult.data.formData.startTime);
     const endDateTime = new Date(parseResult.data.formData.endTime);
 
+    const d = {
+      patrol_id: Number(parseResult.data.driver.patrol_id),
+      start_time: startDateTime,
+      end_time: endDateTime,
+      police_station_base: parseResult.data.formData.policeStationBase,
+      observer_id: observer_id.id,
+      driver_id: driver_id.id,
+      vehicle_id: Number(parseResult.data.formData.vehicle),
+    };
+
+    console.log(d);
+
     shift = await prisma.shift.create({
       data: {
         patrol_id: Number(parseResult.data.driver.patrol_id),
@@ -117,32 +129,30 @@ export const sendShiftRequest = async (req: Request, res: Response) => {
         vehicle_id: Number(parseResult.data.formData.vehicle),
       },
     });
-  } catch (error) {
-    res.status(400).json(error);
-  }
 
-  const {
-    email,
-    recipientEmail,
-    cpnzID,
-    formData,
-    driver,
-  }: z.infer<typeof emailSchema> = parseResult.data;
+    console.log(1);
 
-  if (!EMAIL_API_KEY) {
-    //res.status(400).json({ message: "Auth failed: Please provide Resend API key." });
-    throw new Error("Auth failed: Please provide Resend API key.");
-  }
+    const {
+      email,
+      recipientEmail,
+      cpnzID,
+      formData,
+      driver,
+    }: z.infer<typeof emailSchema> = parseResult.data;
 
-  const guestPatrollersFormatted =
-    formData.guestPatrollers
-      ?.map(
-        (gp) =>
-          `Guest Name: ${gp.name}, Guest Phone Number: ${gp.number}, Registered: ${gp.registered}`
-      )
-      .join("<br>") || "None";
+    if (!EMAIL_API_KEY) {
+      //res.status(400).json({ message: "Auth failed: Please provide Resend API key." });
+      throw new Error("Auth failed: Please provide Resend API key.");
+    }
 
-  try {
+    const guestPatrollersFormatted =
+      formData.guestPatrollers
+        ?.map(
+          (gp) =>
+            `Guest Name: ${gp.name}, Guest Phone Number: ${gp.number}, Registered: ${gp.registered}`
+        )
+        .join("<br>") || "None";
+
     const data = await resend.emails.send({
       from: `CPNZ <${CPNZ_APP_EMAIL}>`,
       to: [`${recipientEmail}`],
@@ -180,16 +190,15 @@ export const sendShiftRequest = async (req: Request, res: Response) => {
     </p>
     <hr>
     <p>
-      Please reply with the <strong>Event ID</strong> to 
+      Please reply with the <strong>Event ID</strong> to
       <a href="mailto:cpnz123@kmail.com" style="color: #1a73e8; text-decoration: none;">CPNZ Patrol Email</a>
     </p>
   </div>`,
     });
 
-    res.status(200).json(data);
+    res.status(200).json({ message: "Email sent successfully" });
   } catch (error) {
-    //res.status(400).json(error);
-    throw new Error(`Error sending email: ${error}`);
+    res.status(400).json(error);
   }
 };
 
@@ -213,7 +222,7 @@ export const sendAmendEmail = async (
     throw new Error("Auth failed: Please provide Resend API key.");
   }
 
-  const subject = `CPNZ - Amendment for Report ID: ${event_no}`;
+  const subject = `CPNZ - Amendment for Event No: ${event_no}`;
 
   try {
     const data = await resend.emails.send({
