@@ -171,55 +171,33 @@ export const deleteReport = async (req: Request, res: Response) => {
   }
 };
 
-// export const getAllReportForLead = async (req: Request, res: Response) => {
-//     try {
-//         // Get the patrol request parameters
-//         const patrolLeadId = req.params.id;
-//         const patrolLead = await prisma.patrols.findFirst({
-//             where: { id: Number(patrolLeadId) },
-//             select: {
-//                 id: true,
-//                 role: true,
-//             },
-//         });
+export const getAllReportForLead = async (req: Request, res: Response) => {
+  try {
+    // Get the patrol request parameters
+    const patrolId = req.params.id;
+    const reports = await prisma.shift.findMany({
+      where: { patrol_id: BigInt(patrolId) },
+      select: {
+        reports: true,
+      },
+    });
 
-//         if (!patrolLead) {
-//             // Check if patrol exists
-//             return res.status(404).json({ error: 'Patrol does not exist' });
-//         } else if (patrolLead.role !== Role.lead) {
-//             // Check if patrol is a lead
-//             return res
-//                 .status(401)
-//                 .json({ error: 'You are not authorized to view this report' });
-//         }
+    if (!reports) {
+      return res.status(404).json({ error: "No reports found" });
+    }
 
-//         // Get all the patrols assigned to the patrol lead
-//         const assignedPatrol = await prisma.patrols.findUnique({
-//             where: { supervisorID: Number(patrolLeadId) },
-//             select: { id: true},
-//         });
-//         if (!assignedPatrol) {
-//             // Check if there is any assigned patrols
-//             return res.status(404).json({ error: 'No assigned patrol' });
-//         }
+    const reportsToSend = reports
+      .filter((r) => r.reports[0] !== undefined)
+      .map((r) => ({
+        ...r.reports[0],
+        id: String(r.reports[0].id),
+        shift_id: String(r.reports[0].shift_id),
+        vehicle_details_id: String(r.reports[0].vehicle_details_id),
+        member_id: String(r.reports[0].member_id),
+      }));
 
-//         // Get all the reports for the assigned patrols
-//         const reports = await prisma.reports.findMany({
-//             where: { patrolID: Number(assignedPatrol.id) },
-//         });
-//         if (!reports) {
-//             // Check if there is any reports for the assigned patrols
-//             return res
-//                 .status(404)
-//                 .json({ error: 'No reports for assigned patrols' });
-//         }
-
-//         // Return the reports
-//         res.status(200).json({
-//             reports,
-//             message: 'All reports for assigned patrols generated for leads',
-//         });
-//     } catch (error: any) {
-//         res.status(400).json({ error: error.message });
-//     }
-// };
+    res.status(200).json(reportsToSend);
+  } catch (error: any) {
+    res.status(400).json({ error: error.message });
+  }
+};
