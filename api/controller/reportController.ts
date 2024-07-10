@@ -1,6 +1,18 @@
 import type { Request, Response } from "express";
 import prisma from "../db/database";
 
+type Observation = {
+  id: string;
+  report_id: string;
+  start_time: Date;
+  end_time: Date;
+  location: string;
+  is_police_or_security_present: boolean;
+  incident_category: string;
+  incident_sub_category: string;
+  description: string;
+};
+
 /*
 Replacer Function:
 Replacing all fields that are BigInt to String
@@ -186,7 +198,7 @@ export const getAllReportForLead = async (req: Request, res: Response) => {
       return res.status(404).json({ error: "No reports found" });
     }
 
-    const reportsToSend = reports
+    const filteredReports = reports
       .filter((r) => r.reports[0] !== undefined)
       .map((r) => ({
         ...r.reports[0],
@@ -194,9 +206,36 @@ export const getAllReportForLead = async (req: Request, res: Response) => {
         shift_id: String(r.reports[0].shift_id),
         vehicle_details_id: String(r.reports[0].vehicle_details_id),
         member_id: String(r.reports[0].member_id),
+        observations: [] as Observation[],
       }));
 
-    res.status(200).json(reportsToSend);
+    const reportIds = filteredReports.map((report) => BigInt(report.id));
+
+    const observations = await prisma.observations.findMany({
+      where: {
+        report_id: {
+          in: reportIds,
+        },
+      },
+    });
+
+    const filteredObservations = observations.map((o) => ({
+      ...o,
+      report_id: String(o.report_id),
+      id: String(o.id),
+    }));
+
+    filteredReports.forEach((r) => {
+      for (const o of filteredObservations) {
+        if (o.report_id === String(r.id)) {
+          console.log(r);
+          r.observations.push(o);
+          console.log(r);
+        }
+      }
+    });
+
+    res.status(200).json(filteredReports);
   } catch (error: any) {
     res.status(400).json({ error: error.message });
   }
