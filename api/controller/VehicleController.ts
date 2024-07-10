@@ -9,9 +9,7 @@ export const createVehicle = async (req: Request, res: Response) => {
       ...createdVehicle,
       patrol_id: BigInt(createdVehicle.patrol_id),
     };
-    res
-      .status(201)
-      .json({ vehicle: createdVehicleWithBigInt, message: "Vehicle created" });
+    res.status(201).json({ message: "Vehicle created" });
   } catch (error: any) {
     res.status(400).json({ error: error.message });
   }
@@ -27,7 +25,7 @@ export const deleteVehicle = async (req: Request, res: Response) => {
     if (!vehicle) {
       return res.status(404).json({ error: "No such Vehicle" });
     }
-    res.status(200).json({ vehicle, message: "Vehicle deleted" });
+    res.status(200).json({ message: "Vehicle deleted" });
   } catch (error: any) {
     res.status(400).json({ error: error.message });
   }
