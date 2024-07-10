@@ -19,14 +19,17 @@ export default function Reports() {
 
   useEffect(() => {
     const fetchAllReports = async () => {
+      if (!currentUserDetails?.patrol_id) {
+        return;
+      }
+
       try {
         const response = await axios.get(
           `${import.meta.env.VITE_API_URL}/report/lead/${
-            currentUserDetails?.patrol_id
+            currentUserDetails.patrol_id
           }`
         );
 
-        console.log(response.data);
         setReports(response.data);
       } catch (error) {
         console.log(error);
@@ -144,6 +147,10 @@ export default function Reports() {
                             </div>
                           ))}
                         </div>
+
+                        <Button className="text-[15px] bg-cpnz-blue-800 mt-4">
+                          Edit
+                        </Button>
                       </div>
                     </DialogDescription>
                   </DialogHeader>
