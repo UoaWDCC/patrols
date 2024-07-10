@@ -25,6 +25,10 @@ export const userDetailsSchema = z.object({
   logon_status: z.enum(["No", "Pending", "Yes"]),
 });
 
+export const shiftDetailsSchema = z.object({
+  event_no: z.string(),
+});
+
 export const tokenSchema = z.object({
   access_token: z.string(),
   refresh_token: z.string(),
