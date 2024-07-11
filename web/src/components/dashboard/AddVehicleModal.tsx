@@ -1,9 +1,26 @@
 import axios from "axios";
 import React, { useState } from "react";
-import TextInputField from "./TextInputField";
-import CheckboxInputField from "./CheckboxInputField";
+import { z } from "zod";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+} from "@components/ui/form";
+import { Input } from "@components/ui/input";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTrigger,
+} from "@components/ui/dialog";
 import CancelButton from "./CancelButton";
-import SubmitButton from "./SubmitButton";
+import { Button } from "@components/ui/button";
+import { Checkbox } from "@components/ui/checkbox";
 
 interface AddVehicleModalProps {
   isOpen: boolean;
@@ -51,75 +68,142 @@ const AddVehicleModal: React.FC<AddVehicleModalProps> = ({
     }
   };
 
+  const addVehicleSchema = z.object({
+    registrationNo: z.string().min(5),
+    colour: z.string().min(1),
+    model: z.string().min(1),
+    make: z.string().min(1),
+    hasLiveryOrSignage: z.boolean(),
+    hasPoliceRadio: z.boolean(),
+  });
+
+  const form = useForm<z.infer<typeof addVehicleSchema>>({
+    resolver: zodResolver(addVehicleSchema),
+    defaultValues: {
+      registrationNo: "",
+      colour: "",
+      model: "",
+      make: "",
+      hasLiveryOrSignage: false,
+      hasPoliceRadio: false,
+    },
+  });
+
+  const onSubmit = async (data: z.infer<typeof addVehicleSchema>) => {
+    try {
+      console.log("data:", data);
+
+      await axios.post(`${import.meta.env.VITE_API_URL}/vehicle`);
+    } catch (error) {
+      console.error("Error submitting form:", error);
+    }
+  };
+
   return (
     <>
       {isOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center overflow-x-hidden overflow-y-auto outline-none focus:outline-none">
-          <div className="relative w-auto max-w-lg mx-auto my-6">
-            <div className="relative flex flex-col bg-white border-0 rounded-lg shadow-lg outline-none focus:outline-none">
-              <div className="flex items-start justify-between p-5 border-b border-solid rounded-t border-blueGray-200">
-                <h3 className="text-3xl font-semibold">Add Vehicle</h3>
-                <button
-                  className="p-1 ml-auto bg-transparent border-0 text-black float-right text-3xl leading-none font-semibold outline-none focus:outline-none"
-                  onClick={onClose}
-                >
-                  <span className="text-black h-6 w-6 text-2xl block outline-none focus:outline-none">
-                    ×
-                  </span>
-                </button>
-              </div>
-              <div className="relative p-6 flex-auto">
-                <form onSubmit={handleSubmit}>
-                  <TextInputField
-                    id="registrationNo"
-                    label="Registration No"
-                    placeholder="Enter registration number"
-                    value={registrationNo}
-                    onChange={(e) => setRegistrationNo(e.target.value)}
+        <div className="fixed inset-0 z-50 bg-black/80  data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0">
+          <div className="max-w-[600px] mx-auto bg-white p-12 mt-[15vh] rounded-3xl">
+            <h3 className="text-center mb-6 text-lg font-bold text-cpnz-blue-800">
+              Add a Vehicle
+            </h3>
+            <Form {...form}>
+              <form onSubmit={form.handleSubmit(onSubmit)}>
+                <FormField
+                  control={form.control}
+                  name="registrationNo"
+                  render={({ field }) => (
+                    <FormItem className="flex flex-col gap-1 mb-2 ">
+                      <FormLabel>Registration No</FormLabel>
+                      <Input
+                        type="text"
+                        placeholder="Registration No"
+                        {...field}
+                      />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="colour"
+                  render={({ field }) => (
+                    <FormItem className="flex flex-col gap-1 mb-2 ">
+                      <FormLabel>Colour</FormLabel>
+                      <Input type="text" placeholder="Colour" {...field} />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="model"
+                  render={({ field }) => (
+                    <FormItem className="flex flex-col gap-1 mb-2 ">
+                      <FormLabel>Model</FormLabel>
+                      <Input type="text" placeholder="Model" {...field} />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="make"
+                  render={({ field }) => (
+                    <FormItem className="flex flex-col gap-1 mb-2 ">
+                      <FormLabel>Make</FormLabel>
+                      <Input type="text" placeholder="Make" {...field} />
+                    </FormItem>
+                  )}
+                />
+                <div className="flex flex-col gap-2 mt-4">
+                  <FormField
+                    control={form.control}
+                    name="hasLiveryOrSignage"
+                    render={({ field }) => (
+                      <FormItem className="flex items-center justify-normal gap-4">
+                        <FormLabel className="text-[16px] text-nowrap">
+                          Has livery or signage
+                        </FormLabel>
+                        <FormControl>
+                          <Checkbox
+                            checked={field.value}
+                            onCheckedChange={field.onChange}
+                            className="w-5 h-5"
+                          />
+                        </FormControl>
+                      </FormItem>
+                    )}
                   />
-                  <TextInputField
-                    id="colour"
-                    label="Colour"
-                    placeholder="Enter colour"
-                    value={colour}
-                    onChange={(e) => setColour(e.target.value)}
+                  <FormField
+                    control={form.control}
+                    name="hasPoliceRadio"
+                    render={({ field }) => (
+                      <FormItem className="flex items-center gap-12">
+                        <FormLabel className="text-[16px] text-nowrap">
+                          Has Police Radio
+                        </FormLabel>
+                        <FormControl>
+                          <Checkbox
+                            checked={field.value}
+                            onCheckedChange={field.onChange}
+                            className="w-5 h-5"
+                          />
+                        </FormControl>
+                      </FormItem>
+                    )}
                   />
-                  <TextInputField
-                    id="model"
-                    label="Model"
-                    placeholder="Enter model"
-                    value={model}
-                    onChange={(e) => setModel(e.target.value)}
-                  />
-                  <TextInputField
-                    id="make"
-                    label="Make"
-                    placeholder="Enter make"
-                    value={make}
-                    onChange={(e) => setMake(e.target.value)}
-                  />
-                  <CheckboxInputField
-                    id="hasLiveryOrSignage"
-                    label="Has Livery or Signage"
-                    checked={hasLiveryOrSignage}
-                    onChange={(e) => setHasLiveryOrSignage(e.target.checked)}
-                  />
-                  <CheckboxInputField
-                    id="hasPoliceRadio"
-                    label="Has Police Radio"
-                    checked={hasPoliceRadio}
-                    onChange={(e) => setHasPoliceRadio(e.target.checked)}
-                  />
-                  <div className="flex items-center justify-end mt-6">
-                    <CancelButton onClick={onClose} />
-                    <SubmitButton label="Add Vehicle" />
-                  </div>
-                </form>
-              </div>
-            </div>
+                </div>
+
+                <div className="pt-6 flex items-center justify-between">
+                  <CancelButton onClick={onClose} />
+                  <Button type="submit" className="bg-cpnz-blue-800">
+                    Create
+                  </Button>
+                </div>
+              </form>
+            </Form>
           </div>
         </div>
       )}
+
       <div
         className={`${
           isOpen ? "opacity-25 fixed inset-0 z-40 bg-black" : "hidden"
