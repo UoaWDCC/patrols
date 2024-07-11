@@ -43,37 +43,12 @@ const statsSchema = z.object({
 const emailSchema = z.object({
   recipientEmail: z.string(),
   data: z.object({
-    cpnzId: z.string(),
+    cpnzID: z.string(),
     email: z.string(),
     formData: reportSchema,
     statistics: statsSchema,
   }),
 });
-
-export const logOffStatus = async (req: Request, res: Response) => {
-  try {
-    const { id } = req.params;
-    console.log(req.params.id);
-    const user = await prisma.members_dev.findUnique({
-      where: { cpnz_id: BigInt(id) },
-    });
-
-    if (!user) {
-      return res.status(404).json({ error: "User not found" });
-    } else if (user.logon_status === LogonStatus.No) {
-      return res.status(400).json({ error: "User is already logged off" });
-    }
-
-    await prisma.members_dev.update({
-      where: { cpnz_id: BigInt(id) },
-      data: { logon_status: LogonStatus.No },
-    });
-
-    res.status(200).json({ message: "User has been logged off." });
-  } catch (error: any) {
-    res.status(400).json({ error: error.message });
-  }
-};
 
 export const logOffEmail = async (req: Request, res: Response) => {
   console.log(req.body.data);
@@ -87,7 +62,7 @@ export const logOffEmail = async (req: Request, res: Response) => {
 
   const observerName = await prisma.members_dev.findFirst({
     where: {
-      cpnz_id: Number(parseResult.data.data.cpnzId),
+      cpnz_id: Number(parseResult.data.data.cpnzID),
     },
     select: { first_names: true, surname: true },
   });
@@ -113,7 +88,7 @@ export const logOffEmail = async (req: Request, res: Response) => {
   }
 
   /* Create a post request to store the observation*/
-  prisma.reports.create({
+  const report = await prisma.reports.create({
     data: {
       member_id: BigInt(data.formData.memberId),
       shift_id: BigInt(data.formData.shiftId),
@@ -136,17 +111,20 @@ export const logOffEmail = async (req: Request, res: Response) => {
   console.log("report created");
 
   // Loop through observations using forEach
-  data.formData.observations.forEach((observation, index) => {
-    prisma.observations.create({
+  data.formData.observations.forEach(async (observation, index) => {
+    const currentDate = new Date().toISOString().split("T")[0];
+    const time = new Date(currentDate + "T" + observation.time).toISOString();
+
+    await prisma.observations.create({
       data: {
-        start_time: observation.time,
-        end_time: observation.time,
+        start_time: time,
+        end_time: time,
         location: observation.location,
         is_police_or_security_present: false,
         incident_category: observation.category,
         incident_sub_category: observation.category,
         description: observation.description,
-        report_id: BigInt(data.formData.shiftId),
+        report_id: report.id,
       },
     });
   });
@@ -158,7 +136,7 @@ export const logOffEmail = async (req: Request, res: Response) => {
     const email = await resend.emails.send({
       from: `CPNZ <${CPNZ_APP_EMAIL}>`,
       to: [`${recipientEmail}`],
-      subject: `CPNZ - Log Off - Patrol ID: ${data.cpnzId} - Shift ID: ${data.formData.shiftId}`,
+      subject: `CPNZ - Log Off - Patrol ID: ${data.cpnzID} - Shift ID: ${data.formData.shiftId}`,
       html: `
             <div style="font-family: Arial, sans-serif; line-height: 1.8;">
           <p style="font-size: 1.2em; font-weight: bold;">
@@ -170,6 +148,11 @@ export const logOffEmail = async (req: Request, res: Response) => {
             <a href="mailto:cpnz123@kmail.com" style="color: #1a73e8; text-decoration: none;">CPNZ Patrol Email</a>
           </p>
         </div>`,
+    });
+
+    await prisma.members_dev.update({
+      where: { id: BigInt(data.formData.memberId) },
+      data: { logon_status: LogonStatus.No },
     });
 
     res.status(200).json(email);
