@@ -67,7 +67,7 @@ export default function UserDetailsForm(props: UserDetailsFormProps) {
   };
 
   return (
-    <div className="bg-[#EEF6FF] py-6 mx-8 my-10 space-y-5 text-left px-7 rounded-md shadow-md">
+    <div className="bg-[#EEF6FF] py-6 m-12 space-y-5 text-left px-7 rounded-md shadow-md">
       <Form {...form}>
         <FormItem className="flex flex-col w-full">
           <FormLabel htmlFor="email">Full Name</FormLabel>

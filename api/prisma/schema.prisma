@@ -77,6 +77,11 @@ model districts_prod {
   patrols_prod patrols_prod[]
 }
 
+model email_history_dev {
+  id         BigInt  @id @default(autoincrement())
+  history_id BigInt?
+}
+
 model equipment_checklist {
   id                BigInt           @id(map: "EquipmentChecklist_pkey") @unique(map: "EquipmentChecklist_id_key") @default(autoincrement())
   hi_viz_uniform    Boolean
@@ -523,11 +528,6 @@ model vehicles_model {
   model_name   String?
   vehicle_dev  vehicle_dev[]
   vehicle_make vehicle_make? @relation(fields: [model_name], references: [name], onDelete: NoAction, onUpdate: NoAction, map: "Vehicles_Model_model_name_fkey")
-}
-
-model email_history_dev {
-  id         BigInt  @id @default(autoincrement())
-  history_id BigInt?
 }
 
 /// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.

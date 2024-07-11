@@ -17,20 +17,14 @@ export default function ReportIntel({
   setStartOdometer,
 }: ReportIntelProps) {
   return (
-    <div className="relative bg-[#FFFFFF] max-w-3xl mx-auto">
-      <h2 className="text-lg font-semibold py-4 text-center">INTEL</h2>
-      <p className="text-left mb-6">
-        Message:{" "}
-        {
-          "Temporarily generated dummmy intel message but this should be a message that the chairman / secretary / police liasion can set for a specific patrol to will show for all patrollers in that patrol"
-        }
-      </p>
+    <div className="relative bg-[#FFFFFF] max-w-3xl mx-auto text-left">
+      <h2 className="text-lg font-semibold py-4 text-center my-14">INTEL</h2>
       <FormField
         control={form.control}
         name="startOdometer"
         render={({ field }) => (
           <FormItem>
-            <FormLabel>Odometer Start KMs</FormLabel>
+            <FormLabel className="font-semibold text-base">Starting Odometer</FormLabel>
             <FormControl>
               <Input
                 {...field}
