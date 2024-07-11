@@ -53,8 +53,7 @@ export default function Report() {
     defaultValues: {
       startOdometer: startOdometer,
       endOdometer: endOdometer,
-      weatherCondition: "",
-      intel: undefined,
+      weatherCondition: "wet",
       observations: observationsList,
       debrief: debrief,
     },
@@ -72,6 +71,8 @@ export default function Report() {
 
   const handleConfirmSubmit = async () => {
     if (!formData) return;
+
+    console.log("form is submitting");
 
     const [
       kmTravelled,
@@ -106,15 +107,31 @@ export default function Report() {
       otherIncidents,
     };
 
+    // JSON.parse(localStorage.getItem("observations")!).forEach((o: any) => {
+    //   formData.observations.push(o);
+    //   console.log(formData.observations);
+    // });
+
+    const data = {
+      email: currentUserDetails?.email,
+      cpnzID: currentUserDetails?.cpnz_id,
+      formData: {
+        ...formData,
+        memberId: currentUserDetails?.id,
+        shiftId: shiftDetails?.id,
+        vehicleId: "13",
+        isFootPatrol: false,
+      },
+      statistics,
+    };
+
+    console.log(data);
+
     try {
       setSubmitting(true);
       await axios.post(`${import.meta.env.VITE_API_URL}/logoff/`, {
         recipientEmail: "jasonabc0626@gmail.com",
-
-        email: currentUserDetails?.email,
-        cpnzID: currentUserDetails?.cpnz_id,
-        formData,
-        statistics,
+        data,
       });
       console.log(formData, statistics);
       setSubmitting(false);
