@@ -73,6 +73,8 @@ export default function Report() {
   const handleConfirmSubmit = async () => {
     if (!formData) return;
 
+    console.log("form is submitting");
+
     const [
       kmTravelled,
       vehicleIncidents,
