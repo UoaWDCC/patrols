@@ -371,7 +371,7 @@ model reports {
   property_incidents       Int?
   willful_damage_incidents Int?
   other_incidents          Int?
-  total_incidents          Int?
+  total_incidents          BigInt?
   observations             observations[]
   members_dev              members_dev    @relation(fields: [member_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "report_member_id_fkey")
   shift                    shift          @relation(fields: [shift_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "report_shift_id_fkey")

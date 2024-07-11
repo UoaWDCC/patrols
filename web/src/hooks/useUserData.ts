@@ -6,24 +6,33 @@ import {
   userDetailsSchema,
   patrolDetailsSchema,
   vehicleDetailsSchema,
+  shiftDetailsSchema,
 } from "../schemas";
 
 type UserDetails = z.infer<typeof userDetailsSchema>;
 type VehicleDetails = z.infer<typeof vehicleDetailsSchema>;
 type PatrolDetails = z.infer<typeof patrolDetailsSchema>;
+type ShiftDetails = z.infer<typeof shiftDetailsSchema>;
 
 const fetchUserData = async () => {
   try {
     const response = await axios.get(
       `${import.meta.env.VITE_API_URL}/user/getUserDetails`
     );
-    const { userDetails, patrolDetails, vehicleDetails } = response.data;
+    const { userDetails, patrolDetails, vehicleDetails, shiftDetails } =
+      response.data;
     const parsedUserDetails = userDetailsSchema.parse(userDetails);
     const parsedPatrolDetails = patrolDetailsSchema.parse(patrolDetails);
     const parsedVehicleDetails = vehicleDetailsSchema
       .array()
       .parse(vehicleDetails);
-    return { parsedUserDetails, parsedPatrolDetails, parsedVehicleDetails };
+    const parsedShiftDetails = shiftDetailsSchema.parse(shiftDetails);
+    return {
+      parsedUserDetails,
+      parsedPatrolDetails,
+      parsedVehicleDetails,
+      parsedShiftDetails,
+    };
   } catch (error) {
     console.log("Error: ", error);
   }
@@ -36,6 +45,7 @@ const useUserData = () => {
   const [currentUserVehicles, setCurrentUserVehicles] = useState<
     VehicleDetails[]
   >([]);
+  const [shiftDetails, setShiftDetails] = useState<ShiftDetails>();
 
   const { data, refetch } = useQuery({
     queryKey: ["userData"],
@@ -45,8 +55,12 @@ const useUserData = () => {
 
   useEffect(() => {
     if (data) {
-      const { parsedUserDetails, parsedPatrolDetails, parsedVehicleDetails } =
-        data;
+      const {
+        parsedUserDetails,
+        parsedPatrolDetails,
+        parsedVehicleDetails,
+        parsedShiftDetails,
+      } = data;
 
       setCurrentUserDetails(parsedUserDetails);
       setPatrolDetails(parsedPatrolDetails);
@@ -64,6 +78,8 @@ const useUserData = () => {
         ];
         setCurrentUserVehicles(reorderedVehicles);
       }
+
+      setShiftDetails(parsedShiftDetails);
     }
   }, [data]);
 
@@ -72,6 +88,7 @@ const useUserData = () => {
     fullName,
     currentUserVehicles,
     patrolDetails,
+    shiftDetails,
     refetch,
   };
 };
