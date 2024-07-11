@@ -53,7 +53,7 @@ export default function Report() {
     defaultValues: {
       startOdometer: startOdometer,
       endOdometer: endOdometer,
-      weatherCondition: "",
+      weatherCondition: "wet",
       observations: observationsList,
       debrief: debrief,
     },
@@ -117,9 +117,9 @@ export default function Report() {
       cpnzID: currentUserDetails?.cpnz_id,
       formData: {
         ...formData,
-        memberId: currentUserDetails?.cpnz_id,
+        memberId: currentUserDetails?.id,
         shiftId: shiftDetails?.id,
-        vehicleId: "1",
+        vehicleId: "13",
         isFootPatrol: false,
       },
       statistics,
