@@ -3,7 +3,6 @@ import prisma from '../db/database';
 import { LogonStatus, Weather } from "@prisma/client";
 import { Resend } from "resend";
 import { z } from "zod";
-import { start } from "repl";
 // import { userDetailsSchema } from "./emailController";
 
 const EMAIL_API_KEY: string = process.env.RESEND_API_KEY as string;
@@ -100,8 +99,9 @@ export const logOffEmail = async (req: Request, res: Response) => {
         res.status(400).json({ message: "Auth failed: Please provide Resend API key." });
         // throw new Error("Auth failed: Please provide Resend API key.");
       }
-    /* Create a post request to store the observation*/
 
+    
+    /* Create a post request to store the observation*/
     prisma.reports.create({
         data: {
             member_id: report.member_id,
