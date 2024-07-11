@@ -13,6 +13,7 @@ export const vehicleDetailsSchema = z.object({
 });
 
 export const userDetailsSchema = z.object({
+  id: z.string(),
   cpnz_id: z.string(),
   email: z.string().email(),
   first_names: z.string(),
@@ -23,6 +24,11 @@ export const userDetailsSchema = z.object({
   police_station: z.string(),
   patrol_id: z.string(),
   logon_status: z.enum(["No", "Pending", "Yes"]),
+});
+
+export const shiftDetailsSchema = z.object({
+  event_no: z.string(),
+  id: z.string(),
 });
 
 export const tokenSchema = z.object({
@@ -70,6 +76,42 @@ export const reportFormSchema = z.object({
   observations: formObservationSchema,
   endOdometer: z.string().min(3, "Odometer must be at least 3 digits"),
   debrief: z.string(),
+});
+
+export const observationSchema = z.object({
+  id: z.string(),
+  start_time: z.date(),
+  end_time: z.date(),
+  location: z.string(),
+  is_police_or_security_present: z.boolean(),
+  incident_category: z.string(),
+  incident_sub_category: z.string(),
+  description: z.string(),
+  report_id: z.string(),
+});
+
+export const reportSchema = z.object({
+  id: z.string(),
+  member_id: z.string(),
+  shift_id: z.string(),
+  vehicle_details_id: z.string(),
+  odometer_initial_reading: z
+    .string()
+    .min(3, "Odometer must be at least 3 digits"),
+  odometer_final_reading: z
+    .string()
+    .min(3, "Odometer must be at least 3 digits"),
+  weather_condition: z.string(),
+  is_foot_patrol: z.boolean(),
+  notes: z.string(),
+  km_travelled: z.number(),
+  person_incidents: z.number(),
+  vehicle_incidents: z.number(),
+  property_incidents: z.number(),
+  willful_damage_incidents: z.number(),
+  other_incidents: z.number(),
+  total_incidents: z.number(),
+  observations: z.array(observationSchema),
 });
 
 export const locationOfInterestSchema = z.object({

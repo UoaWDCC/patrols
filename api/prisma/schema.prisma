@@ -12,9 +12,9 @@ datasource db {
 model amendment {
   id          BigInt   @id @default(autoincrement())
   created_at  DateTime @default(now()) @db.Timestamptz(6)
-  report_id   BigInt?
   description String?
-  reports     reports? @relation(fields: [report_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  event_no    String?
+  shift       shift?   @relation(fields: [event_no], references: [event_no], onDelete: NoAction, onUpdate: NoAction)
 }
 
 model district_stats_dev {
@@ -365,7 +365,13 @@ model reports {
   weather_condition        Weather
   is_foot_patrol           Boolean
   notes                    String
-  amendment                amendment[]
+  km_travelled             Int?
+  vehicle_incidents        Int?
+  person_incidents         Int?
+  property_incidents       Int?
+  willful_damage_incidents Int?
+  other_incidents          Int?
+  total_incidents          BigInt?
   observations             observations[]
   members_dev              members_dev    @relation(fields: [member_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "report_member_id_fkey")
   shift                    shift          @relation(fields: [shift_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "report_shift_id_fkey")
@@ -374,14 +380,15 @@ model reports {
 
 model shift {
   id                                         BigInt             @id(map: "Shift_pkey") @unique(map: "Shift_id_key") @default(autoincrement())
-  event_no                                   String?
+  event_no                                   String?            @unique
   patrol_id                                  BigInt
   start_time                                 DateTime           @db.Timestamptz(0)
   end_time                                   DateTime           @db.Timestamptz(0)
   police_station_base                        String
   observer_id                                BigInt
   driver_id                                  BigInt
-  vehicle_id                                 BigInt
+  vehicle_id                                 BigInt?
+  amendment                                  amendment[]
   guest_patrollers                           guest_patrollers[]
   reports                                    reports[]
   members_dev_shift_driver_idTomembers_dev   members_dev        @relation("shift_driver_idTomembers_dev", fields: [driver_id], references: [id], map: "Shift_driver_id_fkey")

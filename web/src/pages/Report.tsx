@@ -22,7 +22,7 @@ import axios from "axios";
 export default function Report() {
   const [submitting, setSubmitting] = useState(false);
 
-  const { currentUserDetails } = useUserData();
+  const { currentUserDetails, shiftDetails } = useUserData();
 
   const navigate = useNavigate();
   const [observationsList, setObservationsList] = useState<
@@ -53,8 +53,7 @@ export default function Report() {
     defaultValues: {
       startOdometer: startOdometer,
       endOdometer: endOdometer,
-      weatherCondition: "",
-      intel: undefined,
+      weatherCondition: "wet",
       observations: observationsList,
       debrief: debrief,
     },
@@ -72,6 +71,8 @@ export default function Report() {
 
   const handleConfirmSubmit = async () => {
     if (!formData) return;
+
+    console.log("form is submitting");
 
     const [
       kmTravelled,
@@ -106,15 +107,31 @@ export default function Report() {
       otherIncidents,
     };
 
+    // JSON.parse(localStorage.getItem("observations")!).forEach((o: any) => {
+    //   formData.observations.push(o);
+    //   console.log(formData.observations);
+    // });
+
+    const data = {
+      email: currentUserDetails?.email,
+      cpnzID: currentUserDetails?.cpnz_id,
+      formData: {
+        ...formData,
+        memberId: currentUserDetails?.id,
+        shiftId: shiftDetails?.id,
+        vehicleId: "13",
+        isFootPatrol: false,
+      },
+      statistics,
+    };
+
+    console.log(data);
+
     try {
       setSubmitting(true);
       await axios.post(`${import.meta.env.VITE_API_URL}/logoff/`, {
         recipientEmail: "jasonabc0626@gmail.com",
-
-        email: currentUserDetails?.email,
-        cpnzID: currentUserDetails?.cpnz_id,
-        formData,
-        statistics,
+        data,
       });
       console.log(formData, statistics);
       setSubmitting(false);
@@ -138,11 +155,13 @@ export default function Report() {
     <div className="relative max-w-3xl mx-auto max-h-screen">
       <div className="bg-[#1E3A8A] py-6 flex justify-between items-center px-8 rounded-b-3xl">
         <h1 className="text-xl font-bold text-white">Shift in progress</h1>
-        <p className="text-sm text-white">Event number: #P23848457</p>
+        <p className="text-sm text-white">
+          Event number: {shiftDetails?.event_no}
+        </p>
       </div>
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)}>
-          <div> 
+          <div>
             <ReportIntel form={form} setStartOdometer={setStartOdometer} />
             <LocationOfInterestTable showActions={false} />
             <ReportObservation
