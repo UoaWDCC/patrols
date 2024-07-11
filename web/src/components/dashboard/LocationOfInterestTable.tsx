@@ -118,6 +118,9 @@ const LocationOfInteretTable: React.FC<LocationOfInterTableProps> = ({
       </h2>
       <div className="p-12 shadow-md mb-8 max-h-[400px] overflow-y-auto">
         <Table className="">
+          <TableCaption>
+            List of all locations of interests in your patrol
+          </TableCaption>
           <TableHeader>
             <TableRow>
               <TableHead>Start Time</TableHead>
