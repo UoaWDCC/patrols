@@ -2,7 +2,6 @@ import prisma from "../db/database";
 import supabase from "../supabase/supabase_client";
 import type { Request, Response } from "express";
 
-
 function extractCPNZIDFromEmail(userEmail: string) {
   const atSymbolIndex: number = userEmail.indexOf("@");
   return parseInt(userEmail.substring(0, atSymbolIndex));
@@ -60,6 +59,22 @@ export const getUserDetailsByCPNZID = async (req: Request, res: Response) => {
       },
     });
 
+    const shiftDetails = await prisma.shift.findFirst({
+      where: {
+        patrol_id: userDetails?.patrol_id,
+      },
+      orderBy: {
+        id: "desc",
+      },
+      select: {
+        event_no: true,
+      },
+    });
+
+    if (shiftDetails?.event_no === null) {
+      shiftDetails.event_no = "N/A";
+    }
+
     function toObject(userDetails: any) {
       return JSON.parse(
         JSON.stringify(
@@ -83,6 +98,7 @@ export const getUserDetailsByCPNZID = async (req: Request, res: Response) => {
       userDetails: toObject(userDetails),
       vehicleDetails: toObject(vehicleDetails),
       patrolDetails: toObject(patrolDetails),
+      shiftDetails: toObject(shiftDetails),
       userRole: toObject(userRole),
     });
   } catch (error) {

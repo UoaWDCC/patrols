@@ -22,7 +22,7 @@ import axios from "axios";
 export default function Report() {
   const [submitting, setSubmitting] = useState(false);
 
-  const { currentUserDetails } = useUserData();
+  const { currentUserDetails, shiftDetails } = useUserData();
 
   const navigate = useNavigate();
   const [observationsList, setObservationsList] = useState<
@@ -138,11 +138,13 @@ export default function Report() {
     <div className="relative max-w-3xl mx-auto max-h-screen">
       <div className="bg-[#1E3A8A] py-6 flex justify-between items-center px-8 rounded-b-3xl">
         <h1 className="text-xl font-bold text-white">Shift in progress</h1>
-        <p className="text-sm text-white">Event number: #P23848457</p>
+        <p className="text-sm text-white">
+          Event number: {shiftDetails?.event_no}
+        </p>
       </div>
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)}>
-          <div> 
+          <div>
             <ReportIntel form={form} setStartOdometer={setStartOdometer} />
             <LocationOfInterestTable showActions={false} />
             <ReportObservation

@@ -58,13 +58,6 @@ export default function Home() {
 
   const { currentUserDetails } = useUserData();
 
-  // Check the current user's logon status, if "Yes", then redirect to logon home
-  useEffect(() => {
-    if (currentUserDetails && currentUserDetails.logon_status === "Yes") {
-      navigate("/logHome");
-    }
-  }, [currentUserDetails?.logon_status]);
-
   // Check the curent user's logon status, if "Yes", then redirect to logon home
   useEffect(() => {
     if (currentUserDetails && currentUserDetails.logon_status == "Yes") {
@@ -76,7 +69,10 @@ export default function Home() {
     <div className="text-center min-h-screen relative bg-[#FFFFFF] max-w-3xl mx-auto">
       <div className="bg-white pt-14 pb-4 flex justify-between items-center px-8">
         <h1 className="text-xl font-bold text-black mx-4">
-          Welcome, <span className="underline">XXXXXXX</span>
+          Welcome,{" "}
+          <span className="underline">
+            {currentUserDetails?.first_names} {currentUserDetails?.surname}
+          </span>
         </h1>
         <SignoutButton />
       </div>
