@@ -54,7 +54,6 @@ export default function Report() {
       startOdometer: startOdometer,
       endOdometer: endOdometer,
       weatherCondition: "",
-      intel: undefined,
       observations: observationsList,
       debrief: debrief,
     },
@@ -108,15 +107,20 @@ export default function Report() {
       otherIncidents,
     };
 
+    const data = {
+      email: currentUserDetails?.email,
+      cpnzID: currentUserDetails?.cpnz_id,
+      formData,
+      statistics,
+    };
+
+    console.log(data);
+
     try {
       setSubmitting(true);
       await axios.post(`${import.meta.env.VITE_API_URL}/logoff/`, {
         recipientEmail: "jasonabc0626@gmail.com",
-
-        email: currentUserDetails?.email,
-        cpnzID: currentUserDetails?.cpnz_id,
-        formData,
-        statistics,
+        data,
       });
       console.log(formData, statistics);
       setSubmitting(false);

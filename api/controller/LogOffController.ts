@@ -32,13 +32,20 @@ const reportSchema = z.object({
 });
 
 const statsSchema = z.object({
-  km_travelled: z.number(),
-  person_incidents: z.number(),
-  vehicle_incidents: z.number(),
-  property_incidents: z.number(),
-  willful_damage_incidents: z.number(),
-  other_incidents: z.number(),
-  total_incidents: z.number(),
+  kmTravelled: z.number(),
+  personIncidents: z.number(),
+  vehicleIncidents: z.number(),
+  propertyIncidents: z.number(),
+  willfulDamageIncidents: z.number(),
+  otherIncidents: z.number(),
+  totalIncidents: z.number(),
+});
+
+const emailSchema = z.object({
+  recipientEmail: z.string(),
+  cpnzID: z.string(),
+  report: reportSchema,
+  statistics: statsSchema,
 });
 
 export const logOffStatus = async (req: Request, res: Response) => {
@@ -67,13 +74,7 @@ export const logOffStatus = async (req: Request, res: Response) => {
 };
 
 export const logOffEmail = async (req: Request, res: Response) => {
-  console.log("backend reached");
-  const emailSchema = z.object({
-    recipientEmail: z.string(),
-    cpnzID: z.string(),
-    report: reportSchema,
-    statistics: statsSchema,
-  });
+  console.log(req.body);
 
   const parseResult = emailSchema.safeParse(req.body);
 
@@ -124,13 +125,13 @@ export const logOffEmail = async (req: Request, res: Response) => {
       weather_condition: report.weather_condition,
       is_foot_patrol: report.is_foot_patrol,
       notes: report.notes,
-      km_travelled: statistics.km_travelled,
-      person_incidents: statistics.person_incidents,
-      vehicle_incidents: statistics.vehicle_incidents,
-      property_incidents: statistics.property_incidents,
-      willful_damage_incidents: statistics.willful_damage_incidents,
-      other_incidents: statistics.other_incidents,
-      total_incidents: statistics.total_incidents,
+      km_travelled: statistics.kmTravelled,
+      person_incidents: statistics.personIncidents,
+      vehicle_incidents: statistics.vehicleIncidents,
+      property_incidents: statistics.propertyIncidents,
+      willful_damage_incidents: statistics.willfulDamageIncidents,
+      other_incidents: statistics.otherIncidents,
+      total_incidents: statistics.totalIncidents,
     },
   });
 
