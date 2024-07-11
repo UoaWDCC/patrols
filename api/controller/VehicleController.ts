@@ -4,8 +4,18 @@ import prisma from "../db/database";
 export const createVehicle = async (req: Request, res: Response) => {
   try {
     const newVehicle = req.body;
-    await prisma.vehicle.create({ data: newVehicle });
-    res.status(201).json({ message: "Vehicle created" });
+    const vehicle = await prisma.vehicle.create({ data: newVehicle });
+    function toObject(vehicleDetails: any) {
+      return JSON.parse(
+        JSON.stringify(
+          vehicleDetails,
+          (key, value) => (typeof value === "bigint" ? value.toString() : value) // return everything else unchanged
+        )
+      );
+    }
+    res
+      .status(201)
+      .json({ message: "Vehicle created", vehicle: toObject(vehicle) });
   } catch (error: any) {
     res.status(400).json({ error: error.message });
   }

@@ -13,6 +13,7 @@ export const vehicleDetailsSchema = z.object({
 });
 
 export const userDetailsSchema = z.object({
+  id: z.string(),
   cpnz_id: z.string(),
   email: z.string().email(),
   first_names: z.string(),
@@ -27,6 +28,7 @@ export const userDetailsSchema = z.object({
 
 export const shiftDetailsSchema = z.object({
   event_no: z.string(),
+  id: z.string(),
 });
 
 export const tokenSchema = z.object({

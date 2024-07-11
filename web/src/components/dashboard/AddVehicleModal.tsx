@@ -1,5 +1,4 @@
 import axios from "axios";
-import React, { useState } from "react";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -11,13 +10,6 @@ import {
   FormLabel,
 } from "@components/ui/form";
 import { Input } from "@components/ui/input";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTrigger,
-} from "@components/ui/dialog";
 import CancelButton from "./CancelButton";
 import { Button } from "@components/ui/button";
 import { Checkbox } from "@components/ui/checkbox";
@@ -25,58 +17,23 @@ import { Checkbox } from "@components/ui/checkbox";
 interface AddVehicleModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onAddVehicle: (newVehicle: any) => void;
   patrolId: string;
 }
+
+const addVehicleSchema = z.object({
+  registrationNo: z.string().min(5),
+  colour: z.string().min(1),
+  model: z.string().min(1),
+  make: z.string().min(1),
+  hasLiveryOrSignage: z.boolean(),
+  hasPoliceRadio: z.boolean(),
+});
 
 const AddVehicleModal: React.FC<AddVehicleModalProps> = ({
   isOpen,
   onClose,
-  onAddVehicle,
   patrolId,
 }) => {
-  const [registrationNo, setRegistrationNo] = useState("");
-  const [colour, setColour] = useState("");
-  const [model, setModel] = useState("");
-  const [make, setMake] = useState("");
-  const [hasLiveryOrSignage, setHasLiveryOrSignage] = useState(false);
-  const [hasPoliceRadio, setHasPoliceRadio] = useState(false);
-
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    const newVehicle = {
-      patrol_id: patrolId,
-      registration_no: registrationNo,
-      colour: colour,
-      model: model,
-      make: make,
-      has_livery_or_signage: hasLiveryOrSignage,
-      has_police_radio: hasPoliceRadio,
-      selected: false, // You may set other default values as needed
-    };
-    console.log("newVehicle:", newVehicle);
-    try {
-      const response = await axios.post(
-        `${import.meta.env.VITE_API_URL}/vehicle`,
-        newVehicle
-      );
-      const addedVehicle = response.data;
-      onAddVehicle(addedVehicle);
-      onClose();
-    } catch (error) {
-      console.error("Error adding vehicle:", error);
-    }
-  };
-
-  const addVehicleSchema = z.object({
-    registrationNo: z.string().min(5),
-    colour: z.string().min(1),
-    model: z.string().min(1),
-    make: z.string().min(1),
-    hasLiveryOrSignage: z.boolean(),
-    hasPoliceRadio: z.boolean(),
-  });
-
   const form = useForm<z.infer<typeof addVehicleSchema>>({
     resolver: zodResolver(addVehicleSchema),
     defaultValues: {
@@ -91,9 +48,20 @@ const AddVehicleModal: React.FC<AddVehicleModalProps> = ({
 
   const onSubmit = async (data: z.infer<typeof addVehicleSchema>) => {
     try {
-      console.log("data:", data);
+      const newVehicle = {
+        patrol_id: patrolId,
+        registration_no: data.registrationNo,
+        colour: data.colour,
+        model: data.model,
+        make: data.make,
+        has_livery_or_signage: data.hasLiveryOrSignage,
+        has_police_radio: data.hasPoliceRadio,
+        selected: false,
+      };
 
-      await axios.post(`${import.meta.env.VITE_API_URL}/vehicle`);
+      await axios.post(`${import.meta.env.VITE_API_URL}/vehicle`, newVehicle);
+
+      onClose();
     } catch (error) {
       console.error("Error submitting form:", error);
     }

@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
-import { userDetailsSchema, vehicleDetailsSchema } from "../../schemas";
+import { vehicleDetailsSchema } from "../../schemas";
 import { z } from "zod";
 import AddVehicleModal from "./AddVehicleModal"; // Adjust the import path as needed
 import {
@@ -13,36 +13,24 @@ import {
   TableRow,
 } from "@components/ui/table";
 import { Button } from "@components/ui/button";
+import useUserData from "../../hooks/useUserData";
 
 type VehicleDetails = z.infer<typeof vehicleDetailsSchema>;
 
 const VehicleTable = () => {
-  const [patrolId, setPatrolId] = useState<string>("");
   const [vehicleData, setVehicleData] = useState<VehicleDetails[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  useEffect(() => {
-    const getPatrolLeadID = async () => {
-      try {
-        const response = await axios.get(
-          `${import.meta.env.VITE_API_URL}/user/getUserDetails`
-        );
-        const userDetails = userDetailsSchema.parse(response.data.userDetails);
-        setPatrolId(String(userDetails.patrol_id));
-      } catch (error) {
-        console.error("Error fetching patrol lead ID:", error);
-      }
-    };
-
-    getPatrolLeadID();
-  }, []);
+  const { currentUserDetails } = useUserData();
 
   useEffect(() => {
     const getVehicleByPatrolId = async () => {
-      if (!patrolId) return;
+      if (!currentUserDetails?.patrol_id) return;
       try {
         const response = await axios.get(
-          `${import.meta.env.VITE_API_URL}/vehicle/${patrolId}`
+          `${import.meta.env.VITE_API_URL}/vehicle/${
+            currentUserDetails?.patrol_id
+          }`
         );
         const vehicleData = vehicleDetailsSchema.array().parse(response.data);
         setVehicleData(vehicleData);
@@ -52,16 +40,7 @@ const VehicleTable = () => {
     };
 
     getVehicleByPatrolId();
-  }, [patrolId]);
-
-  const handleAddVehicle = async (newVehicle: VehicleDetails) => {
-    try {
-      await axios.post(`${import.meta.env.VITE_API_URL}/vehicle`, newVehicle);
-      setIsModalOpen(false);
-    } catch (error) {
-      console.error("Error adding vehicle:", error);
-    }
-  };
+  }, [currentUserDetails?.patrol_id, vehicleData]);
 
   const removeVehicle = async (id: string) => {
     try {
@@ -136,8 +115,7 @@ const VehicleTable = () => {
       <AddVehicleModal
         isOpen={isModalOpen}
         onClose={closeModal}
-        onAddVehicle={handleAddVehicle}
-        patrolId={patrolId}
+        patrolId={currentUserDetails?.patrol_id || ""}
       />
     </div>
   );

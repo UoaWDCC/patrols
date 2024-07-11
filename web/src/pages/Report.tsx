@@ -53,7 +53,7 @@ export default function Report() {
     defaultValues: {
       startOdometer: startOdometer,
       endOdometer: endOdometer,
-      weatherCondition: "",
+      weatherCondition: "wet",
       observations: observationsList,
       debrief: debrief,
     },
@@ -107,10 +107,21 @@ export default function Report() {
       otherIncidents,
     };
 
+    // JSON.parse(localStorage.getItem("observations")!).forEach((o: any) => {
+    //   formData.observations.push(o);
+    //   console.log(formData.observations);
+    // });
+
     const data = {
       email: currentUserDetails?.email,
       cpnzID: currentUserDetails?.cpnz_id,
-      formData,
+      formData: {
+        ...formData,
+        memberId: currentUserDetails?.id,
+        shiftId: shiftDetails?.id,
+        vehicleId: "13",
+        isFootPatrol: false,
+      },
       statistics,
     };
 
