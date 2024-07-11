@@ -10,23 +10,22 @@ const CPNZ_APP_EMAIL = "ecc@cpnz.org.nz";
 const resend = new Resend(EMAIL_API_KEY);
 
 const reportSchema = z.object({
-  member_id: z.number(),
-  shift_id: z.number(),
-  vehicle_details_id: z.number(),
-  odometer_start: z.number(),
-  odometer_end: z.number(),
-  weather_condition: z.nativeEnum(Weather), // Change the type to Weather
-  is_foot_patrol: z.boolean(),
-  notes: z.string(),
+  startOdometer: z.string(),
+  weatherCondition: z.string(),
+  memberId: z.string(),
+  shiftId: z.string(),
+  vehicleId: z.string(),
+  endOdometer: z.string(),
+  isFootPatrol: z.boolean(),
+  debrief: z.string(),
   observations: z.array(
     z.object({
-      start_time: z.string().datetime(),
-      end_time: z.string().datetime(),
-      location: z.string(),
-      police_security_presence: z.boolean(),
-      incident_catorgory: z.string(),
-      incident_sub_category: z.string(),
+      time: z.string(),
       description: z.string(),
+      displayed: z.boolean(),
+      location: z.string(),
+      category: z.string(),
+      type: z.string(),
     })
   ),
 });
@@ -43,38 +42,16 @@ const statsSchema = z.object({
 
 const emailSchema = z.object({
   recipientEmail: z.string(),
-  cpnzID: z.string(),
-  report: reportSchema,
-  statistics: statsSchema,
+  data: z.object({
+    cpnzID: z.string(),
+    email: z.string(),
+    formData: reportSchema,
+    statistics: statsSchema,
+  }),
 });
 
-export const logOffStatus = async (req: Request, res: Response) => {
-  try {
-    const { id } = req.params;
-    console.log(req.params.id);
-    const user = await prisma.members_dev.findUnique({
-      where: { cpnz_id: BigInt(id) },
-    });
-
-    if (!user) {
-      return res.status(404).json({ error: "User not found" });
-    } else if (user.logon_status === LogonStatus.No) {
-      return res.status(400).json({ error: "User is already logged off" });
-    }
-
-    await prisma.members_dev.update({
-      where: { cpnz_id: BigInt(id) },
-      data: { logon_status: LogonStatus.No },
-    });
-
-    res.status(200).json({ message: "User has been logged off." });
-  } catch (error: any) {
-    res.status(400).json({ error: error.message });
-  }
-};
-
 export const logOffEmail = async (req: Request, res: Response) => {
-  console.log(req.body);
+  console.log(req.body.data);
 
   const parseResult = emailSchema.safeParse(req.body);
 
@@ -85,7 +62,7 @@ export const logOffEmail = async (req: Request, res: Response) => {
 
   const observerName = await prisma.members_dev.findFirst({
     where: {
-      cpnz_id: Number(parseResult.data.cpnzID),
+      cpnz_id: Number(parseResult.data.data.cpnzID),
     },
     select: { first_names: true, surname: true },
   });
@@ -99,12 +76,8 @@ export const logOffEmail = async (req: Request, res: Response) => {
 
   const ObserverFullName = `${observerName.first_names} ${observerName.surname}`;
 
-  const {
-    recipientEmail,
-    cpnzID,
-    report,
-    statistics,
-  }: z.infer<typeof emailSchema> = parseResult.data;
+  const { recipientEmail, data }: z.infer<typeof emailSchema> =
+    parseResult.data;
 
   // Check if the API key is provided
   if (!EMAIL_API_KEY) {
@@ -115,40 +88,43 @@ export const logOffEmail = async (req: Request, res: Response) => {
   }
 
   /* Create a post request to store the observation*/
-  prisma.reports.create({
+  const report = await prisma.reports.create({
     data: {
-      member_id: report.member_id,
-      shift_id: report.shift_id,
-      vehicle_details_id: report.vehicle_details_id,
-      odometer_initial_reading: report.odometer_start,
-      odometer_final_reading: report.odometer_end,
-      weather_condition: report.weather_condition,
-      is_foot_patrol: report.is_foot_patrol,
-      notes: report.notes,
-      km_travelled: statistics.kmTravelled,
-      person_incidents: statistics.personIncidents,
-      vehicle_incidents: statistics.vehicleIncidents,
-      property_incidents: statistics.propertyIncidents,
-      willful_damage_incidents: statistics.willfulDamageIncidents,
-      other_incidents: statistics.otherIncidents,
-      total_incidents: statistics.totalIncidents,
+      member_id: BigInt(data.formData.memberId),
+      shift_id: BigInt(data.formData.shiftId),
+      vehicle_details_id: BigInt(data.formData.vehicleId),
+      odometer_initial_reading: Number(data.formData.startOdometer),
+      odometer_final_reading: Number(data.formData.endOdometer),
+      weather_condition: Weather.Wet,
+      is_foot_patrol: data.formData.isFootPatrol,
+      notes: data.formData.debrief,
+      km_travelled: data.statistics.kmTravelled,
+      person_incidents: data.statistics.personIncidents,
+      vehicle_incidents: data.statistics.vehicleIncidents,
+      property_incidents: data.statistics.propertyIncidents,
+      willful_damage_incidents: data.statistics.willfulDamageIncidents,
+      other_incidents: data.statistics.otherIncidents,
+      total_incidents: data.statistics.totalIncidents,
     },
   });
 
   console.log("report created");
 
   // Loop through observations using forEach
-  report.observations.forEach((observation, index) => {
-    prisma.observations.create({
+  data.formData.observations.forEach(async (observation, index) => {
+    const currentDate = new Date().toISOString().split("T")[0];
+    const time = new Date(currentDate + "T" + observation.time).toISOString();
+
+    await prisma.observations.create({
       data: {
-        start_time: observation.location,
-        end_time: observation.end_time,
+        start_time: time,
+        end_time: time,
         location: observation.location,
-        is_police_or_security_present: observation.police_security_presence,
-        incident_category: observation.incident_catorgory,
-        incident_sub_category: observation.incident_sub_category,
+        is_police_or_security_present: false,
+        incident_category: observation.category,
+        incident_sub_category: observation.category,
         description: observation.description,
-        report_id: report.shift_id,
+        report_id: report.id,
       },
     });
   });
@@ -157,10 +133,10 @@ export const logOffEmail = async (req: Request, res: Response) => {
 
   /* Send email to the recipient */
   try {
-    const data = await resend.emails.send({
+    const email = await resend.emails.send({
       from: `CPNZ <${CPNZ_APP_EMAIL}>`,
       to: [`${recipientEmail}`],
-      subject: `CPNZ - Log Off - Patrol ID: ${cpnzID}`,
+      subject: `CPNZ - Log Off - Patrol ID: ${data.cpnzID} - Shift ID: ${data.formData.shiftId}`,
       html: `
             <div style="font-family: Arial, sans-serif; line-height: 1.8;">
           <p style="font-size: 1.2em; font-weight: bold;">
@@ -174,7 +150,12 @@ export const logOffEmail = async (req: Request, res: Response) => {
         </div>`,
     });
 
-    res.status(200).json(data);
+    await prisma.members_dev.update({
+      where: { id: BigInt(data.formData.memberId) },
+      data: { logon_status: LogonStatus.No },
+    });
+
+    res.status(200).json(email);
   } catch (error) {
     res.status(400).json(error);
   }

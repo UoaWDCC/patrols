@@ -116,8 +116,6 @@ export const sendShiftRequest = async (req: Request, res: Response) => {
       vehicle_id: Number(parseResult.data.formData.vehicle),
     };
 
-    console.log(d);
-
     shift = await prisma.shift.create({
       data: {
         patrol_id: Number(parseResult.data.driver.patrol_id),
@@ -129,8 +127,6 @@ export const sendShiftRequest = async (req: Request, res: Response) => {
         vehicle_id: Number(parseResult.data.formData.vehicle),
       },
     });
-
-    console.log(1);
 
     const {
       email,

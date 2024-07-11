@@ -26,6 +26,7 @@ export const getUserDetailsByCPNZID = async (req: Request, res: Response) => {
         cpnz_id: extractCPNZIDFromEmail(user?.email as string),
       },
       select: {
+        id: true,
         cpnz_id: true,
         patrol_id: true,
         email: true,
@@ -68,6 +69,7 @@ export const getUserDetailsByCPNZID = async (req: Request, res: Response) => {
       },
       select: {
         event_no: true,
+        id: true,
       },
     });
 
