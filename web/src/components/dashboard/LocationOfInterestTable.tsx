@@ -4,6 +4,16 @@ import { locationOfInterestSchema, userDetailsSchema } from "../../schemas";
 import { z } from "zod";
 import AddLocationOfInterestModal from "./AddLocationOfInterestModal";
 import { formatDate } from "@utils/formateDate";
+import {
+  Table,
+  TableBody,
+  TableCaption,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@components/ui/table";
+import { Button } from "@components/ui/button";
 
 interface LocationOfInterTableProps {
   showActions: boolean;
@@ -106,75 +116,62 @@ const LocationOfInteretTable: React.FC<LocationOfInterTableProps> = ({
       <h2 className="text-center text-2xl font-bold my-4">
         Location Of Interest
       </h2>
+      <div className="p-12 shadow-md mb-8 max-h-[400px] overflow-y-auto">
+        <Table className="">
+          <TableHeader>
+            <TableRow>
+              <TableHead>Start Time</TableHead>
+              <TableHead>End Time</TableHead>
+              <TableHead>Location</TableHead>
+              <TableHead>Is Police Or Security Present</TableHead>
+              <TableHead>Incident Category</TableHead>
+              <TableHead>Incident Sub Category</TableHead>
+              <TableHead>Description</TableHead>
+              {showActions && <TableHead>Actions</TableHead>}
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {locationOfInterestData.map((location_of_interest) => (
+              <TableRow key={location_of_interest.id}>
+                <TableCell>
+                  {formatDate(location_of_interest.start_time)}
+                </TableCell>
+                <TableCell>
+                  {formatDate(location_of_interest.end_time)}
+                </TableCell>
+                <TableCell>{location_of_interest.location}</TableCell>
+                <TableCell>
+                  {location_of_interest.is_police_or_security_present
+                    ? "Yes"
+                    : "No"}
+                </TableCell>
+                <TableCell>{location_of_interest.incident_category}</TableCell>
+                <TableCell>
+                  {location_of_interest.incident_sub_category}
+                </TableCell>
+                <TableCell>{location_of_interest.description}</TableCell>
+                {showActions && (
+                  <TableCell>
+                    <Button
+                      variant={"destructive"}
+                      className="text-[14px]"
+                      onClick={() => removeVehicle(location_of_interest.id)}
+                    >
+                      Delete
+                    </Button>
+                  </TableCell>
+                )}
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </div>
+
       {showActions && (
-        <button
-          className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded mb-4"
-          onClick={openModal}
-        >
-          Add Location Of Interest
-        </button>
+        <Button className="bg-cpnz-blue-800 text-[14px]" onClick={openModal}>
+          Add Location of Interest
+        </Button>
       )}
-      <table className="table-auto w-full border-collapse border border-gray-400">
-        <thead>
-          <tr className="bg-gray-200">
-            <th className="border border-gray-400 px-4 py-2">Start Time</th>
-            <th className="border border-gray-400 px-4 py-2">End Time</th>
-            <th className="border border-gray-400 px-4 py-2">Location</th>
-            <th className="border border-gray-400 px-4 py-2">
-              Is Police Or Security Present
-            </th>
-            <th className="border border-gray-400 px-4 py-2">
-              Incident Category
-            </th>
-            <th className="border border-gray-400 px-4 py-2">
-              Incident Sub Category
-            </th>
-            <th className="border border-gray-400 px-4 py-2">Description</th>
-            {showActions && (
-              <th className="border border-gray-400 px-4 py-2">Actions</th>
-            )}
-          </tr>
-        </thead>
-        <tbody>
-          {locationOfInterestData.map((location_of_interest) => (
-            <tr key={location_of_interest.id}>
-              <td className="border border-gray-400 px-4 py-2">
-                {formatDate(location_of_interest.start_time)}
-              </td>
-              <td className="border border-gray-400 px-4 py-2">
-                {formatDate(location_of_interest.end_time)}
-              </td>
-              <td className="border border-gray-400 px-4 py-2">
-                {location_of_interest.location}
-              </td>
-              <td className="border border-gray-400 px-4 py-2">
-                {location_of_interest.is_police_or_security_present
-                  ? "Yes"
-                  : "No"}
-              </td>
-              <td className="border border-gray-400 px-4 py-2">
-                {location_of_interest.incident_category}
-              </td>
-              <td className="border border-gray-400 px-4 py-2">
-                {location_of_interest.incident_sub_category}
-              </td>
-              <td className="border border-gray-400 px-4 py-2">
-                {location_of_interest.description}
-              </td>
-              {showActions && (
-                <td className="border border-gray-400 px-4 py-2">
-                  <button
-                    className="bg-red-500 hover:bg-red-600 text-white font-bold py-1 px-2 rounded"
-                    onClick={() => removeVehicle(location_of_interest.id)}
-                  >
-                    Delete
-                  </button>
-                </td>
-              )}
-            </tr>
-          ))}
-        </tbody>
-      </table>
 
       {showActions && (
         <AddLocationOfInterestModal
