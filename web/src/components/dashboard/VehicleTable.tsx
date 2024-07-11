@@ -56,12 +56,7 @@ const VehicleTable = () => {
 
   const handleAddVehicle = async (newVehicle: VehicleDetails) => {
     try {
-      const response = await axios.post(
-        `${import.meta.env.VITE_API_URL}/vehicle`,
-        newVehicle
-      );
-      const addedVehicle = response.data;
-      setVehicleData([...vehicleData, addedVehicle]);
+      await axios.post(`${import.meta.env.VITE_API_URL}/vehicle`, newVehicle);
       setIsModalOpen(false);
     } catch (error) {
       console.error("Error adding vehicle:", error);
@@ -88,7 +83,7 @@ const VehicleTable = () => {
   return (
     <div className="container mx-auto">
       <h2 className="text-center text-2xl font-bold mt-8">Vehicle List</h2>
-      <div className="p-12 shadow-md mb-8">
+      <div className="p-12 shadow-md mb-8 max-h-[400px] overflow-y-auto">
         <Table>
           <TableCaption>
             List of all vehicles registered in your patrol.
@@ -134,7 +129,7 @@ const VehicleTable = () => {
         </Table>
       </div>
 
-      <Button className="bg-cpnz-blue-800" onClick={openModal}>
+      <Button className="bg-cpnz-blue-800 text-[14px]" onClick={openModal}>
         Add Vehicle
       </Button>
 
