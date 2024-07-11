@@ -10,35 +10,44 @@ const CPNZ_APP_EMAIL = "ecc@cpnz.org.nz";
 const resend = new Resend(EMAIL_API_KEY);
 
 const reportSchema = z.object({
-  member_id: z.number(),
-  shift_id: z.number(),
-  vehicle_details_id: z.number(),
-  odometer_start: z.number(),
-  odometer_end: z.number(),
-  weather_condition: z.nativeEnum(Weather), // Change the type to Weather
-  is_foot_patrol: z.boolean(),
-  notes: z.string(),
+  startOdometer: z.string(),
+  weatherCondition: z.string(),
+  memberId: z.string(),
+  shiftId: z.string(),
+  vehicleId: z.string(),
+  endOdometer: z.string(),
+  isFootPatrol: z.boolean(),
+  debrief: z.string(),
   observations: z.array(
     z.object({
-      start_time: z.string().datetime(),
-      end_time: z.string().datetime(),
-      location: z.string(),
-      police_security_presence: z.boolean(),
-      incident_catorgory: z.string(),
-      incident_sub_category: z.string(),
+      time: z.string(),
       description: z.string(),
+      displayed: z.boolean(),
+      location: z.string(),
+      category: z.string(),
+      type: z.string(),
     })
   ),
 });
 
 const statsSchema = z.object({
-  km_travelled: z.number(),
-  person_incidents: z.number(),
-  vehicle_incidents: z.number(),
-  property_incidents: z.number(),
-  willful_damage_incidents: z.number(),
-  other_incidents: z.number(),
-  total_incidents: z.number(),
+  kmTravelled: z.number(),
+  personIncidents: z.number(),
+  vehicleIncidents: z.number(),
+  propertyIncidents: z.number(),
+  willfulDamageIncidents: z.number(),
+  otherIncidents: z.number(),
+  totalIncidents: z.number(),
+});
+
+const emailSchema = z.object({
+  recipientEmail: z.string(),
+  data: z.object({
+    cpnzId: z.string(),
+    email: z.string(),
+    formData: reportSchema,
+    statistics: statsSchema,
+  }),
 });
 
 export const logOffStatus = async (req: Request, res: Response) => {
@@ -67,13 +76,7 @@ export const logOffStatus = async (req: Request, res: Response) => {
 };
 
 export const logOffEmail = async (req: Request, res: Response) => {
-  console.log("backend reached");
-  const emailSchema = z.object({
-    recipientEmail: z.string(),
-    cpnzID: z.string(),
-    report: reportSchema,
-    statistics: statsSchema,
-  });
+  console.log(req.body.data);
 
   const parseResult = emailSchema.safeParse(req.body);
 
@@ -84,7 +87,7 @@ export const logOffEmail = async (req: Request, res: Response) => {
 
   const observerName = await prisma.members_dev.findFirst({
     where: {
-      cpnz_id: Number(parseResult.data.cpnzID),
+      cpnz_id: Number(parseResult.data.data.cpnzId),
     },
     select: { first_names: true, surname: true },
   });
@@ -98,12 +101,8 @@ export const logOffEmail = async (req: Request, res: Response) => {
 
   const ObserverFullName = `${observerName.first_names} ${observerName.surname}`;
 
-  const {
-    recipientEmail,
-    cpnzID,
-    report,
-    statistics,
-  }: z.infer<typeof emailSchema> = parseResult.data;
+  const { recipientEmail, data }: z.infer<typeof emailSchema> =
+    parseResult.data;
 
   // Check if the API key is provided
   if (!EMAIL_API_KEY) {
@@ -116,38 +115,38 @@ export const logOffEmail = async (req: Request, res: Response) => {
   /* Create a post request to store the observation*/
   prisma.reports.create({
     data: {
-      member_id: report.member_id,
-      shift_id: report.shift_id,
-      vehicle_details_id: report.vehicle_details_id,
-      odometer_initial_reading: report.odometer_start,
-      odometer_final_reading: report.odometer_end,
-      weather_condition: report.weather_condition,
-      is_foot_patrol: report.is_foot_patrol,
-      notes: report.notes,
-      km_travelled: statistics.km_travelled,
-      person_incidents: statistics.person_incidents,
-      vehicle_incidents: statistics.vehicle_incidents,
-      property_incidents: statistics.property_incidents,
-      willful_damage_incidents: statistics.willful_damage_incidents,
-      other_incidents: statistics.other_incidents,
-      total_incidents: statistics.total_incidents,
+      member_id: BigInt(data.formData.memberId),
+      shift_id: BigInt(data.formData.shiftId),
+      vehicle_details_id: BigInt(data.formData.vehicleId),
+      odometer_initial_reading: Number(data.formData.startOdometer),
+      odometer_final_reading: Number(data.formData.endOdometer),
+      weather_condition: Weather.Wet,
+      is_foot_patrol: data.formData.isFootPatrol,
+      notes: data.formData.debrief,
+      km_travelled: data.statistics.kmTravelled,
+      person_incidents: data.statistics.personIncidents,
+      vehicle_incidents: data.statistics.vehicleIncidents,
+      property_incidents: data.statistics.propertyIncidents,
+      willful_damage_incidents: data.statistics.willfulDamageIncidents,
+      other_incidents: data.statistics.otherIncidents,
+      total_incidents: data.statistics.totalIncidents,
     },
   });
 
   console.log("report created");
 
   // Loop through observations using forEach
-  report.observations.forEach((observation, index) => {
+  data.formData.observations.forEach((observation, index) => {
     prisma.observations.create({
       data: {
-        start_time: observation.location,
-        end_time: observation.end_time,
+        start_time: observation.time,
+        end_time: observation.time,
         location: observation.location,
-        is_police_or_security_present: observation.police_security_presence,
-        incident_category: observation.incident_catorgory,
-        incident_sub_category: observation.incident_sub_category,
+        is_police_or_security_present: false,
+        incident_category: observation.category,
+        incident_sub_category: observation.category,
         description: observation.description,
-        report_id: report.shift_id,
+        report_id: BigInt(data.formData.shiftId),
       },
     });
   });
@@ -156,10 +155,10 @@ export const logOffEmail = async (req: Request, res: Response) => {
 
   /* Send email to the recipient */
   try {
-    const data = await resend.emails.send({
+    const email = await resend.emails.send({
       from: `CPNZ <${CPNZ_APP_EMAIL}>`,
       to: [`${recipientEmail}`],
-      subject: `CPNZ - Log Off - Patrol ID: ${cpnzID}`,
+      subject: `CPNZ - Log Off - Patrol ID: ${data.cpnzId} - Shift ID: ${data.formData.shiftId}`,
       html: `
             <div style="font-family: Arial, sans-serif; line-height: 1.8;">
           <p style="font-size: 1.2em; font-weight: bold;">
@@ -173,7 +172,7 @@ export const logOffEmail = async (req: Request, res: Response) => {
         </div>`,
     });
 
-    res.status(200).json(data);
+    res.status(200).json(email);
   } catch (error) {
     res.status(400).json(error);
   }
