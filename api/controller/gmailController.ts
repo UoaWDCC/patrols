@@ -138,7 +138,7 @@ const storeEventIdInDb = async (
     }
 
     return true;
-    
+
   } catch (error) {
     throw error;
   }
@@ -395,6 +395,46 @@ const getMails = async () => {
   }
 };
 
+const saveWatchTimestampInDb = async (watchTimestamp: Date): Promise<boolean> => {
+
+  const storeWatchTimestamp = await prisma.email_history_dev.update({
+    where: {
+      id: 1,
+    },
+    data: {
+      watch_instance_timestamp: watchTimestamp,
+    },
+  });
+
+  if (!storeWatchTimestamp) {
+    throw new Error("Unable to store current Watch instance's timestamp in DB");
+  }
+
+  return true;
+}
+
+const getWatchTimestampFromDb = async (): Promise<Date> => {
+
+  const fetchWatchTimestamp = await prisma.email_history_dev.findUnique({
+    where: {
+      id: 1,
+    },
+    select: {
+      watch_instance_timestamp: true,
+    },
+  })
+
+  const timestamp: Date | null | undefined = fetchWatchTimestamp?.watch_instance_timestamp
+
+  if (!timestamp) {
+    throw new Error('Failed to fetch Watch\'s timestamp from DB')
+  }
+
+  return timestamp;
+}
+
+
+
 /**
  * Reliability:
  * Typically all notifications should be delivered reliably within a few seconds; however in some
@@ -409,33 +449,68 @@ const getMails = async () => {
  * @param req
  * @param res
  */
+const callWatchMailsAPI = async (): Promise<any> => {
+  const { token } = await oAuth2Client.getAccessToken();
+
+  const url = `https://www.googleapis.com/gmail/v1/users/${cpnzEmail}/watch`;
+  const topic = process.env.GOOGLE_CLOUD_TOPIC_ID ?? "";
+  const projectID = process.env.GOOGLE_CLOUD_PROJECT_ID ?? "";
+  const data = {
+    topicName: `projects/${projectID}/topics/${topic}`,
+    labelIds: ["UNREAD"],
+    labelFilterBehavior: "INCLUDE",
+  };
+
+  if (token) {
+    const config = createPostConfig(url, token, data);
+    const response = await axios.request(config);
+
+    const history_id = response.data.historyId
+    saveHistoryIdInDb(history_id);
+    const date = new Date()
+    saveWatchTimestampInDb(date);
+    console.log(`Store watch instance with info: History ID[${history_id}], Timestamp[${date}]`)
+
+    return response.data;
+  } else {
+    throw new Error("Unable to get access token");
+  }
+};
+
 const watchMails = async (req: Request, res: Response): Promise<void> => {
   try {
-    const { token } = await oAuth2Client.getAccessToken();
-
-    const url = `https://www.googleapis.com/gmail/v1/users/${cpnzEmail}/watch`;
-    const topic = process.env.GOOGLE_CLOUD_TOPIC_ID ?? "";
-    const projectID = process.env.GOOGLE_CLOUD_PROJECT_ID ?? "";
-    const data = {
-      topicName: `projects/${projectID}/topics/${topic}`,
-      labelIds: ["UNREAD"],
-      labelFilterBehavior: "INCLUDE",
-    };
-
-    if (token) {
-      const config = createPostConfig(url, token, data);
-      const response = await axios.request(config);
-      saveHistoryIdInDb(response.data.historyId); // temp
-      res.status(200).json(response.data);
-    } else {
-      res.status(500).json("Unable to get access token");
-    }
+    const responseData = await callWatchMailsAPI();
+    res.status(200).json(responseData);
   } catch (error) {
     if (axios.isAxiosError(error) && error.response) {
       res.status(error.response.status).json(error.response.data);
     } else {
       res.status(500).json("An unknown error occurred");
     }
+  }
+};
+
+const checkAndRenewWatch = async () => {
+  try {
+
+    const currentTimestamp = await getWatchTimestampFromDb();
+
+    if (currentTimestamp) {
+      const now = new Date();
+      const differenceInDays = Math.floor((now.getTime() - currentTimestamp.getTime()) / (1000 * 3600 * 24));
+
+      console.log(`Days since last call to watch: ${differenceInDays} days`)
+
+      // Check if more than 6 days have passed since last watch initiation
+      if (differenceInDays >= 6) {
+        // Call the watchMails function again to renew the watch
+        await callWatchMailsAPI();
+      }
+    } else {
+      console.error("No watch info found in the database");
+    }
+  } catch (error) {
+    console.error("Error checking and renewing watch:", error);
   }
 };
 
@@ -461,5 +536,8 @@ const stopWatchMails = async (req: Request, res: Response): Promise<void> => {
     }
   }
 };
+
+// check daily
+setInterval(checkAndRenewWatch, 24 * 60 * 60 * 1000);
 
 export { watchMails, getHistoryRecords, stopWatchMails, saveHistoryIdInDb };
