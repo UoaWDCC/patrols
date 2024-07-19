@@ -19,7 +19,7 @@ import {
   DialogClose,
   DialogFooter,
 } from "@components/ui/dialog";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 interface ReportObservationProps {
   form: UseFormReturn<z.infer<typeof reportFormSchema>>;
