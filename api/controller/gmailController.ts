@@ -410,6 +410,9 @@ const saveWatchTimestampInDb = async (watchTimestamp: Date): Promise<boolean> =>
     throw new Error("Unable to store current Watch instance's timestamp in DB");
   }
 
+  console.log(`\n`);
+  console.log("Store watch timestamp: " + watchTimestamp);
+
   return true;
 }
 
@@ -433,8 +436,6 @@ const getWatchTimestampFromDb = async (): Promise<Date> => {
   return timestamp;
 }
 
-
-
 /**
  * Reliability:
  * Typically all notifications should be delivered reliably within a few seconds; however in some
@@ -446,8 +447,6 @@ const getWatchTimestampFromDb = async (): Promise<Date> => {
  * You must re-call watch at least every 7 days or else you will stop receiving updates for the
  * user. We recommend calling watch once per day. The watch response also has an expiration field
  * with the timestamp for the watch expiration.
- * @param req
- * @param res
  */
 const callWatchMailsAPI = async (): Promise<any> => {
   const { token } = await oAuth2Client.getAccessToken();
