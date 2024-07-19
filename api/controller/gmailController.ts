@@ -131,26 +131,14 @@ const storeEventIdInDb = async (
       },
     });
 
-    // const updateDriverLogonStatus = await prisma.members_dev.update({
-    //     where: {
-    //         id: driverId
-    //     },
-    //     data: {
-    //         logon_status: 'Yes'
-    //     }
-    // })
-
     if (!updateObseverLogonStatus) {
       throw new Error(
         `Unable to update observer ID: ${observerId} 's logon status for shift ID: ${logOnIdInt} in DB`
       );
     }
 
-    // if(!updateDriverLogonStatus) {
-    //     throw new Error(`Unable to update driver ID: ${driverId} 's logon status for shift ID: ${logOnIdInt} in DB`);
-    // }
-
     return true;
+    
   } catch (error) {
     throw error;
   }
