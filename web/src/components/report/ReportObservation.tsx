@@ -95,12 +95,6 @@ const ReportObservation = ({
   update,
 }: ReportObservationProps) => {
 
-  useEffect(() => {
-    setTimeout(() => {
-      console.log(fields)
-    })
-  })
-
   const { address } = useCurrentLocation();
   const date = new Date();
   let parsedDate = "";
@@ -314,43 +308,43 @@ const ReportObservation = ({
       </Dialog>
 
       <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
-      {fields.map((observation: Observation, i: number) => (
-        <div
-          key={`observation-${i}`}
-          className="shadow-md bg-[#F8F8F8] rounded-lg p-4 my-4 text-left"
-        >
-          <div className="flex justify-between items-center mb-2">
-            <div>
-              <h3 className="text-base font-semibold">{observation.location}</h3>
-              <p className="text-xs text-gray-500 font-light">{observation.time}</p>
-            </div>
-            <div className="flex flex-col gap-3">
-              <DialogTrigger asChild>
+        {fields.map((observation: Observation, i: number) => (
+          <div
+            key={`observation-${i}`}
+            className="shadow-md bg-[#F8F8F8] rounded-lg p-4 my-4 text-left"
+          >
+            <div className="flex justify-between items-center mb-2">
+              <div>
+                <h3 className="text-base font-semibold">{observation.location}</h3>
+                <p className="text-xs text-gray-500 font-light">{observation.time}</p>
+              </div>
+              <div className="flex flex-col gap-3">
+                <DialogTrigger asChild>
+                  <button
+                    onClick={() => expandEditObservation(i)}
+                    className="text-blue-500 hover:text-blue-700 text-xs"
+                    type="button"
+                  >
+                    Edit
+                  </button>
+                </DialogTrigger>
                 <button
-                  onClick={() => expandEditObservation(i)}
-                  className="text-blue-500 hover:text-blue-700 text-xs"
+                  onClick={() =>
+                    deleteObservation(i, fields, setObservationsList, remove)
+                  }
+                  className="text-red-500 hover:text-red-700 text-xs"
                   type="button"
                 >
-                  Edit
+                  Delete
                 </button>
-              </DialogTrigger>
-              <button
-                onClick={() =>
-                  deleteObservation(i, fields, setObservationsList, remove)
-                }
-                className="text-red-500 hover:text-red-700 text-xs"
-                type="button"
-              >
-                Delete
-              </button>
+              </div>
             </div>
+            <p className="text-xs text-gray-500 mt-2">
+              Category: {observation.category}
+            </p>
+            <p className="text-base">{observation.description}</p>
           </div>
-          <p className="text-xs text-gray-500 mt-2">
-            Category: {observation.category}
-          </p>
-          <p className="text-base">{observation.description}</p>
-        </div>
-      ))}
+        ))}
         <DialogContent>
           <div className="flex flex-col gap-4">
             <h2 className="text-xs text-left font-light mb-4">
