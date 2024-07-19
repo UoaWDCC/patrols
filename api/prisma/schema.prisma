@@ -78,8 +78,9 @@ model districts_prod {
 }
 
 model email_history_dev {
-  id         BigInt  @id @default(autoincrement())
-  history_id BigInt?
+  id                       BigInt    @id @default(autoincrement())
+  history_id               BigInt?
+  watch_instance_timestamp DateTime? @db.Timestamptz(6)
 }
 
 model equipment_checklist {

@@ -42,7 +42,6 @@ function listenForMessages(subscriptionNameOrId: string): void {
             }
         };
 
-        // Listen for new messages until timeout is hit
         subscription.on('message', messageHandler);
     } catch (err) {
         console.log('Error: failed to pull a message from gmail')

@@ -59,7 +59,7 @@ export default function Report() {
     },
   });
 
-  const { fields, append, remove } = useFieldArray({
+  const { fields, append, remove, update } = useFieldArray({
     control: form.control,
     name: "observations",
   });
@@ -170,6 +170,7 @@ export default function Report() {
               setObservationsList={setObservationsList}
               append={append}
               remove={remove}
+              update={update}
             />
             <button className="bg-[#FF8080] my-10 rounded-lg shadow-md p-4 w-full hover:bg-[#ff4d4d]">
               Submit Report & Log Off
