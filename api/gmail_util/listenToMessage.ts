@@ -3,26 +3,26 @@ import { getHistoryRecords } from '../controller/gmailController';
 import prisma from '../db/database';
 
 
-const gCloudClientEmail = process.env.GOOGLE_CLOUD_CLIENT_EMAIL
-const gCloudPrivateKeyJSON = JSON.parse(process.env.GOOGLE_CLOUD_PRIVATE_KEY|| '{}');
-const gCloudPrivateKey = gCloudPrivateKeyJSON.private_key
-const gCloudProjectId = process.env.GOOGLE_CLOUD_PROJECT_ID;
-
-if(!gCloudClientEmail || !gCloudPrivateKey || !gCloudProjectId) {
-    console.log("Error: please ensure [GOOGLE_CLOUD_CLIENT_EMAIL], [GOOGLE_CLOUD_PRIVATE_KEY] or [GOOGLE_CLOUD_PROJECT_ID] .env variables are properly stored")
-}
-
-const pubSubClient = new PubSub({
-    projectId: gCloudProjectId,
-    credentials: {
-        client_email: gCloudClientEmail,
-        private_key: gCloudPrivateKey
-    }
-});
-
 function listenForMessages(subscriptionNameOrId: string): void {
     // References an existing subscription
     try {
+        const gCloudClientEmail = process.env.GOOGLE_CLOUD_CLIENT_EMAIL
+        const gCloudPrivateKeyJSON = JSON.parse(process.env.GOOGLE_CLOUD_PRIVATE_KEY || '{}');
+        const gCloudPrivateKey = gCloudPrivateKeyJSON.private_key
+        const gCloudProjectId = process.env.GOOGLE_CLOUD_PROJECT_ID;
+
+        if (!gCloudClientEmail || !gCloudPrivateKey || !gCloudProjectId) {
+            throw new Error("Error: please ensure [GOOGLE_CLOUD_CLIENT_EMAIL], [GOOGLE_CLOUD_PRIVATE_KEY] or [GOOGLE_CLOUD_PROJECT_ID] .env variables are properly stored")
+        }
+
+        const pubSubClient = new PubSub({
+            projectId: gCloudProjectId,
+            credentials: {
+                client_email: gCloudClientEmail,
+                private_key: gCloudPrivateKey
+            }
+        });
+
         const subscription = pubSubClient.subscription(subscriptionNameOrId);
 
         // Create an event handler to handle messages
