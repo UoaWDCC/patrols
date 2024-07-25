@@ -2,11 +2,27 @@ import { PubSub, Message } from '@google-cloud/pubsub';
 import { getHistoryRecords } from '../controller/gmailController';
 import prisma from '../db/database';
 
-const pubSubClient = new PubSub();
 
 function listenForMessages(subscriptionNameOrId: string): void {
     // References an existing subscription
     try {
+        const gCloudClientEmail = process.env.GOOGLE_CLOUD_CLIENT_EMAIL
+        const gCloudPrivateKeyJSON = JSON.parse(process.env.GOOGLE_CLOUD_PRIVATE_KEY || '{}');
+        const gCloudPrivateKey = gCloudPrivateKeyJSON.private_key
+        const gCloudProjectId = process.env.GOOGLE_CLOUD_PROJECT_ID;
+
+        if (!gCloudClientEmail || !gCloudPrivateKey || !gCloudProjectId) {
+            throw new Error("Error: please ensure [GOOGLE_CLOUD_CLIENT_EMAIL], [GOOGLE_CLOUD_PRIVATE_KEY] or [GOOGLE_CLOUD_PROJECT_ID] .env variables are properly stored")
+        }
+
+        const pubSubClient = new PubSub({
+            projectId: gCloudProjectId,
+            credentials: {
+                client_email: gCloudClientEmail,
+                private_key: gCloudPrivateKey
+            }
+        });
+
         const subscription = pubSubClient.subscription(subscriptionNameOrId);
 
         // Create an event handler to handle messages
@@ -31,10 +47,10 @@ function listenForMessages(subscriptionNameOrId: string): void {
 
             const historyId: bigint | null | undefined = fetchHistoryId?.history_id
 
-            if(!historyId) {
+            if (!historyId) {
                 throw new Error('Failed to fetch gmail history ID')
             }
-            
+
             const success = await getHistoryRecords(historyId);
 
             if (success) {
@@ -43,8 +59,9 @@ function listenForMessages(subscriptionNameOrId: string): void {
         };
 
         subscription.on('message', messageHandler);
-    } catch (err) {
-        console.log('Error: failed to pull a message from gmail')
+    } catch (err: any) {
+        console.log('Error - failed to pull a message from gmail:')
+        console.log(err.message)
     }
 
 }
