@@ -33,8 +33,9 @@ const fetchUserData = async () => {
     const parsedVehicleDetails = vehicleDetailsSchema
       .array()
       .parse(vehicleDetails);
+    console.log(shiftDetails);
     const parsedShiftDetails = shiftDetailsSchema.parse(shiftDetails);
-    console.log(reportDetails);
+
     return {
       parsedUserDetails,
       parsedPatrolDetails,

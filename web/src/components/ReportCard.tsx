@@ -7,21 +7,32 @@ import {
   DialogTitle,
   DialogDescription,
 } from "@components/ui/dialog";
-import { reportSchema } from "../schemas/index";
+import { reportSchema, shiftDetailsSchema } from "../schemas/index";
 import { z } from "zod";
 import { formatDate } from "@utils/formateDate";
 
-type Report = z.infer<typeof reportSchema>;
+interface ReportCardProps {
+  report: z.infer<typeof reportSchema>;
+  shift: z.infer<typeof shiftDetailsSchema>;
+  fullName: String;
+}
 
-export default function reportCard(report: Report) {
+export default function reportCard(props: ReportCardProps) {
+  const { report, fullName, shift } = props;
   return (
     <div
       key={report.id}
       className="p-6 px-8 bg-white mb-4 shadow-md rounded-lg"
     >
       <div className="flex items-start justify-between">
-        <h3 className="text-lg font-semibold">Report: {report.id}</h3>
-        <div>
+        <div className="flex flex-col justify-start items-start">
+          <h3 className="text-lg font-semibold">{fullName}</h3>
+          <p>
+            {formatDate(shift.start_time)} - {formatDate(shift.end_time)}
+          </p>
+        </div>
+
+        <div className="flex flex-col items-start">
           <p>
             Shift: <strong>{report.shift_id}</strong>
           </p>

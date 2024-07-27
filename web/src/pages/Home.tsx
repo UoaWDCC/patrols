@@ -14,8 +14,6 @@ import BottomNavBar from "@components/BottomNavBar";
 import logon from "../assets/images/logon.png";
 import useUserData from "../hooks/useUserData";
 import ReportCard from "@components/ReportCard";
-import { reportSchema } from "../schemas";
-import { z } from "zod";
 
 export default function Home() {
   const navigate = useNavigate();
@@ -25,7 +23,8 @@ export default function Home() {
     navigate("/logon");
   };
 
-  const { currentUserDetails, reportDetails } = useUserData();
+  const { currentUserDetails, reportDetails, fullName, shiftDetails } =
+    useUserData();
 
   // Check the curent user's logon status, if "Yes", then redirect to logon home
   useEffect(() => {
@@ -74,7 +73,9 @@ export default function Home() {
           {reportDetails.length > 0 ? (
             <div className=" bg-[#F8F8F8] shadow-md mt-4">
               <ReportCard
-                {...(reportDetails[0] as z.infer<typeof reportSchema>)}
+                report={reportDetails[0]}
+                fullName={fullName}
+                shift={shiftDetails!}
               />
             </div>
           ) : (
@@ -98,8 +99,10 @@ export default function Home() {
                   <div>
                     {reportDetails.map((report) => (
                       <ReportCard
-                        {...(report as z.infer<typeof reportSchema>)}
+                        shift={shiftDetails!}
+                        report={report}
                         key={report.id}
+                        fullName={fullName}
                       />
                     ))}
                   </div>

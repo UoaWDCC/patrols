@@ -83,6 +83,11 @@ export const getUserDetailsByCPNZID = async (req: Request, res: Response) => {
       select: {
         event_no: true,
         id: true,
+        start_time: true,
+        end_time: true,
+        police_station_base: true,
+        observer_id: true,
+        driver_id: true,
       },
     });
 
