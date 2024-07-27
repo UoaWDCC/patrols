@@ -12,13 +12,31 @@ function listenForMessages(subscriptionNameOrId: string): void {
     // )
     //   .split(String.raw`\n`)
     //   .join("\n");
+
     const gCloudProjectId = process.env.GOOGLE_CLOUD_PROJECT_ID;
 
-    const gCloudPrivateKey = JSON.parse(
-      Buffer.from(process.env.GOOGLE_ENCODED_KEY!, "base64")
-        .toString()
-        .replace(/\n/g, "")
-    );
+    // console.log(
+    //   Buffer.from(process.env.GOOGLE_ENCODED_KEY!, "base64")
+    //     .toString()
+    //     .replace(/^"|"$/g, "")
+    //     .split(String.raw`\n`)
+    //     .join("\n")
+    // );
+
+    // console.log(
+    //   process.env.GOOGLE_CLOUD_PRIVATE_KEY?.replace(/^"|"$/g, "")
+    //     .split(String.raw`\n`)
+    //     .join("\n")
+    // );
+
+    const gCloudPrivateKey = Buffer.from(
+      process.env.GOOGLE_ENCODED_KEY!,
+      "base64"
+    )
+      .toString()
+      .replace(/^"|"$/g, "")
+      .split(String.raw`\n`)
+      .join("\n");
 
     if (!gCloudClientEmail || !gCloudPrivateKey || !gCloudProjectId) {
       throw new Error(
