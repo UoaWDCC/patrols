@@ -116,8 +116,6 @@ export const sendShiftRequest = async (req: Request, res: Response) => {
       vehicle_id: Number(parseResult.data.formData.vehicle),
     };
 
-    console.log(d);
-
     shift = await prisma.shift.create({
       data: {
         patrol_id: Number(parseResult.data.driver.patrol_id),
@@ -130,8 +128,6 @@ export const sendShiftRequest = async (req: Request, res: Response) => {
       },
     });
 
-    console.log(1);
-
     const {
       email,
       recipientEmail,
@@ -139,7 +135,7 @@ export const sendShiftRequest = async (req: Request, res: Response) => {
       formData,
       driver,
     }: z.infer<typeof emailSchema> = parseResult.data;
-
+    
     if (!EMAIL_API_KEY) {
       //res.status(400).json({ message: "Auth failed: Please provide Resend API key." });
       throw new Error("Auth failed: Please provide Resend API key.");
