@@ -56,7 +56,7 @@ export default function Home() {
               <h3 className="font-light">Ready to start a patrol?</h3>
             </div> */}
             <button onClick={handleNewReport} className="w-full">
-              <div className="bg-cpnz-blue-900 rounded-lg shadow-md mb-6 py-20 items-center flex flex-row justify-center w-full space-x-4">
+              <div className="bg-cpnz-blue-900 rounded-lg shadow-md mb-6 py-20 items-center flex flex-row justify-center w-full space-x-4 transition-all duration-300 hover:bg-cpnz-blue-800">
                 <img src={logon} alt="logon" className="w-10 h-9" />
                 <h1 className="text-white font-semibold text-lg">Log On</h1>
               </div>
@@ -84,8 +84,8 @@ export default function Home() {
 
           <Dialog>
             <DialogTrigger className="flex-1 text-black" asChild>
-              <button className="w-full">
-                <div className="p-4 bg-[#EEF6FF] shadow-md mt-4">
+              <button className="w-full rounded-lg">
+                <div className="p-4 bg-[#EEF6FF] shadow-md mt-4 transition-all duration-300 hover:shadow-lg rounded-lg">
                   <p>View More</p>
                 </div>
               </button>
