@@ -9,7 +9,9 @@ function listenForMessages(subscriptionNameOrId: string): void {
     const gCloudPrivateKey = process.env.GOOGLE_CLOUD_PRIVATE_KEY?.replace(
       /^"|"$/g,
       ""
-    );
+    )
+      .split(String.raw`\n`)
+      .join("\n");
     const gCloudProjectId = process.env.GOOGLE_CLOUD_PROJECT_ID;
 
     if (!gCloudClientEmail || !gCloudPrivateKey || !gCloudProjectId) {
