@@ -12,6 +12,7 @@ import vehicleRoute from "./routes/VehicleRoutes";
 import locationOfInterestRoute from "./routes/LocationOfInterestRoutes";
 import reportRoutes from "./routes/report";
 import logOffRoutes from "./routes/LogOff";
+import stolenVehicleRoutes from "./routes/StolenVehicle";
 
 const app = express();
 
@@ -29,6 +30,7 @@ app.use("/vehicle", vehicleRoute);
 app.use("/location-of-interest", locationOfInterestRoute);
 app.use("/logOff", logOffRoutes);
 app.use("/email", emailRoute);
+app.use("/stolen-vehicle", stolenVehicleRoutes);
 
 const port = Number.parseInt(process.env.PORT || "3000");
 app.listen(port, () => {
