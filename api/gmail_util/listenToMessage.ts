@@ -6,13 +6,19 @@ function listenForMessages(subscriptionNameOrId: string): void {
   // References an existing subscription
   try {
     const gCloudClientEmail = process.env.GOOGLE_CLOUD_CLIENT_EMAIL;
-    const gCloudPrivateKey = process.env.GOOGLE_CLOUD_PRIVATE_KEY?.replace(
-      /^"|"$/g,
-      ""
-    )
-      .split(String.raw`\n`)
-      .join("\n");
+    // const gCloudPrivateKey = process.env.GOOGLE_CLOUD_PRIVATE_KEY?.replace(
+    //   /^"|"$/g,
+    //   ""
+    // )
+    //   .split(String.raw`\n`)
+    //   .join("\n");
     const gCloudProjectId = process.env.GOOGLE_CLOUD_PROJECT_ID;
+
+    const gCloudPrivateKey = JSON.parse(
+      Buffer.from(process.env.GOOGLE_ENCODED_KEY!, "base64")
+        .toString()
+        .replace(/\n/g, "")
+    );
 
     if (!gCloudClientEmail || !gCloudPrivateKey || !gCloudProjectId) {
       throw new Error(
@@ -20,13 +26,13 @@ function listenForMessages(subscriptionNameOrId: string): void {
       );
     }
 
-    const formattedPrivateKey = gCloudPrivateKey.replace(/\\n/g, "\n");
+    // const formattedPrivateKey = gCloudPrivateKey.replace(/\\n/g, "\n");
 
     const pubSubClient = new PubSub({
       projectId: gCloudProjectId,
       credentials: {
         client_email: gCloudClientEmail,
-        private_key: formattedPrivateKey,
+        private_key: gCloudPrivateKey,
       },
     });
 
