@@ -545,6 +545,19 @@ model location_of_interest {
   patrols_dev                   patrols_dev @relation(fields: [patrol_id], references: [id], onDelete: Cascade)
 }
 
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+model stolen_vehicle {
+  registration_number String    @unique(map: "stolen_vehicle_duplicate_registration_number_key")
+  vehicle_color       String?
+  vehicle_brand       String?
+  vehicle_model       String?
+  years               BigInt?
+  vehicle_type        String?
+  reported_date       DateTime? @db.Date
+  city                String?
+  id                  BigInt    @id(map: "stolen_vehicle_duplicate_pkey") @default(autoincrement())
+}
+
 enum Call_Sign {
   MRCS
   MACS
