@@ -1,6 +1,7 @@
 import prisma from "../db/database";
 import supabase from "../supabase/supabase_client";
 import type { Request, Response } from "express";
+import { toObject } from "../util/serializeBigInt";
 
 function extractCPNZIDFromEmail(userEmail: string) {
   const atSymbolIndex: number = userEmail.indexOf("@");
@@ -77,15 +78,6 @@ export const getUserDetailsByCPNZID = async (req: Request, res: Response) => {
       shiftDetails.event_no = "N/A";
     }
 
-    function toObject(userDetails: any) {
-      return JSON.parse(
-        JSON.stringify(
-          userDetails,
-          (key, value) => (typeof value === "bigint" ? value.toString() : value) // return everything else unchanged
-        )
-      );
-    }
-
     const userRole = await prisma.members_dev.findFirst({
       where: {
         email: user?.email,
@@ -96,12 +88,21 @@ export const getUserDetailsByCPNZID = async (req: Request, res: Response) => {
       },
     });
 
+    const reports = await prisma.reports.findMany({
+      where: { member_id: BigInt(userDetails?.patrol_id) },
+    });
+
+    if (!reports) {
+      return res.status(404).json({ error: "No reports found" });
+    }
+
     res.status(200).json({
       userDetails: toObject(userDetails),
       vehicleDetails: toObject(vehicleDetails),
       patrolDetails: toObject(patrolDetails),
       shiftDetails: toObject(shiftDetails),
       userRole: toObject(userRole),
+      reports: toObject(reports),
     });
   } catch (error) {
     console.error("Error:", error);

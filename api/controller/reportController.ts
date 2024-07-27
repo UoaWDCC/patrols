@@ -228,9 +228,7 @@ export const getAllReportForLead = async (req: Request, res: Response) => {
     filteredReports.forEach((r) => {
       for (const o of filteredObservations) {
         if (o.report_id === String(r.id)) {
-          console.log(r);
           r.observations.push(o);
-          console.log(r);
         }
       }
     });
