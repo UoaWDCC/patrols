@@ -12,6 +12,11 @@ primary_region = 'syd'
   min_machines_running = 0
   processes = ['app']
 
+[[restart]]
+  policy = "on-failure"
+  retries = 10
+  processes = ["app"]
+
 [[vm]]
   cpu_kind = 'shared'
   cpus = 1

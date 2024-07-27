@@ -78,8 +78,9 @@ model districts_prod {
 }
 
 model email_history_dev {
-  id         BigInt  @id @default(autoincrement())
-  history_id BigInt?
+  id                       BigInt    @id @default(autoincrement())
+  history_id               BigInt?
+  watch_instance_timestamp DateTime? @db.Timestamptz(6)
 }
 
 model equipment_checklist {
@@ -542,6 +543,19 @@ model location_of_interest {
   incident_sub_category         String?
   description                   String?
   patrols_dev                   patrols_dev @relation(fields: [patrol_id], references: [id], onDelete: Cascade)
+}
+
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+model stolen_vehicle {
+  registration_number String    @unique(map: "stolen_vehicle_duplicate_registration_number_key")
+  vehicle_color       String?
+  vehicle_brand       String?
+  vehicle_model       String?
+  years               BigInt?
+  vehicle_type        String?
+  reported_date       DateTime? @db.Date
+  city                String?
+  id                  BigInt    @id(map: "stolen_vehicle_duplicate_pkey") @default(autoincrement())
 }
 
 enum Call_Sign {

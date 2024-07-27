@@ -135,7 +135,7 @@ export const sendShiftRequest = async (req: Request, res: Response) => {
       formData,
       driver,
     }: z.infer<typeof emailSchema> = parseResult.data;
-
+    
     if (!EMAIL_API_KEY) {
       //res.status(400).json({ message: "Auth failed: Please provide Resend API key." });
       throw new Error("Auth failed: Please provide Resend API key.");
