@@ -4,14 +4,18 @@ import prisma from "../db/database";
 export const createVehicle = async (req: Request, res: Response) => {
   try {
     const newVehicle = req.body;
-    const createdVehicle = await prisma.vehicle.create({ data: newVehicle });
-    const createdVehicleWithBigInt = {
-      ...createdVehicle,
-      patrol_id: BigInt(createdVehicle.patrol_id),
-    };
+    const vehicle = await prisma.vehicle.create({ data: newVehicle });
+    function toObject(vehicleDetails: any) {
+      return JSON.parse(
+        JSON.stringify(
+          vehicleDetails,
+          (key, value) => (typeof value === "bigint" ? value.toString() : value) // return everything else unchanged
+        )
+      );
+    }
     res
       .status(201)
-      .json({ vehicle: createdVehicleWithBigInt, message: "Vehicle created" });
+      .json({ message: "Vehicle created", vehicle: toObject(vehicle) });
   } catch (error: any) {
     res.status(400).json({ error: error.message });
   }
@@ -27,7 +31,7 @@ export const deleteVehicle = async (req: Request, res: Response) => {
     if (!vehicle) {
       return res.status(404).json({ error: "No such Vehicle" });
     }
-    res.status(200).json({ vehicle, message: "Vehicle deleted" });
+    res.status(200).json({ message: "Vehicle deleted" });
   } catch (error: any) {
     res.status(400).json({ error: error.message });
   }
