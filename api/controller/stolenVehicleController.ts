@@ -9,20 +9,21 @@ function toObject(report: any) {
   );
 }
 
+const selectFields = {
+  registration_number: true,
+  vehicle_color: true,
+  vehicle_brand: true,
+  vehicle_model: true,
+  vehicle_type: true,
+  years: true,
+  reported_date: true,
+  city: true,
+};
 
 export const getAllStolenVehicle = async (req: Request, res: Response) => {
   try {
     const stolenVehicles = await prisma.stolen_vehicle.findMany({
-      select: {
-        registration_number : true,
-        vehicle_color : true,
-        vehicle_brand : true,
-        vehicle_model : true,
-        vehicle_type : true,
-        years : true,
-        reported_date : true,
-        city : true,
-      }
+      select: selectFields,
     });
     if (!stolenVehicles || stolenVehicles.length === 0) {
       return res.status(404).json({ error: "There are no stolen vehicles" });
@@ -38,15 +39,7 @@ export const getSingleStolenVehicle = async (req: Request, res: Response) => {
   try {
     const stolenVehicle = await prisma.stolen_vehicle.findUnique({
       where: { registration_number: registration_no },
-      select: {
-        vehicle_color : true,
-        vehicle_brand : true,
-        vehicle_model : true,
-        vehicle_type : true,
-        years : true,
-        reported_date : true,
-        city : true,
-      }
+      select: selectFields,
     });
     if (!stolenVehicle) {
       return res.status(404).json({ error: "Stolen vehicle not found" });
