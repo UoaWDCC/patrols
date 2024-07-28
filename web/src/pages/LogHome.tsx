@@ -1,6 +1,5 @@
 import { useNavigate } from "react-router-dom";
 import BottomNavBar from "@components/BottomNavBar";
-import LargeInfoButton from "@components/ui/LargeInfoButton";
 import useDraftStatus from "../hooks/useDraftStatus";
 import useUserData from "../hooks/useUserData";
 import { useEffect, useState } from "react";
@@ -16,10 +15,6 @@ export default function ReportSummary() {
   // Function to navigate to the new report page
   const handleNewReport = () => {
     navigate("/Report");
-  };
-
-  const handleDraftReport = () => {
-    navigate("/report");
   };
 
   const handleOpenAmendment = () => {
@@ -80,26 +75,17 @@ export default function ReportSummary() {
       <div className="max-w-800 mx-auto px-14 my-8">
         <div>
           <div className="py-12">
-            <h2 className="text-base font-bold">Patrol in progress.</h2>
+            <h2 className="text-base font-bold">Patrol in progress...</h2>
             <h3 className="font-light">Event ID: {shiftDetails?.event_no}</h3>
           </div>
-          {isDraft && (
-            <LargeInfoButton
-              heading={"Draft report detected"}
-              description={"You have a report you haven't submitted."}
-              className="bg-[#0F1363] p-4 rounded-lg shadow-md mb-6"
-              iconDescription={"Finish your report?"}
-              onClick={handleDraftReport}
-              variant={"dark"}
-            />
-          )}
+
           <button
             onClick={handleNewReport}
             className="w-full transition-all duration-300 hover:opacity-80"
           >
-            <div className="bg-cpnz-blue-900 rounded-lg shadow-md mb-6 py-14 items-center flex justify-center w-full">
+            <div className="flex flex-col gap-2 bg-cpnz-blue-900 rounded-lg shadow-md mb-6 py-20 items-center justify-center w-full">
               <h1 className="text-white font-semibold text-lg">
-                Start a New Report
+                {isDraft ? "Continue Draft Report" : "Start a New Report"}
               </h1>
             </div>
           </button>

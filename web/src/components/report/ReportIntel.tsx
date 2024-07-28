@@ -18,13 +18,18 @@ export default function ReportIntel({
 }: ReportIntelProps) {
   return (
     <div className="relative bg-[#FFFFFF] max-w-3xl mx-auto text-left">
-      <h2 className="text-lg font-semibold py-4 text-center my-14">INTEL</h2>
+      <h2 className="text-lg font-semibold py-4 text-center mt-4">INTEL</h2>
+      <p className="text-center font-bold mb-10">
+        Some informatio sent from the police will show here*
+      </p>
       <FormField
         control={form.control}
         name="startOdometer"
         render={({ field }) => (
           <FormItem>
-            <FormLabel className="font-semibold text-base">Starting Odometer</FormLabel>
+            <FormLabel className="font-semibold text-base">
+              Starting Odometer
+            </FormLabel>
             <FormControl>
               <Input
                 {...field}

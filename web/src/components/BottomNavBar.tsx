@@ -20,7 +20,7 @@ const BottomNavBar = () => {
   // };
 
   return (
-    <div className="bg-[#EEF6FF] mt-6 flex items-center px-10 py-4 max-w-[768px] mx-auto md:w-[768px] bottom-0 sticky shadow-xl">
+    <div className="bg-[#EEF6FF] mt-6 flex items-center px-10 py-4 max-w-[768px] mx-auto md:w-[768px] bottom-0 z-[2] shadow-xl">
       <div className="font-semibold space-x-10 text-cpnz-blue-900 flex items-center w-full">
         <button className="flex flex-col items-center" onClick={handleHome}>
           <img src={home} alt="home" className="w-7 h-7" />

@@ -163,7 +163,7 @@ export default function Report() {
         <form onSubmit={form.handleSubmit(onSubmit)}>
           <div>
             <ReportIntel form={form} setStartOdometer={setStartOdometer} />
-            <LocationOfInterestTable showActions={false} />
+            {/* <LocationOfInterestTable showActions={false} /> */}
             <ReportObservation
               form={form}
               fields={fields}

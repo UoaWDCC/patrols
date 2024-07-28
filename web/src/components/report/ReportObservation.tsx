@@ -38,7 +38,6 @@ enum type {
 }
 
 const observationCategories = [
-  "",
   "vehicle",
   "people",
   "property",
@@ -85,7 +84,6 @@ const editObservation = (
   localStorage.setItem("observations", JSON.stringify(updatedFields));
 };
 
-
 const ReportObservation = ({
   form,
   fields,
@@ -94,7 +92,6 @@ const ReportObservation = ({
   remove,
   update,
 }: ReportObservationProps) => {
-
   const { address } = useCurrentLocation();
   const date = new Date();
   let parsedDate = "";
@@ -113,7 +110,8 @@ const ReportObservation = ({
     displayed: true,
   });
 
-  const [editObservationData, setEditObservationData] = useState<Observation | null>(null);
+  const [editObservationData, setEditObservationData] =
+    useState<Observation | null>(null);
   const [editIndex, setEditIndex] = useState<number | null>(null);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState<boolean>(false);
   const [isAddDialogOpen, setIsAddDialogOpen] = useState<boolean>(false);
@@ -165,7 +163,13 @@ const ReportObservation = ({
 
   const handleEditObservation = () => {
     if (editObservationData && editIndex !== null) {
-      editObservation(editIndex, fields, setObservationsList, update, editObservationData);
+      editObservation(
+        editIndex,
+        fields,
+        setObservationsList,
+        update,
+        editObservationData
+      );
       setEditObservationData(null);
       setEditIndex(null);
       setIsEditDialogOpen(false);
@@ -315,8 +319,12 @@ const ReportObservation = ({
           >
             <div className="flex justify-between items-center mb-2">
               <div>
-                <h3 className="text-base font-semibold">{observation.location}</h3>
-                <p className="text-xs text-gray-500 font-light">{observation.time}</p>
+                <h3 className="text-base font-semibold">
+                  {observation.location}
+                </h3>
+                <p className="text-xs text-gray-500 font-light">
+                  {observation.time}
+                </p>
               </div>
               <div className="flex flex-col gap-3">
                 <DialogTrigger asChild>
@@ -366,7 +374,9 @@ const ReportObservation = ({
                           placeholder="Type your message here"
                           type="text"
                           value={
-                            editObservationData ? editObservationData.location : ""
+                            editObservationData
+                              ? editObservationData.location
+                              : ""
                           }
                           onChange={(e) => handleEditInputChange(e, "location")}
                         />
@@ -409,7 +419,9 @@ const ReportObservation = ({
                         <select
                           className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-slate-400 h-12"
                           value={
-                            editObservationData ? editObservationData.category : ""
+                            editObservationData
+                              ? editObservationData.category
+                              : ""
                           }
                           onChange={(e) => handleEditInputChange(e, "category")}
                         >
@@ -474,5 +486,3 @@ const ReportObservation = ({
 };
 
 export { ReportObservation };
-
-
