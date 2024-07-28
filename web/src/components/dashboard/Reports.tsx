@@ -6,7 +6,7 @@ import { reportSchema } from "../../schemas";
 import ReportCard from "../../components/ReportCard";
 
 export default function Reports() {
-  const { currentUserDetails, fullName, shiftDetails } = useUserData();
+  const { currentUserDetails, fullName } = useUserData();
   const [reports, setReports] = useState<z.infer<typeof reportSchema>[]>([]);
 
   useEffect(() => {
@@ -37,12 +37,7 @@ export default function Reports() {
 
       <div className="max-w-[700px] p-12 shadow-lg mx-auto max-h-[560px] overflow-y-auto mt-8 rounded-xl">
         {reports.map((report) => (
-          <ReportCard
-            report={report}
-            fullName={fullName}
-            key={report.id}
-            shift={shiftDetails!}
-          />
+          <ReportCard report={report} fullName={fullName} key={report.id} />
         ))}
       </div>
     </div>
