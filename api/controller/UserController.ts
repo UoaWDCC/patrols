@@ -106,7 +106,7 @@ export const getUserDetailsByCPNZID = async (req: Request, res: Response) => {
     });
 
     const reports = await prisma.reports.findMany({
-      where: { member_id: BigInt(userDetails?.patrol_id) },
+      where: { member_id: BigInt(userDetails?.id) },
     });
 
     if (!reports) {
@@ -121,13 +121,31 @@ export const getUserDetailsByCPNZID = async (req: Request, res: Response) => {
       },
     });
 
+    const allShifts = await prisma.shift.findMany({
+      where: {
+        id: {
+          in: reports.map((report) => report.shift_id),
+        },
+      },
+      select: {
+        event_no: true,
+        id: true,
+        start_time: true,
+        end_time: true,
+        observer_id: true,
+      },
+    });
+
     const filteredReports = reports.map((r) => ({
       ...r,
       id: String(r.id),
-      shift_id: String(shiftDetails?.id),
+      shift_id: allShifts?.find((s) => s.id === r.shift_id)?.id,
       vehicle_details_id: String(vehicleDetails[0].id),
       member_id: String(userDetails?.id),
       observations: [] as Observation[],
+      start_time: allShifts?.find((s) => s.id === r.shift_id)?.start_time,
+      end_time: allShifts?.find((s) => s.id === r.shift_id)?.end_time,
+      event_no: allShifts?.find((s) => s.id === r.shift_id)?.event_no,
     }));
 
     filteredReports.forEach((r) => {

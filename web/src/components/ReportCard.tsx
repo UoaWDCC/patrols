@@ -7,18 +7,17 @@ import {
   DialogTitle,
   DialogDescription,
 } from "@components/ui/dialog";
-import { reportSchema, shiftDetailsSchema } from "../schemas/index";
+import { reportSchema } from "../schemas/index";
 import { z } from "zod";
 import { formatDate } from "@utils/formateDate";
 
 interface ReportCardProps {
   report: z.infer<typeof reportSchema>;
-  shift: z.infer<typeof shiftDetailsSchema>;
   fullName: String;
 }
 
 export default function reportCard(props: ReportCardProps) {
-  const { report, fullName, shift } = props;
+  const { report, fullName } = props;
   return (
     <div
       key={report.id}
@@ -28,7 +27,7 @@ export default function reportCard(props: ReportCardProps) {
         <div className="flex flex-col justify-start items-start">
           <h3 className="text-lg font-semibold">{fullName}</h3>
           <p>
-            {formatDate(shift.start_time)} - {formatDate(shift.end_time)}
+            {formatDate(report.start_time)} - {formatDate(report.end_time)}
           </p>
         </div>
 

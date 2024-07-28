@@ -23,8 +23,7 @@ export default function Home() {
     navigate("/logon");
   };
 
-  const { currentUserDetails, reportDetails, fullName, shiftDetails } =
-    useUserData();
+  const { currentUserDetails, reportDetails, fullName } = useUserData();
 
   // Check the curent user's logon status, if "Yes", then redirect to logon home
   useEffect(() => {
@@ -71,45 +70,43 @@ export default function Home() {
           <h2 className="font-bold text-left">Past Reports</h2>
 
           {reportDetails.length > 0 ? (
-            <div className=" bg-[#F8F8F8] shadow-md mt-4">
-              <ReportCard
-                report={reportDetails[0]}
-                fullName={fullName}
-                shift={shiftDetails!}
-              />
-            </div>
+            <>
+              <div className=" bg-[#F8F8F8] shadow-md mt-4">
+                <ReportCard report={reportDetails[0]} fullName={fullName} />
+              </div>
+              <Dialog>
+                <DialogTrigger className="flex-1 text-black" asChild>
+                  <button className="w-full rounded-lg">
+                    <div className="p-4 bg-[#EEF6FF] shadow-md mt-4 transition-all duration-300 hover:shadow-lg rounded-lg">
+                      <p>View More</p>
+                    </div>
+                  </button>
+                </DialogTrigger>
+                <DialogContent className="p-8 max-h-[550px] overflow-y-auto">
+                  <DialogHeader>
+                    <DialogTitle className="text-center text-subheading pb-12">
+                      All Reports
+                    </DialogTitle>
+                    <DialogDescription asChild>
+                      <div>
+                        {reportDetails.map((report) => (
+                          <ReportCard
+                            report={report}
+                            key={report.id}
+                            fullName={fullName}
+                          />
+                        ))}
+                      </div>
+                    </DialogDescription>
+                  </DialogHeader>
+                </DialogContent>
+              </Dialog>
+            </>
           ) : (
-            <div className=" bg-[#F8F8F8] shadow-md mt-4 my-10" />
+            <div className=" bg-[#F8F8F8] shadow-md mt-4 py-16">
+              No Past Reports
+            </div>
           )}
-
-          <Dialog>
-            <DialogTrigger className="flex-1 text-black" asChild>
-              <button className="w-full rounded-lg">
-                <div className="p-4 bg-[#EEF6FF] shadow-md mt-4 transition-all duration-300 hover:shadow-lg rounded-lg">
-                  <p>View More</p>
-                </div>
-              </button>
-            </DialogTrigger>
-            <DialogContent className="p-8 max-h-[550px] overflow-y-auto">
-              <DialogHeader>
-                <DialogTitle className="text-center text-subheading pb-12">
-                  All Reports
-                </DialogTitle>
-                <DialogDescription asChild>
-                  <div>
-                    {reportDetails.map((report) => (
-                      <ReportCard
-                        shift={shiftDetails!}
-                        report={report}
-                        key={report.id}
-                        fullName={fullName}
-                      />
-                    ))}
-                  </div>
-                </DialogDescription>
-              </DialogHeader>
-            </DialogContent>
-          </Dialog>
         </div>
       </div>
       <BottomNavBar />

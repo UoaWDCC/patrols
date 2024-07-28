@@ -117,6 +117,9 @@ export const reportSchema = z.object({
   other_incidents: z.number(),
   total_incidents: z.number(),
   observations: z.array(observationSchema),
+  start_time: z.string(),
+  end_time: z.string(),
+  event_no: z.string(),
 });
 
 export const locationOfInterestSchema = z.object({
