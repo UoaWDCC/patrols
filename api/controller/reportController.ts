@@ -174,7 +174,7 @@ export const getAllReportForLead = async (req: Request, res: Response) => {
       },
     });
 
-    if (!reports) {
+    if (!reports || reports.length === 0) {
       return res.status(404).json({ error: "No reports found" });
     }
 
@@ -188,6 +188,10 @@ export const getAllReportForLead = async (req: Request, res: Response) => {
         member_id: String(r.reports[0].member_id),
         observations: [] as Observation[],
       }));
+
+    if (filteredReports.length === 0) {
+      return res.status(404).json({ error: "No reports found" });
+    }
 
     const reportIds = filteredReports.map((report) => BigInt(report.id));
 
