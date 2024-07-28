@@ -25,6 +25,36 @@ function toObject(report: any) {
   );
 }
 
+const getShiftDetails = async (shift_id: number) => {
+  return prisma.shift.findUnique({
+    where: { id: shift_id },
+    select: {
+      event_no: true,
+      patrol_id: true,
+      start_time: true,
+      end_time: true,
+      police_station_base: true,
+      observer_id: true,
+      driver_id: true,
+      vehicle_id: true,
+    },
+  });
+};
+
+const getVehicleDetails = async (vehicle_details_id: number) => {
+  return prisma.vehicle.findUnique({
+    where: { id: vehicle_details_id },
+    select: {
+      registration_no: true,
+      colour: true,
+      model: true,
+      make: true,
+      has_police_radio: true,
+      selected: true,
+    },
+  });
+};
+
 export const getAllReport = async (req: Request, res: Response) => {
   try {
     const reports = await prisma.reports.findMany();
@@ -33,53 +63,25 @@ export const getAllReport = async (req: Request, res: Response) => {
       return res.status(404).json({ error: "There are no reports" });
     }
 
-    const shifts: any[] = [];
-    const vehicles: any[] = [];
+    const detailedReport = await Promise.all(
+      reports.map(async (report) => {
+        const [shift, vehicle] = await Promise.all([
+          getShiftDetails(Number(report.shift_id)),
+          getVehicleDetails(Number(report.vehicle_details_id)),
+        ]);
 
-    for (const report of reports) {
-      const shift = await prisma.shift.findUnique({
-        where: { id: report?.shift_id },
-        select: {
-          event_no: true,
-          patrol_id: true,
-          start_time: true,
-          end_time: true,
-          police_station_base: true,
-          observer_id: true,
-          driver_id: true,
-          vehicle_id: true,
-        },
-      });
-      if (!shift) {
-        return res.status(404).json({ error: "Shift not found" });
-      }
+        if (!shift || !vehicle) {
+          return res.status(404).json({ error: !shift ? "Shift not found" : "Vehicle not found" });
+        }
 
-      const vehicle = await prisma.vehicle.findUnique({
-        where: { id: report?.vehicle_details_id },
-        select: {
-          // No patrol_id as the driver id would be the same
-          registration_no: true,
-          colour: true,
-          model: true,
-          make: true,
-          has_police_radio: true,
-          selected: true,
-        },
-      });
-      if (!vehicle) {
-        return res.status(404).json({ error: "Vehicle not found" });
-      }
-
-      shifts.push(toObject(shift));
-      vehicles.push(toObject(vehicle));
-    }
-    const reportsWithDetails = reports.map((report: any, index: any) => ({
-      report: toObject(report),
-      shift: shifts[index],
-      vehicle: vehicles[index],
-    }));
-
-    res.status(200).json({ reports: reportsWithDetails });
+        return {
+          report: toObject(report),
+          shift: toObject(shift),
+          vehicle: toObject(vehicle),
+        };
+      })
+    );
+    res.status(200).json({ reports: detailedReport });
   } catch (error: any) {
     res.status(400).json({ error: error.message });
   }
@@ -95,36 +97,14 @@ export const getSingleReport = async (req: Request, res: Response) => {
     if (!report) {
       return res.status(404).json({ error: "No such report" });
     }
-    const shift = await prisma.shift.findUnique({
-      where: { id: report?.shift_id },
-      select: {
-        event_no: true,
-        patrol_id: true,
-        start_time: true,
-        end_time: true,
-        police_station_base: true,
-        observer_id: true,
-        driver_id: true,
-        vehicle_id: true,
-      },
-    });
-    if (!shift) {
-      return res.status(404).json({ error: "Shift not found" });
-    }
-    const vehicle = await prisma.vehicle.findUnique({
-      where: { id: report?.vehicle_details_id },
-      select: {
-        patrol_id: true,
-        registration_no: true,
-        colour: true,
-        model: true,
-        make: true,
-        has_police_radio: true,
-        selected: true,
-      },
-    });
-    if (!vehicle) {
-      return res.status(404).json({ error: "Vehicle not found" });
+
+    const [shift, vehicle] = await Promise.all([
+      getShiftDetails(Number(report.shift_id)),
+      getVehicleDetails(Number(report.vehicle_details_id)),
+    ]);
+
+    if (!shift || !vehicle) {
+      return res.status(404).json({ error: !shift ? "Shift not found" : "Vehicle not found" });
     }
 
     res.status(200).json({
