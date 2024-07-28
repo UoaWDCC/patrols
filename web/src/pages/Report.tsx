@@ -15,7 +15,6 @@ import {
   DialogTrigger,
   DialogDescription,
 } from "@components/ui/dialog";
-import LocationOfInterestTable from "@components/dashboard/LocationOfInterestTable";
 import useUserData from "../hooks/useUserData";
 import axios from "axios";
 
