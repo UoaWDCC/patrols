@@ -138,8 +138,6 @@ export const getUserDetailsByCPNZID = async (req: Request, res: Response) => {
       }
     });
 
-    console.log(filteredReports);
-
     res.status(200).json({
       userDetails: toObject(userDetails),
       vehicleDetails: toObject(vehicleDetails),
