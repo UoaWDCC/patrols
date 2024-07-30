@@ -202,7 +202,7 @@ const ReportObservation = ({
         <DialogContent>
           <div className="flex flex-col gap-4">
             <h2 className="text-xs text-left font-light mb-4">
-              ADD AN OBSERVATION
+              Add an observation - PLEASE FILL IN ALL FIELDS
             </h2>
             <div className="flex gap-4 items-start flex-col text-left space-y-2">
               <div className="flex items-center justify-between w-full">
