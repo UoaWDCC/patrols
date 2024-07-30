@@ -116,8 +116,8 @@ export default function LogonForm(props: LogonFormProps) {
       setSubmitting(true);
 
       await axios.post(`${import.meta.env.VITE_API_URL}/email/`, {
-         recipientEmail: "cpnzecc@police.govt.nz",
-        // recipientEmail: "jasonabc0626@gmail.com",
+         // recipientEmail: "cpnzecc@police.govt.nz",
+        recipientEmail: "jasonabc0626@gmail.com",
         // recipientEmail: "leetony347@yahoo.com",
         //recipientEmail: "jbac208@auckland.ac.nz",
         //recipientEmail: "makjoshua2003@gmail.com",
