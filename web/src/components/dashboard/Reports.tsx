@@ -32,14 +32,20 @@ export default function Reports() {
   }, [currentUserDetails]);
 
   return (
-    <div>
-      <h2 className="text-center mt-12 font-bold text-2xl">Reports</h2>
+    <>
+      {reports ? (
+        <div>
+          <h2 className="text-center mt-12 font-bold text-2xl">Reports</h2>
 
-      <div className="max-w-[700px] p-12 shadow-lg mx-auto max-h-[560px] overflow-y-auto mt-8 rounded-xl">
-        {reports.map((report) => (
-          <ReportCard report={report} fullName={fullName} key={report.id} />
-        ))}
-      </div>
-    </div>
+          <div className="max-w-[700px] p-12 shadow-lg mx-auto max-h-[560px] overflow-y-auto mt-8 rounded-xl">
+            {reports.map((report) => (
+              <ReportCard report={report} fullName={fullName} key={report.id} />
+            ))}
+          </div>
+        </div>
+      ) : (
+        <>Loading</>
+      )}
+    </>
   );
 }
