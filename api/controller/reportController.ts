@@ -197,6 +197,22 @@ export const getAllReportForLead = async (req: Request, res: Response) => {
     if (!reports) {
       return res.status(404).json({ error: "No reports found" });
     }
+    console.log(reports.map((report) => report.reports[0]?.shift_id));
+
+    const allShifts = await prisma.shift.findMany({
+      where: {
+        id: {
+          in: reports.map((report) => report.reports[0]?.shift_id),
+        },
+      },
+      select: {
+        event_no: true,
+        id: true,
+        start_time: true,
+        end_time: true,
+        observer_id: true,
+      },
+    });
 
     const filteredReports = reports
       .filter((r) => r.reports[0] !== undefined)
@@ -207,9 +223,16 @@ export const getAllReportForLead = async (req: Request, res: Response) => {
         vehicle_details_id: String(r.reports[0].vehicle_details_id),
         member_id: String(r.reports[0].member_id),
         observations: [] as Observation[],
+        start_time: allShifts?.find((s) => s.id === r.reports[0].shift_id)
+          ?.start_time,
+        end_time: allShifts?.find((s) => s.id === r.reports[0].shift_id)
+          ?.end_time,
+        event_no: allShifts?.find((s) => s.id === r.reports[0].shift_id)
+          ?.event_no,
       }));
 
     const reportIds = filteredReports.map((report) => BigInt(report.id));
+    console.log(filteredReports);
 
     const observations = await prisma.observations.findMany({
       where: {
