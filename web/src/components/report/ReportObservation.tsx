@@ -83,7 +83,6 @@ const editObservation = (
   setFields(updatedFields);
   update(i, observation);
   localStorage.setItem("observations", JSON.stringify(updatedFields));
-  console.log(JSON.parse(localStorage.getItem("observations")!).length);
 };
 
 const ReportObservation = ({
