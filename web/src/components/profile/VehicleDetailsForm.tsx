@@ -1,13 +1,13 @@
 import { FormItem, FormLabel, Form } from "@components/ui/form";
 import { Input } from "@components/ui/input";
-import useUserData from "../../hooks/useUserData";
+// import useUserData from "../../hooks/useUserData";
 import { formSchema, vehicleDetailsSchema } from "../../schemas";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import car from "../../assets/images/car.png";
-import { Button } from "@components/ui/button";
-import axios from "axios";
+// import { Button } from "@components/ui/button";
+// import axios from "axios";
 import { useRef, useState, ChangeEvent, useEffect } from "react";
 
 interface VehicleDetailsFormFormProps {
@@ -17,12 +17,12 @@ type VehicleDetails = z.infer<typeof vehicleDetailsSchema>;
 
 export default function VehicleDetailsForm(props: VehicleDetailsFormFormProps) {
   const vehicleSelectRef = useRef<HTMLSelectElement | null>(null);
-  const [canSaveVehicle, setCanSaveVehicle] = useState(false);
+  // const [canSaveVehicle, setCanSaveVehicle] = useState(false);
   const [selectedVehicle, setSelectedVehicle] = useState<VehicleDetails | null>(
     null
   );
 
-  const { refetch } = useUserData();
+  // const { refetch } = useUserData();
 
   useEffect(() => {
     if (props) {
@@ -36,21 +36,21 @@ export default function VehicleDetailsForm(props: VehicleDetailsFormFormProps) {
     }
   }, [props]);
 
-  const changeSelectedVehicle = async () => {
-    try {
-      const updateSelectedVehicle = {
-        newVehicle: vehicleSelectRef.current?.value,
-      };
+  // const changeSelectedVehicle = async () => {
+  //   try {
+  //     const updateSelectedVehicle = {
+  //       newVehicle: vehicleSelectRef.current?.value,
+  //     };
 
-      await axios.patch(
-        `${import.meta.env.VITE_API_URL}/user/updateUserSelectedVehicle`,
-        updateSelectedVehicle
-      );
-      refetch();
-    } catch (error) {
-      console.log(error);
-    }
-  };
+  //     await axios.patch(
+  //       `${import.meta.env.VITE_API_URL}/user/updateUserSelectedVehicle`,
+  //       updateSelectedVehicle
+  //     );
+  //     refetch();
+  //   } catch (error) {
+  //     console.log(error);
+  //   }
+  // };
 
   const handleVehicleSelect = (event: ChangeEvent<HTMLSelectElement>) => {
     const selectedVehicleName = event.target.value;
@@ -58,7 +58,7 @@ export default function VehicleDetailsForm(props: VehicleDetailsFormFormProps) {
       (vehicle) => vehicle.model + " " + vehicle.make === selectedVehicleName
     );
     setSelectedVehicle(selectedVehicle || null);
-    setCanSaveVehicle(true);
+    // setCanSaveVehicle(true);
   };
 
   const form = useForm<z.infer<typeof formSchema>>({
@@ -83,15 +83,15 @@ export default function VehicleDetailsForm(props: VehicleDetailsFormFormProps) {
                 ref={vehicleSelectRef}
                 className="rounded-md px-3 py-2 border-[#CBD5E1] border-[1px]"
                 onChange={(event) => {
-                  const selectedVehicleInDatabase =
-                    props.currentUserVehicles[0];
-                  const selectedVehicleName = event.target.value;
-                  const vehicleChanged =
-                    selectedVehicleName !==
-                    selectedVehicleInDatabase?.model +
-                      " " +
-                      selectedVehicleInDatabase?.make;
-                  setCanSaveVehicle(vehicleChanged);
+                  // const selectedVehicleInDatabase =
+                  //   props.currentUserVehicles[0];
+                  // const selectedVehicleName = event.target.value;
+                  // const vehicleChanged =
+                  //   selectedVehicleName !==
+                  //   selectedVehicleInDatabase?.model +
+                  //     " " +
+                  //     selectedVehicleInDatabase?.make;
+                  // setCanSaveVehicle(vehicleChanged);
                   handleVehicleSelect(event);
                 }}
                 value={selectedVehicle?.model + " " + selectedVehicle?.make}
@@ -148,11 +148,11 @@ export default function VehicleDetailsForm(props: VehicleDetailsFormFormProps) {
               </div>
             )}
           </div>
-          {canSaveVehicle ? (
+          {/* {canSaveVehicle ? (
             <Button onClick={changeSelectedVehicle}>Save</Button>
           ) : (
             <></>
-          )}
+          )} */}
         </div>
       </Form>
     </div>

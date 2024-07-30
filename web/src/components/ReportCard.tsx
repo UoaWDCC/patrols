@@ -121,10 +121,10 @@ export default function reportCard(props: ReportCardProps) {
                       </div>
                     ))}
                   </div>
-
+                  {/* 
                   <Button className="text-[15px] bg-cpnz-blue-800 mt-4">
                     Edit
-                  </Button>
+                  </Button> */}
                 </div>
               </DialogDescription>
             </DialogHeader>
