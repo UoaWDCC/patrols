@@ -44,6 +44,8 @@ export default function LogonForm(props: LogonFormProps) {
   const [driver, setDriver] = useState<string>("");
   const [open, setOpen] = useState(false);
   const [submitting, setSubmitting] = useState<boolean>(false);
+  const [isDriverSelected, setIsDriverSelected] = useState(false);
+  const [isSubmitAttempted, setIsSubmitAttempted] = useState(false);
   const navigate = useNavigate();
 
   const membersFullName = props.patrolDetails["members_dev"]
@@ -69,7 +71,7 @@ export default function LogonForm(props: LogonFormProps) {
         })
       )
       .optional(),
-    driver: z.string(),
+    driver: z.string().min(1, "Driver selection is required"),
     vehicle: z.string(),
     liveryOrSignage: z.string(),
     havePoliceRadio: z.string(),
@@ -112,12 +114,17 @@ export default function LogonForm(props: LogonFormProps) {
   };
 
   const onSubmit = async (data: z.infer<typeof formSchema>) => {
+    setIsSubmitAttempted(true);
+    if (!isDriverSelected) {
+      return; // Stop here if no driver is selected
+    }
+
     try {
       setSubmitting(true);
 
       await axios.post(`${import.meta.env.VITE_API_URL}/email/`, {
-         // recipientEmail: "cpnzecc@police.govt.nz",
-        recipientEmail: "jasonabc0626@gmail.com",
+         recipientEmail: "cpnzecc@police.govt.nz",
+        // recipientEmail: "jasonabc0626@gmail.com",
         // recipientEmail: "leetony347@yahoo.com",
         //recipientEmail: "jbac208@auckland.ac.nz",
         //recipientEmail: "makjoshua2003@gmail.com",
@@ -136,6 +143,8 @@ export default function LogonForm(props: LogonFormProps) {
       axios.isAxiosError(error)
         ? console.log(error.response?.data.error)
         : console.error("Unexpected error during login:", error);
+    } finally {
+      setSubmitting(false);
     }
   };
 
@@ -291,32 +300,31 @@ export default function LogonForm(props: LogonFormProps) {
             <FormField
               control={form.control}
               name="driver"
-              render={() => (
+              render={({ field }) => (
                 <FormItem>
+                  <FormLabel>Driver</FormLabel>
                   <FormControl>
                     <Popover open={open} onOpenChange={setOpen}>
                       <PopoverTrigger asChild>
                         <Button
-                          variant={"outline"}
+                          variant="outline"
                           role="combobox"
                           aria-expanded={open}
-                          className="w-[300px] justify-between text-md text-gray-600"
+                          className={cn(
+                            "w-[300px] justify-between text-md text-gray-600",
+                            isSubmitAttempted && !isDriverSelected && "border-red-500"
+                          )}
                         >
                           {driver
-                            ? membersFullName.find(
-                                (member) => member.name === driver
-                              )?.name
+                            ? membersFullName.find((member) => member.name === driver)?.name
                             : "Select Driver"}
                           <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                         </Button>
                       </PopoverTrigger>
-                      <PopoverContent>
+                      <PopoverContent className="w-[300px] p-0">
                         <Command>
-                          <CommandInput
-                            placeholder="Search..."
-                            className="w-[255px]"
-                          />
-                          <CommandEmpty>No user found.</CommandEmpty>
+                          <CommandInput placeholder="Search driver..." className="h-9" />
+                          <CommandEmpty>No driver found.</CommandEmpty>
                           <CommandGroup>
                             <CommandList>
                               {membersFullName.map((member) => (
@@ -324,23 +332,17 @@ export default function LogonForm(props: LogonFormProps) {
                                   key={member.name}
                                   value={member.name}
                                   onSelect={(currentDriver) => {
-                                    const newDriver =
-                                      currentDriver === driver
-                                        ? ""
-                                        : currentDriver;
+                                    const newDriver = currentDriver === driver ? "" : currentDriver;
                                     setDriver(newDriver);
-                                    form.setValue("driver", newDriver, {
-                                      shouldValidate: true,
-                                    });
+                                    setIsDriverSelected(newDriver !== "");
+                                    field.onChange(newDriver);
                                     setOpen(false);
                                   }}
                                 >
                                   <Check
                                     className={cn(
                                       "mr-2 h-4 w-4",
-                                      driver === member.name
-                                        ? "opacity-100"
-                                        : "opacity-0"
+                                      driver === member.name ? "opacity-100" : "opacity-0"
                                     )}
                                   />
                                   {member.name}
@@ -352,6 +354,11 @@ export default function LogonForm(props: LogonFormProps) {
                       </PopoverContent>
                     </Popover>
                   </FormControl>
+                  {isSubmitAttempted && !isDriverSelected && (
+                    <p className="text-sm font-medium text-red-500 mt-2">
+                      Driver selection is required
+                    </p>
+                  )}
                 </FormItem>
               )}
             />
