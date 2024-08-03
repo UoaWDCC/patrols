@@ -62,7 +62,6 @@ export const sendShiftRequest = async (req: Request, res: Response) => {
 
   const parseResult = emailSchema.safeParse(req.body);
   const recipientEmail = POLICE_EMAIL;
-  console.log(recipientEmail)
 
   if (!parseResult.success) {
     //return res.status(400).json({ error: parseResult.error.flatten() });
@@ -192,7 +191,6 @@ export const sendShiftRequest = async (req: Request, res: Response) => {
     </p>
   </div>`,
     });
-    console.log(data)
     res.status(200).json({ message: "Email sent successfully" });
   } catch (error) {
     res.status(400).json(error);
