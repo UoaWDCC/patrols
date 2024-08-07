@@ -5,7 +5,7 @@ import { Resend } from "resend";
 import { LogonStatus } from "@prisma/client";
 
 const EMAIL_API_KEY: string = process.env.RESEND_API_KEY as string;
-const CPNZ_APP_EMAIL = process.env.CPNZ_EMAIL_TEST
+const CPNZ_APP_EMAIL = process.env.CPNZ_EMAIL_TEST;
 const POLICE_EMAIL = process.env.CPNZ_ECC_RECIPIENT_EMAIL;
 const resend = new Resend(EMAIL_API_KEY);
 
@@ -129,13 +129,9 @@ export const sendShiftRequest = async (req: Request, res: Response) => {
       },
     });
 
-    const {
-      email,
-      cpnzID,
-      formData,
-      driver,
-    }: z.infer<typeof emailSchema> = parseResult.data;
-    
+    const { email, cpnzID, formData, driver }: z.infer<typeof emailSchema> =
+      parseResult.data;
+
     if (!EMAIL_API_KEY) {
       //res.status(400).json({ message: "Auth failed: Please provide Resend API key." });
       throw new Error("Auth failed: Please provide Resend API key.");
@@ -263,8 +259,10 @@ export const handleAmendment = async (req: Request, res: Response) => {
     try {
       const recipientEmail = POLICE_EMAIL;
 
-      if(!recipientEmail) {
-        throw new Error('Please ensure recipient email is provided. e.g. Police-ECC email address')
+      if (!recipientEmail) {
+        throw new Error(
+          "Please ensure recipient email is provided. e.g. Police-ECC email address"
+        );
       }
       const emailResponse = await sendAmendEmail(
         recipientEmail,
