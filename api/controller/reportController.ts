@@ -197,7 +197,6 @@ export const getAllReportForLead = async (req: Request, res: Response) => {
     if (!reports) {
       return res.status(404).json({ error: "No reports found" });
     }
-    console.log(reports.map((report) => report.reports[0]?.shift_id));
 
     const allShifts = await prisma.shift.findMany({
       where: {
