@@ -116,7 +116,8 @@ export default function LogonForm(props: LogonFormProps) {
       setSubmitting(true);
 
       await axios.post(`${import.meta.env.VITE_API_URL}/email/`, {
-        recipientEmail: "jasonabc0626@gmail.com",
+        recipientEmail: "cpnzecc@police.govt.nz",
+        // recipientEmail: "jasonabc0626@gmail.com",
         // recipientEmail: "leetony347@yahoo.com",
         //recipientEmail: "jbac208@auckland.ac.nz",
         //recipientEmail: "makjoshua2003@gmail.com",
@@ -358,7 +359,9 @@ export default function LogonForm(props: LogonFormProps) {
           {fields.map((_, index) => (
             <div key={index} className="col-span-2 mt-8">
               <div className="flex items-center justify-between mb-2">
-                <h4 className="text-2xl font-semibold">Guest Patrol</h4>
+                <h4 className="text-2xl font-semibold">
+                  Additional Patrollers
+                </h4>
                 <button
                   type="button"
                   className="px-2 py-1 bg-red-500 text-white rounded-md"
@@ -405,9 +408,7 @@ export default function LogonForm(props: LogonFormProps) {
                   name={`guestPatrollers.${index}.registered`}
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>
-                        Is this guest a registered patroller?
-                      </FormLabel>
+                      <FormLabel>Is this patroller registered</FormLabel>
                       <FormControl>
                         <div className="flex items-center space-x-4">
                           <label className="flex items-center">
@@ -444,7 +445,7 @@ export default function LogonForm(props: LogonFormProps) {
               className="px-4 py-2 bg-white text-black border-2 border-[#038400] rounded-md font-semibold underline hover:bg-[#038400] hover:text-white"
               onClick={addGuestPatroller}
             >
-              Add Guest Patrols
+              Add Additional Patrollers
             </button>
           </div>
           <div className="col-span-2 mt-6">

@@ -15,7 +15,6 @@ import {
   DialogTrigger,
   DialogDescription,
 } from "@components/ui/dialog";
-import LocationOfInterestTable from "@components/dashboard/LocationOfInterestTable";
 import useUserData from "../hooks/useUserData";
 import axios from "axios";
 
@@ -107,11 +106,6 @@ export default function Report() {
       otherIncidents,
     };
 
-    // JSON.parse(localStorage.getItem("observations")!).forEach((o: any) => {
-    //   formData.observations.push(o);
-    //   console.log(formData.observations);
-    // });
-
     const data = {
       email: currentUserDetails?.email,
       cpnzID: currentUserDetails?.cpnz_id,
@@ -124,8 +118,6 @@ export default function Report() {
       },
       statistics,
     };
-
-    console.log(data);
 
     try {
       setSubmitting(true);
