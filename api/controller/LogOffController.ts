@@ -139,8 +139,9 @@ export const logOffEmail = async (req: Request, res: Response) => {
       subject: `CPNZ - Log Off - Patrol ID: ${data.cpnzID} - Shift ID: ${data.formData.shiftId}`,
       html: `
             <div style="font-family: Arial, sans-serif; line-height: 1.8;">
+            <h2>This is a controlled test from CPNZ</h2>
           <p style="font-size: 1.2em; font-weight: bold;">
-            ${ObserverFullName} requests to log off a shift with the following details:
+            ${ObserverFullName} requests to log off. 
           </p>
           <hr>
           <p>

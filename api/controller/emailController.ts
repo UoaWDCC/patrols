@@ -5,7 +5,8 @@ import { Resend } from "resend";
 import { LogonStatus } from "@prisma/client";
 
 const EMAIL_API_KEY: string = process.env.RESEND_API_KEY as string;
-const CPNZ_APP_EMAIL = "ecc@cpnz.org.nz";
+const CPNZ_APP_EMAIL = process.env.CPNZ_EMAIL_TEST;
+const POLICE_EMAIL = process.env.CPNZ_ECC_RECIPIENT_EMAIL;
 const resend = new Resend(EMAIL_API_KEY);
 
 function toObject(data: any) {
@@ -54,13 +55,13 @@ export const userDetailsSchema = z.object({
 export const sendShiftRequest = async (req: Request, res: Response) => {
   const emailSchema = z.object({
     email: z.string(),
-    recipientEmail: z.string(),
     cpnzID: z.string(),
     formData: formSchema,
     driver: userDetailsSchema,
   });
 
   const parseResult = emailSchema.safeParse(req.body);
+  const recipientEmail = POLICE_EMAIL;
 
   if (!parseResult.success) {
     //return res.status(400).json({ error: parseResult.error.flatten() });
@@ -128,14 +129,9 @@ export const sendShiftRequest = async (req: Request, res: Response) => {
       },
     });
 
-    const {
-      email,
-      recipientEmail,
-      cpnzID,
-      formData,
-      driver,
-    }: z.infer<typeof emailSchema> = parseResult.data;
-    
+    const { email, cpnzID, formData, driver }: z.infer<typeof emailSchema> =
+      parseResult.data;
+
     if (!EMAIL_API_KEY) {
       //res.status(400).json({ message: "Auth failed: Please provide Resend API key." });
       throw new Error("Auth failed: Please provide Resend API key.");
@@ -191,7 +187,6 @@ export const sendShiftRequest = async (req: Request, res: Response) => {
     </p>
   </div>`,
     });
-
     res.status(200).json({ message: "Email sent successfully" });
   } catch (error) {
     res.status(400).json(error);
@@ -262,8 +257,15 @@ export const handleAmendment = async (req: Request, res: Response) => {
 
     // Send the amendment email
     try {
+      const recipientEmail = POLICE_EMAIL;
+
+      if (!recipientEmail) {
+        throw new Error(
+          "Please ensure recipient email is provided. e.g. Police-ECC email address"
+        );
+      }
       const emailResponse = await sendAmendEmail(
-        "jasonabc0626@gmail.com",
+        recipientEmail,
         text,
         event_no
       );

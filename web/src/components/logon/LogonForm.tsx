@@ -52,28 +52,40 @@ export default function LogonForm(props: LogonFormProps) {
       name: `${m.first_names} ${m.surname}`,
     }));
 
-  const formSchema = z.object({
-    startTime: z.string().min(1),
-    endTime: z.string().min(1),
-    policeStationBase: z.string(),
-    cpCallSign: z.string(),
-    patrol: z.string(),
-    observerName: z.string(),
-    observerNumber: z.string(),
-    guestPatrollers: z
-      .array(
-        z.object({
-          name: z.string(),
-          number: z.string(),
-          registered: z.string(),
-        })
-      )
-      .optional(),
-    driver: z.string(),
-    vehicle: z.string(),
-    liveryOrSignage: z.string(),
-    havePoliceRadio: z.string(),
-  });
+  const formSchema = z
+    .object({
+      startTime: z.string().min(1),
+      endTime: z.string().min(1),
+      policeStationBase: z.string(),
+      cpCallSign: z.string(),
+      patrol: z.string(),
+      observerName: z.string(),
+      observerNumber: z.string(),
+      guestPatrollers: z
+        .array(
+          z.object({
+            name: z.string(),
+            number: z.string(),
+            registered: z.string(),
+          })
+        )
+        .optional(),
+      driver: z.string(),
+      vehicle: z.string(),
+      liveryOrSignage: z.string(),
+      havePoliceRadio: z.string(),
+    })
+    .refine(
+      (data) => {
+        const start = new Date(data.startTime);
+        const end = new Date(data.endTime);
+        return end > start;
+      },
+      {
+        message: "End time must be after start time",
+        path: ["endTime"],
+      }
+    );
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -115,9 +127,29 @@ export default function LogonForm(props: LogonFormProps) {
     try {
       setSubmitting(true);
 
+      const start = new Date(data.startTime);
+      const end = new Date(data.endTime);
+      const now = new Date();
+      const maxShiftDuration = 12 * 60 * 60 * 1000; // 12 hours in milliseconds
+
+      if (start < now) {
+        form.setError("startTime", {
+          message: "Start time cannot be in the past",
+        });
+        setSubmitting(false);
+        return;
+      }
+
+      if (end.getTime() - start.getTime() > maxShiftDuration) {
+        form.setError("endTime", {
+          message: "Shift duration cannot exceed 12 hours",
+        });
+        setSubmitting(false);
+        return;
+      }
+
       await axios.post(`${import.meta.env.VITE_API_URL}/email/`, {
-        recipientEmail: "cpnzecc@police.govt.nz",
-        // recipientEmail: "jasonabc0626@gmail.com",
+        recipientEmail: "jasonabc0626@gmail.com",
         // recipientEmail: "leetony347@yahoo.com",
         //recipientEmail: "jbac208@auckland.ac.nz",
         //recipientEmail: "makjoshua2003@gmail.com",
@@ -130,7 +162,7 @@ export default function LogonForm(props: LogonFormProps) {
       });
       console.log(data);
       setSubmitting(false);
-      // Navigates to Loghome if succesfully logged on.
+      // Navigates to Loghome if successfully logged on.
       navigate("/home");
     } catch (error) {
       axios.isAxiosError(error)
@@ -156,6 +188,7 @@ export default function LogonForm(props: LogonFormProps) {
                       {...field}
                       className="w-full pl-10"
                       placeholder="Select time"
+                      min={new Date().toISOString().slice(0, 16)}
                     />
                     <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                       <svg
@@ -173,6 +206,7 @@ export default function LogonForm(props: LogonFormProps) {
                     </div>
                   </div>
                 </FormControl>
+                <FormMessage />
               </FormItem>
             )}
           />
@@ -189,6 +223,7 @@ export default function LogonForm(props: LogonFormProps) {
                       {...field}
                       className="w-full pl-10"
                       placeholder="Select time"
+                      min={form.watch("startTime")}
                     />
                     <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                       <svg
@@ -206,9 +241,11 @@ export default function LogonForm(props: LogonFormProps) {
                     </div>
                   </div>
                 </FormControl>
+                <FormMessage />
               </FormItem>
             )}
           />
+
           <FormField
             control={form.control}
             name="policeStationBase"
