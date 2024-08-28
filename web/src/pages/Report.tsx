@@ -58,10 +58,11 @@ export default function Report() {
     },
   });
 
-  const { fields, append, remove, update } = useFieldArray({
+  const { fields, replace, remove, update } = useFieldArray({
     control: form.control,
     name: "observations",
   });
+  
 
   const onSubmit = (data: z.infer<typeof reportFormSchema>) => {
     setFormData(data);
@@ -166,7 +167,7 @@ export default function Report() {
               form={form}
               fields={fields}
               setObservationsList={setObservationsList}
-              append={append}
+              replace={replace}
               remove={remove}
               update={update}
             />
