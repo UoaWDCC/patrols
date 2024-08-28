@@ -7,6 +7,7 @@ import { z } from "zod";
 
 const EMAIL_API_KEY: string = process.env.RESEND_API_KEY as string;
 const CPNZ_APP_EMAIL = "ecc@cpnz.org.nz";
+const POLICE_EMAIL = process.env.CPNZ_ECC_RECIPIENT_EMAIL;
 const resend = new Resend(EMAIL_API_KEY);
 
 const reportSchema = z.object({
@@ -41,7 +42,6 @@ const statsSchema = z.object({
 });
 
 const emailSchema = z.object({
-  recipientEmail: z.string(),
   data: z.object({
     cpnzID: z.string(),
     email: z.string(),
@@ -76,7 +76,7 @@ export const logOffEmail = async (req: Request, res: Response) => {
 
   const ObserverFullName = `${observerName.first_names} ${observerName.surname}`;
 
-  const { recipientEmail, data }: z.infer<typeof emailSchema> =
+  const {data }: z.infer<typeof emailSchema> =
     parseResult.data;
 
   // Check if the API key is provided
@@ -135,7 +135,7 @@ export const logOffEmail = async (req: Request, res: Response) => {
   try {
     const email = await resend.emails.send({
       from: `CPNZ <${CPNZ_APP_EMAIL}>`,
-      to: [`${recipientEmail}`],
+      to: [`${POLICE_EMAIL}`],
       subject: `CPNZ - Log Off - Patrol ID: ${data.cpnzID} - Shift ID: ${data.formData.shiftId}`,
       html: `
             <div style="font-family: Arial, sans-serif; line-height: 1.8;">

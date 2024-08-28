@@ -129,7 +129,6 @@ export default function Report() {
     try {
       setSubmitting(true);
       await axios.post(`${import.meta.env.VITE_API_URL}/logoff/`, {
-        recipientEmail: "jasonabc0626@gmail.com",
         data,
       });
       console.log(formData, statistics);
