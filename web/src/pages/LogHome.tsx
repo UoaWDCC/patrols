@@ -55,7 +55,7 @@ export default function ReportSummary() {
   // Check the curent user's logon status, if "Yes", then redirect to logon home
   useEffect(() => {
     if (currentUserDetails && currentUserDetails.logon_status != "Yes") {
-      navigate("/home");
+      navigate("/LogHome");
     }
   }, [currentUserDetails?.logon_status]);
 
@@ -120,16 +120,16 @@ export default function ReportSummary() {
               <label className="block text-left font-semibold ml-1">
                 Enter a Registration Number:
               </label>
-              <div className="flex mt-1">
+              <div className="flex mt-2 h-12">
                 <input
                   // className="mt-2 font-light text-xs h-12 rounded-l-md w-full"
                   type="text"
-                  className="mt-2 font-light text-xs h-12 p-2 border border-gray-300 rounded-l-md w-full"
+                  className="font-light text-xs p-2 border border-gray-300 rounded-l-md w-full"
                   placeholder="Enter registration number"
                   value={registrationInput}
                   onChange={(e) => setRegistrationInput(e.target.value)}
                 />
-                <button className="bg-cpnz-blue-900 text-white px-10 py-2 rounded-r-md hover:opacity-80 ml-2 h-12 mt-2">
+                <button className="bg-cpnz-blue-900 text-white px-10 py-2 rounded-r-md hover:opacity-80 ml-2">
                   Search
                 </button>
               </div>
