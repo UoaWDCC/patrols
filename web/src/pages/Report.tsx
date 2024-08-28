@@ -22,6 +22,7 @@ export default function Report() {
   const [submitting, setSubmitting] = useState(false);
 
   const { currentUserDetails, shiftDetails } = useUserData();
+  const [registrationInput, setRegistrationInput] = useState("");
 
   const navigate = useNavigate();
   const [observationsList, setObservationsList] = useState<
@@ -171,6 +172,26 @@ export default function Report() {
               remove={remove}
               update={update}
             />
+            <div className="mt-8">
+              <label className="block text-left font-semibold ml-1">
+                Enter a Registration Number:
+              </label>
+              <div className="flex mt-2 h-12">
+                <input
+                  type="text"
+                  className="font-light text-xs p-2 border border-gray-300 rounded-l-md w-full"
+                  placeholder="Enter registration number"
+                  value={registrationInput}
+                  onChange={(e) => setRegistrationInput(e.target.value)}
+                />
+                <button 
+                  className="bg-cpnz-blue-900 text-white px-10 py-2 rounded-r-md hover:opacity-80 ml-2"
+                  // onClick={handleSearchRegistration}
+                >
+                  Search
+                </button>
+              </div>
+            </div>
             <button className="bg-[#FF8080] my-10 rounded-lg shadow-md p-4 w-full hover:bg-[#ff4d4d]">
               Submit Report & Log Off
             </button>
