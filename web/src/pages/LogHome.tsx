@@ -4,7 +4,6 @@ import useDraftStatus from "../hooks/useDraftStatus";
 import useUserData from "../hooks/useUserData";
 import { useEffect, useState } from "react";
 import axios from "axios";
-import { Input } from "@components/ui/input";
 
 export default function ReportSummary() {
   const navigate = useNavigate();
@@ -122,13 +121,17 @@ export default function ReportSummary() {
                 Enter a Registration Number:
               </label>
               <div className="flex mt-1">
-                <Input
-                  className="mt-2 font-light text-xs h-12"
+                <input
+                  // className="mt-2 font-light text-xs h-12 rounded-l-md w-full"
                   type="text"
+                  className="mt-2 font-light text-xs h-12 p-2 border border-gray-300 rounded-l-md w-full"
                   placeholder="Enter registration number"
                   value={registrationInput}
                   onChange={(e) => setRegistrationInput(e.target.value)}
                 />
+                <button className="bg-cpnz-blue-900 text-white px-10 py-2 rounded-r-md hover:opacity-80 ml-2 h-12 mt-2">
+                  Search
+                </button>
               </div>
             </div>
         </div>
