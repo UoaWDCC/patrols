@@ -4,6 +4,7 @@ import useDraftStatus from "../hooks/useDraftStatus";
 import useUserData from "../hooks/useUserData";
 import { useEffect, useState } from "react";
 import axios from "axios";
+import { Input } from "@components/ui/input";
 
 export default function ReportSummary() {
   const navigate = useNavigate();
@@ -11,6 +12,7 @@ export default function ReportSummary() {
 
   const [showAmendmentDialog, setShowAmendmentDialog] = useState(false);
   const [amendmentText, setAmendmentText] = useState("");
+  const [registrationInput, setRegistrationInput] = useState("");
 
   // Function to navigate to the new report page
   const handleNewReport = () => {
@@ -93,17 +95,17 @@ export default function ReportSummary() {
         <div className="my-6">
           <div className="mb-8">
             <p>
-              Police Station Base{" "}
+              Police Station Base:{" "}
               <strong>{currentUserDetails?.police_station}</strong>
             </p>
             <p>
-              CP Call Sign <strong>{currentUserDetails?.call_sign}</strong>
+              CP Call Sign: <strong>{currentUserDetails?.call_sign}</strong>
             </p>
             <p>
-              Patrols <strong>{currentUserDetails?.patrol_id}</strong>{" "}
+              Patrols: <strong>{currentUserDetails?.patrol_id}</strong>{" "}
             </p>
             <p>
-              Vehicle <strong>{registrationNo}</strong>
+              Vehicle: <strong>{registrationNo}</strong>
             </p>
           </div>
           <div className="flex flex-row justify-center space-x-2 items-center">
@@ -115,6 +117,20 @@ export default function ReportSummary() {
               Make Amendment
             </button>
           </div>
+          <div className="mt-8">
+              <label className="block text-left font-semibold ml-1">
+                Enter a Registration Number:
+              </label>
+              <div className="flex mt-1">
+                <Input
+                  className="mt-2 font-light text-xs h-12"
+                  type="text"
+                  placeholder="Enter registration number"
+                  value={registrationInput}
+                  onChange={(e) => setRegistrationInput(e.target.value)}
+                />
+              </div>
+            </div>
         </div>
       </div>
 
