@@ -489,6 +489,20 @@ const watchMails = async (req: Request, res: Response): Promise<void> => {
   }
 };
 
+const getAllMails = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const responseData = await getMails();
+    await callWatchMailsAPI();
+    res.status(200).json(responseData);
+  } catch (error) {
+    if (axios.isAxiosError(error) && error.response) {
+      res.status(error.response.status).json(error.response.data);
+    } else {
+      res.status(500).json("An unknown error occurred");
+    }
+  }
+};
+
 const checkAndRenewWatch = async () => {
   try {
 
@@ -539,4 +553,4 @@ const stopWatchMails = async (req: Request, res: Response): Promise<void> => {
 // check daily
 setInterval(checkAndRenewWatch, 24 * 60 * 60 * 1000);
 
-export { watchMails, getHistoryRecords, stopWatchMails, saveHistoryIdInDb };
+export { watchMails, getHistoryRecords, stopWatchMails, saveHistoryIdInDb, getAllMails };
