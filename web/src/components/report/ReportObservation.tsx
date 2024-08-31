@@ -25,7 +25,7 @@ interface ReportObservationProps {
   form: UseFormReturn<z.infer<typeof reportFormSchema>>;
   fields: Observation[];
   setObservationsList: (value: z.infer<typeof formObservationSchema>) => void;
-  append: any;
+  replace: any;
   remove: any;
   update: any;
 }
@@ -62,11 +62,11 @@ const addObservation = (
   newObservation: Observation,
   fields: Observation[],
   setFields: any,
-  append: any
+  replace: any
 ) => {
   const updatedFields = [...fields, newObservation];
   setFields(updatedFields);
-  append(newObservation);
+  replace(updatedFields)
   localStorage.setItem("observations", JSON.stringify(updatedFields));
   console.log(JSON.parse(localStorage.getItem("observations")!).length);
 };
@@ -89,10 +89,11 @@ const ReportObservation = ({
   form,
   fields,
   setObservationsList,
-  append,
+  replace,
   remove,
   update,
 }: ReportObservationProps) => {
+
   const { address } = useCurrentLocation();
   const date = new Date();
   let parsedDate = "";
@@ -149,7 +150,7 @@ const ReportObservation = ({
       newObservation.category &&
       newObservation.description
     ) {
-      addObservation(newObservation, fields, setObservationsList, append);
+      addObservation(newObservation, fields, setObservationsList, replace);
       setNewObservation({
         location: address,
         description: "",
