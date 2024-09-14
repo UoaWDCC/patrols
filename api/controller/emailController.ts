@@ -107,16 +107,6 @@ export const sendShiftRequest = async (req: Request, res: Response) => {
     const startDateTime = new Date(parseResult.data.formData.startTime);
     const endDateTime = new Date(parseResult.data.formData.endTime);
 
-    const d = {
-      patrol_id: Number(parseResult.data.driver.patrol_id),
-      start_time: startDateTime,
-      end_time: endDateTime,
-      police_station_base: parseResult.data.formData.policeStationBase,
-      observer_id: observer_id.id,
-      driver_id: driver_id.id,
-      vehicle_id: Number(parseResult.data.formData.vehicle),
-    };
-
     shift = await prisma.shift.create({
       data: {
         patrol_id: Number(parseResult.data.driver.patrol_id),

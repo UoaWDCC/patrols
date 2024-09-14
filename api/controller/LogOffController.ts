@@ -26,6 +26,7 @@ const reportSchema = z.object({
       displayed: z.boolean(),
       location: z.string(),
       category: z.string(),
+      subcategory: z.string(),
       type: z.string(),
     })
   ),
@@ -60,21 +61,34 @@ export const logOffEmail = async (req: Request, res: Response) => {
     return res.status(400).json({ error: parseResult.error.flatten() });
   }
 
-  const observerName = await prisma.members_dev.findFirst({
+  /* Get the observer's name and patroller id */
+  const observerDetail = await prisma.members_dev.findFirst({
     where: {
       cpnz_id: Number(parseResult.data.data.cpnzID),
     },
-    select: { first_names: true, surname: true },
+    select: { id: true, first_names: true, surname: true},
   });
 
   /* Getting the full name of the obeserver */
-  if (!observerName) {
+  if (!observerDetail) {
     return res
       .status(400)
       .json({ message: "No member found with the provided cpnz_id" });
   }
 
-  const ObserverFullName = `${observerName.first_names} ${observerName.surname}`;
+  const ObserverFullName = `${observerDetail.first_names} ${observerDetail.surname}`;
+
+  /* Getting startTime and endTime from shift table via last shift record */
+
+  const lastShift = await prisma.shift.findFirst({
+    orderBy: { id: "desc" },
+    where: {
+      observer_id: observerDetail.id,
+    },
+    select: { start_time: true, end_time: true },
+  });
+
+  console.log(lastShift);
 
   const {data }: z.infer<typeof emailSchema> =
     parseResult.data;
@@ -122,7 +136,7 @@ export const logOffEmail = async (req: Request, res: Response) => {
         location: observation.location,
         is_police_or_security_present: false,
         incident_category: observation.category,
-        incident_sub_category: observation.category,
+        incident_sub_category: observation.subcategory,
         description: observation.description,
         report_id: report.id,
       },
