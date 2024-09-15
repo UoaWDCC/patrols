@@ -69,6 +69,7 @@ export const formObservationSchema = z.array(
     description: z.string().min(1),
     time: z.string().min(1),
     category: z.string().min(1),
+    subCategory: z.string().min(1),
     type: z.enum(["observation", "intel"]),
     displayed: z.boolean(),
   })
