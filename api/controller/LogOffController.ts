@@ -26,7 +26,7 @@ const reportSchema = z.object({
       displayed: z.boolean(),
       location: z.string(),
       category: z.string(),
-      subcategory: z.string(),
+      subCategory: z.string(),
       type: z.string(),
     })
   ),
@@ -38,7 +38,8 @@ const statsSchema = z.object({
   vehicleIncidents: z.number(),
   propertyIncidents: z.number(),
   willfulDamageIncidents: z.number(),
-  otherIncidents: z.number(),
+  disorderIncidents: z.number(),
+  specialServiceIncidents: z.number(),
   totalIncidents: z.number(),
 });
 
@@ -66,7 +67,7 @@ export const logOffEmail = async (req: Request, res: Response) => {
     where: {
       cpnz_id: Number(parseResult.data.data.cpnzID),
     },
-    select: { id: true, first_names: true, surname: true},
+    select: { id: true, first_names: true, surname: true },
   });
 
   /* Getting the full name of the obeserver */
@@ -90,8 +91,7 @@ export const logOffEmail = async (req: Request, res: Response) => {
 
   console.log(lastShift);
 
-  const {data }: z.infer<typeof emailSchema> =
-    parseResult.data;
+  const { data }: z.infer<typeof emailSchema> = parseResult.data;
 
   // Check if the API key is provided
   if (!EMAIL_API_KEY) {
@@ -117,7 +117,8 @@ export const logOffEmail = async (req: Request, res: Response) => {
       vehicle_incidents: data.statistics.vehicleIncidents,
       property_incidents: data.statistics.propertyIncidents,
       willful_damage_incidents: data.statistics.willfulDamageIncidents,
-      other_incidents: data.statistics.otherIncidents,
+      disorder_incidents: data.statistics.disorderIncidents,
+      special_service_incidents: data.statistics.specialServiceIncidents,
       total_incidents: data.statistics.totalIncidents,
     },
   });
@@ -136,7 +137,7 @@ export const logOffEmail = async (req: Request, res: Response) => {
         location: observation.location,
         is_police_or_security_present: false,
         incident_category: observation.category,
-        incident_sub_category: observation.subcategory,
+        incident_sub_category: observation.subCategory,
         description: observation.description,
         report_id: report.id,
       },
