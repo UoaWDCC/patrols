@@ -543,7 +543,6 @@ const ReportObservation = ({
                     </FormItem>
                   )}
                 />
-
                 <FormField
                   control={form.control}
                   name="observations.0.subCategory"

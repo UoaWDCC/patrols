@@ -36,7 +36,8 @@ export default function Report() {
     localStorage.getItem("startOdometer") || ""
   );
   const [endOdometer, setEndOdometer] = useState<string>(
-    localStorage.getItem("endOdometer") || "1000"
+    localStorage.getItem("endOdometer") ||
+      localStorage.getItem("startOdometer")!
   );
   const [debrief, setDebrief] = useState<string>(
     localStorage.getItem("debrief") || "message"
