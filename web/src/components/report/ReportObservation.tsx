@@ -452,7 +452,10 @@ const ReportObservation = ({
             <p className="text-xs text-gray-500 mt-2">
               Category: {observation.category}
             </p>
-            <p className="text-base">{observation.description}</p>
+            <p className="text-xs text-gray-500 mt-2">
+              Subcategory: {observation.subCategory}
+            </p>
+            <p className="text-base">Description: {observation.description}</p>
           </div>
         ))}
         <DialogContent>
@@ -535,6 +538,39 @@ const ReportObservation = ({
                               {category}
                             </option>
                           ))}
+                        </select>
+                      </FormControl>
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="observations.0.subCategory"
+                  render={() => (
+                    <FormItem className="w-full">
+                      <FormLabel className="font-semibold text-base">
+                        Subcategory
+                      </FormLabel>
+                      <FormControl>
+                        <select
+                          className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-slate-400 h-12"
+                          value={editObservationData?.subCategory || ""}
+                          onChange={(e) =>
+                            handleEditInputChange(e, "subCategory")
+                          }
+                        >
+                          <option value="" disabled>
+                            Select a Subcategory
+                          </option>
+                          {editObservationData?.category &&
+                            observationSubCategories[
+                              editObservationData.category as keyof typeof observationSubCategories
+                            ]?.map((subCategory) => (
+                              <option key={subCategory} value={subCategory}>
+                                {subCategory}
+                              </option>
+                            ))}
                         </select>
                       </FormControl>
                     </FormItem>
