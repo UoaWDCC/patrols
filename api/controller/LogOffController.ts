@@ -67,7 +67,7 @@ export const logOffEmail = async (req: Request, res: Response) => {
     where: {
       cpnz_id: Number(parseResult.data.data.cpnzID),
     },
-    select: { id: true, first_names: true, surname: true },
+    select: { first_names: true, surname: true },
   });
 
   /* Getting the full name of the obeserver */
@@ -79,17 +79,31 @@ export const logOffEmail = async (req: Request, res: Response) => {
 
   const ObserverFullName = `${observerDetail.first_names} ${observerDetail.surname}`;
 
-  /* Getting startTime and endTime from shift table via last shift record */
-
   const lastShift = await prisma.shift.findFirst({
-    orderBy: { id: "desc" },
     where: {
-      observer_id: observerDetail.id,
+      id: BigInt(parseResult.data.data.formData.shiftId),
     },
-    select: { start_time: true, end_time: true },
+    select: { start_time: true, end_time: true, guest_patrollers: true },
   });
 
-  console.log(lastShift);
+  /* throwing an error message if last shift does not exist */
+  if (!lastShift) {
+    return res.status(400).json({ message: "No shift found with the provided shift_id" });
+  }
+
+  /* calculating the shift duration */
+  const shiftDuration =
+    new Date(lastShift.end_time).getTime() - new Date(lastShift.start_time).getTime();
+
+  /* Fetching for the amount of guest patrollers */
+  const guestPatrollers = lastShift.guest_patrollers?.length || 0;
+  console.log("guest patrollers: ", guestPatrollers);
+
+  /* calculating the shift duration in hours including rounding */
+  const shiftDurationInHours = Math.round(shiftDuration / 1000 / 60 / 60);
+
+  /* calculating the total hours patrolled */
+  const totalHoursPatrolled = shiftDurationInHours * 2 + guestPatrollers;
 
   const { data }: z.infer<typeof emailSchema> = parseResult.data;
 
