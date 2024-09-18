@@ -36,7 +36,8 @@ export default function Report() {
     localStorage.getItem("startOdometer") || ""
   );
   const [endOdometer, setEndOdometer] = useState<string>(
-    localStorage.getItem("endOdometer") || "1000"
+    localStorage.getItem("endOdometer") ||
+      localStorage.getItem("startOdometer")!
   );
   const [debrief, setDebrief] = useState<string>(
     localStorage.getItem("debrief") || "message"
@@ -77,13 +78,21 @@ export default function Report() {
     const [
       kmTravelled,
       vehicleIncidents,
-      personIncidents,
       propertyIncidents,
       willfulDamageIncidents,
-      otherIncidents,
+      disorderIncidents,
+      personIncidents,
+      specialServiceIncidents,
     ] = [
       parseInt(formData.endOdometer) - parseInt(formData.startOdometer),
-      ...["vehicle", "people", "property", "willful damage", "other"].map(
+      ...[
+        "Vehicle",
+        "Property",
+        "Willful Damage",
+        "Disorder",
+        "People",
+        "Special Service",
+      ].map(
         (category) =>
           formData.observations.filter(
             (o) => o.category.toString() === category
@@ -92,19 +101,21 @@ export default function Report() {
     ];
     const totalIncidents =
       vehicleIncidents +
-      personIncidents +
       propertyIncidents +
       willfulDamageIncidents +
-      otherIncidents;
+      disorderIncidents +
+      personIncidents +
+      specialServiceIncidents;
 
     const statistics = {
       kmTravelled,
       vehicleIncidents,
-      personIncidents,
       propertyIncidents,
       willfulDamageIncidents,
+      disorderIncidents,
+      personIncidents,
+      specialServiceIncidents,
       totalIncidents,
-      otherIncidents,
     };
 
     // JSON.parse(localStorage.getItem("observations")!).forEach((o: any) => {
