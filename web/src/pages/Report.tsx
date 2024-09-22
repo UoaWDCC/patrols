@@ -23,6 +23,9 @@ export default function Report() {
 
   const { currentUserDetails, shiftDetails } = useUserData();
   const [registrationInput, setRegistrationInput] = useState("");
+  const [vehicleData, setVehicleData] = useState<any>(null);
+  const [openVehicleDialog, setOpenVehicleDialog] = useState<boolean>(false);
+  const [vehicleNotFound, setVehicleNotFound] = useState<boolean>(false);
 
   const navigate = useNavigate();
   const [observationsList, setObservationsList] = useState<
@@ -151,9 +154,29 @@ export default function Report() {
     }
   };
 
+  // Function to handle vehicle search
+  const handleSearchRegistration = async () => {
+    console.log("Searching for registration number:", registrationInput);
+    try {
+      const response = await axios.get(
+        `${import.meta.env.VITE_API_URL}/stolen-vehicle/${registrationInput}`
+      );
+      setVehicleData(response.data); // Set the fetched vehicle data
+      setVehicleNotFound(false); // Reset the not found flag
+      setOpenVehicleDialog(true); // Open the dialog to show the vehicle data
+    } catch (error) {
+      setVehicleData(null); // Clear vehicle data if not found
+      setVehicleNotFound(true); // Set the not found flag
+      setOpenVehicleDialog(true); // Open the dialog to show the vehicle status
+      axios.isAxiosError(error)
+        ? console.log("Axios error:", error.response?.data.error)
+        : console.error("Unexpected error during vehicle search:", error);
+    }
+  };
+
   return (
     <div className="relative max-w-3xl mx-auto max-h-screen">
-      <div className="bg-[#1E3A8A] py-6 flex justify-between items-center px-8 rounded-b-3xl">
+      <div className="bg-cpnz-blue-900 py-6 flex justify-between items-center px-8 rounded-b-2xl">
         <h1 className="text-xl font-bold text-white">Shift in progress</h1>
         <p className="text-sm text-white">
           Event number: {shiftDetails?.event_no}
@@ -185,21 +208,43 @@ export default function Report() {
                   onChange={(e) => setRegistrationInput(e.target.value)}
                 />
                 <button 
+                  type="button"
                   className="bg-cpnz-blue-900 text-white px-10 py-2 rounded-r-md hover:opacity-80 ml-2"
-                  // onClick={handleSearchRegistration}
+                  onClick={handleSearchRegistration}
                 >
                   Search
                 </button>
               </div>
             </div>
-            <button className="bg-[#FF8080] my-10 rounded-lg shadow-md p-4 w-full hover:bg-[#ff4d4d]">
-              Submit Report & Log Off
-            </button>
           </div>
-
+          <button 
+            type="submit"
+            className="bg-[#FF8080] my-10 rounded-lg shadow-md p-4 w-full hover:bg-[#ff4d4d]"
+          >
+            Submit Report & Log Off
+          </button>
           <div>
+            <Dialog open={openVehicleDialog} onOpenChange={setOpenVehicleDialog}>
+              <DialogContent>
+                <DialogDescription>
+                  <div className="mt-4 p-4 rounded-md">
+                  <h3 className="font-semibold text-[20px] text-black text-center my-4">Vehicle stolen status:</h3>
+                  {vehicleData ? (
+                    <>
+                      <p className="text-center">Vehicle is stolen.</p>
+                    </>
+                  ) : (
+                    <>
+                      <p className="text-center">This vehicle is not stolen.</p>
+                    </>
+                  )}
+                  </div>
+                </DialogDescription>
+              </DialogContent>
+            </Dialog>
             <Dialog open={openDialog} onOpenChange={setOpenDialog}>
-              <DialogTrigger></DialogTrigger>
+              <DialogTrigger>
+              </DialogTrigger>
               <DialogContent>
                 <DialogDescription className="flex justify-center">
                   <div>

@@ -11,8 +11,7 @@ export default function ReportSummary() {
 
   const [showAmendmentDialog, setShowAmendmentDialog] = useState(false);
   const [amendmentText, setAmendmentText] = useState("");
-  const [registrationInput, setRegistrationInput] = useState("");
-
+  
   // Function to navigate to the new report page
   const handleNewReport = () => {
     navigate("/Report");
