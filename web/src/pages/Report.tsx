@@ -231,7 +231,7 @@ export default function Report() {
                   <h3 className="font-semibold text-[20px] text-black text-center my-4">Vehicle stolen status:</h3>
                   {vehicleData ? (
                     <>
-                      <p className="text-center">Vehicle is stolen.</p>
+                      <p className="text-center">This vehicle is stolen.</p>
                     </>
                   ) : (
                     <>
