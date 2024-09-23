@@ -25,7 +25,7 @@ export default function Report() {
   const [registrationInput, setRegistrationInput] = useState("");
   const [vehicleData, setVehicleData] = useState<any>(null);
   const [openVehicleDialog, setOpenVehicleDialog] = useState<boolean>(false);
-  const [vehicleNotFound, setVehicleNotFound] = useState<boolean>(false);
+  const [isRegistrationEmpty, setIsRegistrationEmpty] = useState<boolean>(false);
 
   const navigate = useNavigate();
   const [observationsList, setObservationsList] = useState<
@@ -41,7 +41,7 @@ export default function Report() {
   );
   const [endOdometer, setEndOdometer] = useState<string>(
     localStorage.getItem("endOdometer") ||
-      localStorage.getItem("startOdometer")!
+    localStorage.getItem("startOdometer")!
   );
   const [debrief, setDebrief] = useState<string>(
     localStorage.getItem("debrief") || "message"
@@ -67,7 +67,7 @@ export default function Report() {
     control: form.control,
     name: "observations",
   });
-  
+
 
   const onSubmit = (data: z.infer<typeof reportFormSchema>) => {
     setFormData(data);
@@ -88,21 +88,21 @@ export default function Report() {
       personIncidents,
       specialServiceIncidents,
     ] = [
-      parseInt(formData.endOdometer) - parseInt(formData.startOdometer),
-      ...[
-        "Vehicle",
-        "Property",
-        "Willful Damage",
-        "Disorder",
-        "People",
-        "Special Service",
-      ].map(
-        (category) =>
-          formData.observations.filter(
-            (o) => o.category.toString() === category
-          ).length
-      ),
-    ];
+        parseInt(formData.endOdometer) - parseInt(formData.startOdometer),
+        ...[
+          "Vehicle",
+          "Property",
+          "Willful Damage",
+          "Disorder",
+          "People",
+          "Special Service",
+        ].map(
+          (category) =>
+            formData.observations.filter(
+              (o) => o.category.toString() === category
+            ).length
+        ),
+      ];
     const totalIncidents =
       vehicleIncidents +
       propertyIncidents +
@@ -168,16 +168,25 @@ export default function Report() {
   // Function to handle vehicle search
   const handleSearchRegistration = async () => {
     console.log("Searching for registration number:", registrationInput);
+
+    if (!registrationInput) {
+      setIsRegistrationEmpty(true);
+      setOpenVehicleDialog(true);
+      return;
+    }
+
     try {
       const response = await axios.get(
         `${import.meta.env.VITE_API_URL}/stolen-vehicle/${registrationInput}`
       );
+      if (!response.data) {
+        setOpenVehicleDialog(true);
+        return;
+      }
       setVehicleData(response.data); // Set the fetched vehicle data
-      setVehicleNotFound(false); // Reset the not found flag
       setOpenVehicleDialog(true); // Open the dialog to show the vehicle data
     } catch (error) {
       setVehicleData(null); // Clear vehicle data if not found
-      setVehicleNotFound(true); // Set the not found flag
       setOpenVehicleDialog(true); // Open the dialog to show the vehicle status
       axios.isAxiosError(error)
         ? console.log("Axios error:", error.response?.data.error)
@@ -216,9 +225,9 @@ export default function Report() {
                   className="font-light text-xs p-2 border border-gray-300 rounded-l-md w-full"
                   placeholder="Enter registration number"
                   value={registrationInput}
-                  onChange={(e) => setRegistrationInput(e.target.value)}
+                  onChange={(e) => (setRegistrationInput(e.target.value), setIsRegistrationEmpty(false))}
                 />
-                <button 
+                <button
                   type="button"
                   className="bg-cpnz-blue-900 text-white px-10 py-2 rounded-r-md hover:opacity-80 ml-2"
                   onClick={handleSearchRegistration}
@@ -228,7 +237,7 @@ export default function Report() {
               </div>
             </div>
           </div>
-          <button 
+          <button
             type="submit"
             className="bg-[#FF8080] my-10 rounded-lg shadow-md p-4 w-full hover:bg-[#ff4d4d]"
           >
@@ -237,20 +246,23 @@ export default function Report() {
           <div>
             <Dialog open={openVehicleDialog} onOpenChange={setOpenVehicleDialog}>
               <DialogContent>
-                <DialogDescription>
-                  <div className="mt-4 p-4 rounded-md">
-                  <h3 className="font-semibold text-[20px] text-black text-center my-4">Vehicle stolen status:</h3>
-                  {vehicleData ? (
-                    <>
-                      <p className="text-center">This vehicle is stolen.</p>
-                    </>
+                <div className="mt-4 p-4 rounded-md">
+                  {isRegistrationEmpty ? (
+                    <div className="flex flex-col items-center">
+                      <span className="text-4xl text-yellow-500">&#9888;</span>
+                      <p className="text-center text-yellow-500 font-semibold">Please enter a registration number</p>
+                    </div>
                   ) : (
                     <>
-                      <p className="text-center">This vehicle is not stolen.</p>
+                      <h3 className="font-semibold text-[20px] text-black text-center my-4">Vehicle stolen status:</h3>
+                      {vehicleData ? (
+                        <p className="text-center text-red-600">This vehicle is stolen.</p>
+                      ) : (
+                        <p className="text-center text-green-500">This vehicle is not stolen.</p>
+                      )}
                     </>
                   )}
-                  </div>
-                </DialogDescription>
+                </div>
               </DialogContent>
             </Dialog>
             <Dialog open={openDialog} onOpenChange={setOpenDialog}>
