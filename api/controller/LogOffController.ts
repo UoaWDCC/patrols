@@ -7,6 +7,7 @@ import { z } from "zod";
 
 const EMAIL_API_KEY: string = process.env.RESEND_API_KEY as string;
 const CPNZ_APP_EMAIL = "ecc@cpnz.org.nz";
+const POLICE_EMAIL = process.env.CPNZ_ECC_RECIPIENT_EMAIL;
 const resend = new Resend(EMAIL_API_KEY);
 
 const reportSchema = z.object({
@@ -25,6 +26,7 @@ const reportSchema = z.object({
       displayed: z.boolean(),
       location: z.string(),
       category: z.string(),
+      subCategory: z.string(),
       type: z.string(),
     })
   ),
@@ -36,12 +38,12 @@ const statsSchema = z.object({
   vehicleIncidents: z.number(),
   propertyIncidents: z.number(),
   willfulDamageIncidents: z.number(),
-  otherIncidents: z.number(),
+  disorderIncidents: z.number(),
+  specialServiceIncidents: z.number(),
   totalIncidents: z.number(),
 });
 
 const emailSchema = z.object({
-  recipientEmail: z.string(),
   data: z.object({
     cpnzID: z.string(),
     email: z.string(),
@@ -60,7 +62,8 @@ export const logOffEmail = async (req: Request, res: Response) => {
     return res.status(400).json({ error: parseResult.error.flatten() });
   }
 
-  const observerName = await prisma.members_dev.findFirst({
+  /* Get the observer's name and patroller id */
+  const observerDetail = await prisma.members_dev.findFirst({
     where: {
       cpnz_id: Number(parseResult.data.data.cpnzID),
     },
@@ -68,16 +71,41 @@ export const logOffEmail = async (req: Request, res: Response) => {
   });
 
   /* Getting the full name of the obeserver */
-  if (!observerName) {
+  if (!observerDetail) {
     return res
       .status(400)
       .json({ message: "No member found with the provided cpnz_id" });
   }
 
-  const ObserverFullName = `${observerName.first_names} ${observerName.surname}`;
+  const ObserverFullName = `${observerDetail.first_names} ${observerDetail.surname}`;
 
-  const { recipientEmail, data }: z.infer<typeof emailSchema> =
-    parseResult.data;
+  const lastShift = await prisma.shift.findFirst({
+    where: {
+      id: BigInt(parseResult.data.data.formData.shiftId),
+    },
+    select: { start_time: true, end_time: true, guest_patrollers: true },
+  });
+
+  /* throwing an error message if last shift does not exist */
+  if (!lastShift) {
+    return res.status(400).json({ message: "No shift found with the provided shift_id" });
+  }
+
+  /* calculating the shift duration */
+  const shiftDuration =
+    new Date(lastShift.end_time).getTime() - new Date(lastShift.start_time).getTime();
+
+  /* Fetching for the amount of guest patrollers */
+  const guestPatrollers = lastShift.guest_patrollers?.length || 0;
+  console.log("guest patrollers: ", guestPatrollers);
+
+  /* calculating the shift duration in hours including rounding */
+  const shiftDurationInHours = Math.round(shiftDuration / 1000 / 60 / 60);
+
+  /* calculating the total hours patrolled */
+  const totalHoursPatrolled = shiftDurationInHours * 2 + guestPatrollers;
+
+  const { data }: z.infer<typeof emailSchema> = parseResult.data;
 
   // Check if the API key is provided
   if (!EMAIL_API_KEY) {
@@ -103,7 +131,8 @@ export const logOffEmail = async (req: Request, res: Response) => {
       vehicle_incidents: data.statistics.vehicleIncidents,
       property_incidents: data.statistics.propertyIncidents,
       willful_damage_incidents: data.statistics.willfulDamageIncidents,
-      other_incidents: data.statistics.otherIncidents,
+      disorder_incidents: data.statistics.disorderIncidents,
+      special_service_incidents: data.statistics.specialServiceIncidents,
       total_incidents: data.statistics.totalIncidents,
     },
   });
@@ -122,7 +151,7 @@ export const logOffEmail = async (req: Request, res: Response) => {
         location: observation.location,
         is_police_or_security_present: false,
         incident_category: observation.category,
-        incident_sub_category: observation.category,
+        incident_sub_category: observation.subCategory,
         description: observation.description,
         report_id: report.id,
       },
@@ -135,7 +164,7 @@ export const logOffEmail = async (req: Request, res: Response) => {
   try {
     const email = await resend.emails.send({
       from: `CPNZ <${CPNZ_APP_EMAIL}>`,
-      to: [`${recipientEmail}`],
+      to: [`${POLICE_EMAIL}`],
       subject: `CPNZ - Log Off - Patrol ID: ${data.cpnzID} - Shift ID: ${data.formData.shiftId}`,
       html: `
             <div style="font-family: Arial, sans-serif; line-height: 1.8;">

@@ -357,26 +357,27 @@ model patrols_prod {
 }
 
 model reports {
-  id                       BigInt         @id(map: "Report_pkey") @unique(map: "Report_id_key") @default(autoincrement())
-  member_id                BigInt
-  shift_id                 BigInt
-  vehicle_details_id       BigInt
-  odometer_initial_reading Int
-  odometer_final_reading   Int
-  weather_condition        Weather
-  is_foot_patrol           Boolean
-  notes                    String
-  km_travelled             Int?
-  vehicle_incidents        Int?
-  person_incidents         Int?
-  property_incidents       Int?
-  willful_damage_incidents Int?
-  other_incidents          Int?
-  total_incidents          Int?
-  observations             observations[]
-  members_dev              members_dev    @relation(fields: [member_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "report_member_id_fkey")
-  shift                    shift          @relation(fields: [shift_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "report_shift_id_fkey")
-  vehicle                  vehicle        @relation(fields: [vehicle_details_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  id                        BigInt         @id(map: "Report_pkey") @unique(map: "Report_id_key") @default(autoincrement())
+  member_id                 BigInt
+  shift_id                  BigInt
+  vehicle_details_id        BigInt
+  odometer_initial_reading  Int
+  odometer_final_reading    Int
+  weather_condition         Weather
+  is_foot_patrol            Boolean
+  notes                     String
+  km_travelled              Int?
+  vehicle_incidents         Int?
+  person_incidents          Int?
+  property_incidents        Int?
+  willful_damage_incidents  Int?
+  disorder_incidents        Int?
+  total_incidents           Int?
+  special_service_incidents Int?
+  observations              observations[]
+  members_dev               members_dev    @relation(fields: [member_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "report_member_id_fkey")
+  shift                     shift          @relation(fields: [shift_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "report_shift_id_fkey")
+  vehicle                   vehicle        @relation(fields: [vehicle_details_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
 }
 
 model shift {
@@ -389,6 +390,7 @@ model shift {
   observer_id                                BigInt
   driver_id                                  BigInt
   vehicle_id                                 BigInt?
+  total_hours_travelled                     BigInt?
   amendment                                  amendment[]
   guest_patrollers                           guest_patrollers[]
   reports                                    reports[]

@@ -40,7 +40,8 @@ export default function Report() {
     localStorage.getItem("startOdometer") || ""
   );
   const [endOdometer, setEndOdometer] = useState<string>(
-    localStorage.getItem("endOdometer") || "1000"
+    localStorage.getItem("endOdometer") ||
+      localStorage.getItem("startOdometer")!
   );
   const [debrief, setDebrief] = useState<string>(
     localStorage.getItem("debrief") || "message"
@@ -62,10 +63,11 @@ export default function Report() {
     },
   });
 
-  const { fields, append, remove, update } = useFieldArray({
+  const { fields, replace, remove, update } = useFieldArray({
     control: form.control,
     name: "observations",
   });
+  
 
   const onSubmit = (data: z.infer<typeof reportFormSchema>) => {
     setFormData(data);
@@ -80,13 +82,21 @@ export default function Report() {
     const [
       kmTravelled,
       vehicleIncidents,
-      personIncidents,
       propertyIncidents,
       willfulDamageIncidents,
-      otherIncidents,
+      disorderIncidents,
+      personIncidents,
+      specialServiceIncidents,
     ] = [
       parseInt(formData.endOdometer) - parseInt(formData.startOdometer),
-      ...["vehicle", "people", "property", "willful damage", "other"].map(
+      ...[
+        "Vehicle",
+        "Property",
+        "Willful Damage",
+        "Disorder",
+        "People",
+        "Special Service",
+      ].map(
         (category) =>
           formData.observations.filter(
             (o) => o.category.toString() === category
@@ -95,19 +105,21 @@ export default function Report() {
     ];
     const totalIncidents =
       vehicleIncidents +
-      personIncidents +
       propertyIncidents +
       willfulDamageIncidents +
-      otherIncidents;
+      disorderIncidents +
+      personIncidents +
+      specialServiceIncidents;
 
     const statistics = {
       kmTravelled,
       vehicleIncidents,
-      personIncidents,
       propertyIncidents,
       willfulDamageIncidents,
+      disorderIncidents,
+      personIncidents,
+      specialServiceIncidents,
       totalIncidents,
-      otherIncidents,
     };
 
     // JSON.parse(localStorage.getItem("observations")!).forEach((o: any) => {
@@ -133,7 +145,6 @@ export default function Report() {
     try {
       setSubmitting(true);
       await axios.post(`${import.meta.env.VITE_API_URL}/logoff/`, {
-        recipientEmail: "jasonabc0626@gmail.com",
         data,
       });
       console.log(formData, statistics);
@@ -191,7 +202,7 @@ export default function Report() {
               form={form}
               fields={fields}
               setObservationsList={setObservationsList}
-              append={append}
+              replace={replace}
               remove={remove}
               update={update}
             />

@@ -25,7 +25,7 @@ interface ReportObservationProps {
   form: UseFormReturn<z.infer<typeof reportFormSchema>>;
   fields: Observation[];
   setObservationsList: (value: z.infer<typeof formObservationSchema>) => void;
-  append: any;
+  replace: any;
   remove: any;
   update: any;
 }
@@ -38,12 +38,77 @@ enum type {
 }
 
 const observationCategories = [
-  "vehicle",
-  "people",
-  "property",
-  "willful damage",
-  "other",
+  "Vehicle",
+  "Property",
+  "Willful Damage",
+  "Disorder",
+  "People",
+  "Special Service",
 ];
+
+const observationSubCategories = {
+  Vehicle: [
+    "Abandoned Vehicle",
+    "Accident",
+    "Breakdown",
+    "Damaged",
+    "Driving Behaviour (unsafe)",
+    "Vehicle Interfered with",
+    "Vehicle insecure",
+    "Stolen Vehicle (Located)",
+    "Theft (from vehicle)",
+    "Vehicle Sighting (Wanted)",
+    "Traffic Control (assist Accident / Breakdown)",
+    "Other (manual data entry required)",
+  ],
+  Property: [
+    "Alarm (Business / Residential)",
+    "Burglary (in progress)",
+    "Property Located",
+    "Gates Open (Business / Residential)",
+    "Insecure Property (Business / School etc)",
+    "Street Lamps (non operational)",
+    "Manhole Cover (missing or displaced)",
+    "Lost & Found",
+    "Other (manual data entry required)",
+  ],
+  "Willful Damage": [
+    "Building",
+    "Graffiti / Tagging / Vandalism",
+    "Signs (missing or damaged)",
+    "Street Lamps (damaged)",
+    "Other (manual data entry required)",
+  ],
+  Disorder: [
+    "Assault",
+    "Riotous",
+    "Offensive (Language)",
+    "Threatening (Intimidation)",
+    "Insulting",
+    "Fighting",
+    "Disorderly Behaviour",
+    "Other (manual data entry required)",
+  ],
+  People: [
+    "Persons (missing / wanted / lost etc)",
+    "Suspicious (1C)",
+    "Trespassing",
+    "First Aid (Administered)",
+    "Dispute (Arguing / 5F)",
+    "Drunk (1K)",
+    "Welfare Check (Vulnerable persons)",
+    "Other (manual data entry required)",
+  ],
+  "Special Service": [
+    "Cordons",
+    "Assist (Emergency Services)",
+    "Events (Tasked)",
+    "Observation (Tasked)",
+    "Static Patrol (Tasked)",
+    "Traffic Control (Tasked - non accident)",
+    "Other (manual data entry required)",
+  ],
+};
 
 const deleteObservation = (
   i: number,
@@ -62,11 +127,11 @@ const addObservation = (
   newObservation: Observation,
   fields: Observation[],
   setFields: any,
-  append: any
+  replace: any
 ) => {
   const updatedFields = [...fields, newObservation];
   setFields(updatedFields);
-  append(newObservation);
+  replace(updatedFields);
   localStorage.setItem("observations", JSON.stringify(updatedFields));
   console.log(JSON.parse(localStorage.getItem("observations")!).length);
 };
@@ -89,7 +154,7 @@ const ReportObservation = ({
   form,
   fields,
   setObservationsList,
-  append,
+  replace,
   remove,
   update,
 }: ReportObservationProps) => {
@@ -107,6 +172,7 @@ const ReportObservation = ({
     description: "",
     time: parsedDate,
     category: "",
+    subCategory: "",
     type: type.observation,
     displayed: true,
   });
@@ -149,12 +215,13 @@ const ReportObservation = ({
       newObservation.category &&
       newObservation.description
     ) {
-      addObservation(newObservation, fields, setObservationsList, append);
+      addObservation(newObservation, fields, setObservationsList, replace);
       setNewObservation({
         location: address,
         description: "",
         time: parsedDate,
         category: "",
+        subCategory: "",
         type: type.observation,
         displayed: true,
       });
@@ -227,7 +294,7 @@ const ReportObservation = ({
                   )}
                 />
               </div>
-              <div className="flex gap-5 justify-center items-center w-full">
+              <div className="flex gap-5 justify-between items-center w-full">
                 <FormField
                   control={form.control}
                   name="observations.0.time"
@@ -269,6 +336,40 @@ const ReportObservation = ({
                               {category}
                             </option>
                           ))}
+                        </select>
+                      </FormControl>
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="observations.0.subCategory"
+                  render={() => (
+                    <FormItem
+                      className={`w-full transition-opacity duration-300 ${
+                        newObservation.category ? "block" : "hidden"
+                      }`}
+                    >
+                      <FormLabel className="font-semibold text-base">
+                        Subcategory
+                      </FormLabel>
+                      <FormControl>
+                        <select
+                          className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-slate-400 h-12"
+                          value={newObservation.subCategory}
+                          onChange={(e) => handleInputChange(e, "subCategory")}
+                        >
+                          <option value="" disabled>
+                            Select a Subcategory
+                          </option>
+                          {newObservation.category &&
+                            observationSubCategories[
+                              newObservation.category as keyof typeof observationSubCategories
+                            ]?.map((subCategory) => (
+                              <option key={subCategory} value={subCategory}>
+                                {subCategory}
+                              </option>
+                            ))}
                         </select>
                       </FormControl>
                     </FormItem>
@@ -351,7 +452,10 @@ const ReportObservation = ({
             <p className="text-xs text-gray-500 mt-2">
               Category: {observation.category}
             </p>
-            <p className="text-base">{observation.description}</p>
+            <p className="text-xs text-gray-500 mt-2">
+              Subcategory: {observation.subCategory}
+            </p>
+            <p className="text-base">Description: {observation.description}</p>
           </div>
         ))}
         <DialogContent>
@@ -434,6 +538,38 @@ const ReportObservation = ({
                               {category}
                             </option>
                           ))}
+                        </select>
+                      </FormControl>
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="observations.0.subCategory"
+                  render={() => (
+                    <FormItem className="w-full">
+                      <FormLabel className="font-semibold text-base">
+                        Subcategory
+                      </FormLabel>
+                      <FormControl>
+                        <select
+                          className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-slate-400 h-12"
+                          value={editObservationData?.subCategory || ""}
+                          onChange={(e) =>
+                            handleEditInputChange(e, "subCategory")
+                          }
+                        >
+                          <option value="" disabled>
+                            Select a Subcategory
+                          </option>
+                          {editObservationData?.category &&
+                            observationSubCategories[
+                              editObservationData.category as keyof typeof observationSubCategories
+                            ]?.map((subCategory) => (
+                              <option key={subCategory} value={subCategory}>
+                                {subCategory}
+                              </option>
+                            ))}
                         </select>
                       </FormControl>
                     </FormItem>
