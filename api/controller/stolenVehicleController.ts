@@ -39,6 +39,7 @@ export const getSingleStolenVehicle = async (req: Request, res: Response) => {
     const stolenVehicle = await prisma.stolen_vehicle.findUnique({
       where: { registration_number: registration_no },
       select: {
+        registration_number: true,
         vehicle_color : true,
         vehicle_brand : true,
         vehicle_model : true,
@@ -48,9 +49,11 @@ export const getSingleStolenVehicle = async (req: Request, res: Response) => {
         city : true,
       }
     });
+
     if (!stolenVehicle) {
       return res.status(404).json({ error: "Stolen vehicle not found" });
     }
+
     return res.status(200).json(toObject(stolenVehicle));
   } catch (error: any) {
     return res.status(400).json({ error: error.message });
