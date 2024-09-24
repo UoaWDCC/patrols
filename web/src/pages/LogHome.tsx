@@ -11,7 +11,7 @@ export default function ReportSummary() {
 
   const [showAmendmentDialog, setShowAmendmentDialog] = useState(false);
   const [amendmentText, setAmendmentText] = useState("");
-
+  
   // Function to navigate to the new report page
   const handleNewReport = () => {
     navigate("/Report");
@@ -93,17 +93,17 @@ export default function ReportSummary() {
         <div className="my-6">
           <div className="mb-8">
             <p>
-              Police Station Base{" "}
+              Police Station Base:{" "}
               <strong>{currentUserDetails?.police_station}</strong>
             </p>
             <p>
-              CP Call Sign <strong>{currentUserDetails?.call_sign}</strong>
+              CP Call Sign: <strong>{currentUserDetails?.call_sign}</strong>
             </p>
             <p>
-              Patrols <strong>{currentUserDetails?.patrol_id}</strong>{" "}
+              Patrols: <strong>{currentUserDetails?.patrol_id}</strong>{" "}
             </p>
             <p>
-              Vehicle <strong>{registrationNo}</strong>
+              Vehicle: <strong>{registrationNo}</strong>
             </p>
           </div>
           <div className="flex flex-row justify-center space-x-2 items-center">
