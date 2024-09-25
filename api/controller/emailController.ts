@@ -38,6 +38,7 @@ const formSchema = z.object({
   vehicle: z.string(),
   liveryOrSignage: z.string(),
   havePoliceRadio: z.string(),
+  additionalInfo: z.string()
 });
 
 export const userDetailsSchema = z.object({
