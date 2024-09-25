@@ -34,6 +34,7 @@ export const shiftDetailsSchema = z.object({
   police_station_base: z.string(),
   observer_id: z.string(),
   driver_id: z.string(),
+  additional_details: z.string(),
 });
 
 export const tokenSchema = z.object({
