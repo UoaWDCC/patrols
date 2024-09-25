@@ -74,6 +74,7 @@ export default function LogonForm(props: LogonFormProps) {
       vehicle: z.string(),
       liveryOrSignage: z.string(),
       havePoliceRadio: z.string(),
+      additionalDetails: z.string(),
     })
     .refine(
       (data) => {
@@ -110,6 +111,7 @@ export default function LogonForm(props: LogonFormProps) {
           ?.model || ""),
       liveryOrSignage: "yes",
       havePoliceRadio: "no",
+      additionalDetails: "",
     },
     mode: "onSubmit",
   });
@@ -571,6 +573,23 @@ export default function LogonForm(props: LogonFormProps) {
                       No
                     </label>
                   </div>
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="additionalDetails"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Additional Information</FormLabel>
+                <FormControl>
+                  <textarea
+                    {...field}
+                    placeholder="Add any additional information here..."
+                    className="w-[600px] px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>
