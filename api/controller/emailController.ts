@@ -25,12 +25,20 @@ const formSchema = z.object({
   patrol: z.string(),
   observerName: z.string(),
   observerNumber: z.string(),
+  numPatrollers: z.number().optional(),
+  additionalPatrollers: z
+    .array(
+      z.object({
+        name: z.string(),
+        number: z.string().optional(),
+      })
+    )
+    .optional(),
   guestPatrollers: z
     .array(
       z.object({
         name: z.string(),
-        number: z.string(),
-        registered: z.string(),
+        number: z.string().optional(),
       })
     )
     .optional(),
@@ -105,17 +113,19 @@ export const sendShiftRequest = async (req: Request, res: Response) => {
     const startDateTime = new Date(parseResult.data.formData.startTime);
     const endDateTime = new Date(parseResult.data.formData.endTime);
 
-      /* calculating the shift duration */
-  const shiftDuration = endDateTime.getTime() - startDateTime.getTime();
+    /* calculating the shift duration */
+    const shiftDuration = endDateTime.getTime() - startDateTime.getTime();
 
-  /* Fetching for the amount of guest patrollers */
-  const guestPatrollers = parseResult.data.formData.guestPatrollers?.length || 0;
+    /* calculating the shift duration in hours including rounding */
+    const shiftDurationInHours = Math.round(shiftDuration / 1000 / 60 / 60);
 
-  /* calculating the shift duration in hours including rounding */
-  const shiftDurationInHours = Math.round(shiftDuration / 1000 / 60 / 60);
+    /* Handling the number of patrollers */
+    const totalPatrollers =
+      (parseResult.data.formData.numPatrollers || 0) +
+      (parseResult.data.formData.guestPatrollers?.length || 0);
 
-  /* calculating the total hours patrolled */
-  const totalHoursPatrolled = shiftDurationInHours * 2 + guestPatrollers;
+    /* calculating the total hours patrolled */
+    const totalHoursPatrolled = shiftDurationInHours * 2 + totalPatrollers;
 
     const shift = await prisma.shift.create({
       data: {
@@ -176,9 +186,17 @@ export const sendShiftRequest = async (req: Request, res: Response) => {
       formData.guestPatrollers
         ?.map(
           (gp) =>
-            `Guest Name: ${gp.name}, Guest Phone Number: ${gp.number}, Registered: ${gp.registered}`
+            `Guest Name: ${gp.name}, Guest Phone Number: ${gp.number}`
         )
         .join("<br>") || "None";
+
+    const additionalPatrollersFormatted =
+    formData.additionalPatrollers
+      ?.map(
+        (ap) =>
+          `Patroller Name: ${ap.name}, Patroller Phone Number: ${ap.number || "N/A"}`
+      )
+      .join("<br>") || "None";
 
     const data = await resend.emails.send({
       from: `CPNZ <${CPNZ_APP_EMAIL}>`,
@@ -210,7 +228,10 @@ export const sendShiftRequest = async (req: Request, res: Response) => {
       <strong>Driver Number:</strong> ${
         driver.mobile_phone ? driver.mobile_phone : driver.home_phone
       } <br>
-        <strong>Guest Patrollers:</strong><br> ${guestPatrollersFormatted}<br>
+      <strong>Additional Patrollers:</strong><br> ${
+        additionalPatrollersFormatted
+      }<br>
+      <strong>Guest Patrollers:</strong><br> ${guestPatrollersFormatted}<br>
       <strong>Vehicle:</strong> ${formData.vehicle} <br>
       <strong>Livery or Signage:</strong> ${formData.liveryOrSignage} <br>
       <strong>Have Police Radio:</strong> ${formData.havePoliceRadio} <br>
