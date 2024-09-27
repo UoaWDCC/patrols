@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useFieldArray, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -22,7 +22,6 @@ import { Check, ChevronsUpDown, Loader2 } from "lucide-react";
 import {
   Command,
   CommandEmpty,
-  CommandGroup,
   CommandInput,
   CommandItem,
   CommandList,
@@ -49,6 +48,7 @@ export default function LogonForm(props: LogonFormProps) {
   const [submitting, setSubmitting] = useState<boolean>(false);
   const [numPatrollers, setNumPatrollers] = useState<number>(2);
   const navigate = useNavigate();
+  console.log(numPatrollers)
 
   const membersFullName = props.patrolDetails["members_dev"]
     .filter((m) => m.cpnz_id !== props.currentUserDetails.cpnz_id)
