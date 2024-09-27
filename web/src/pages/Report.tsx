@@ -217,7 +217,7 @@ export default function Report() {
             />
             <div className="mt-8">
               <label className="block text-left font-semibold ml-1">
-                Enter a Registration Number:
+                Search stolen vehicle:
               </label>
               <div className="flex mt-2 h-12">
                 <input
