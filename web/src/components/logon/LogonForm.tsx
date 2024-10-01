@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useFieldArray, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -12,14 +13,15 @@ import {
   FormLabel,
   FormMessage,
 } from "@components/ui/form";
-import { useState } from "react";
-import { Popover } from "@components/ui/popover";
-import { PopoverContent, PopoverTrigger } from "@radix-ui/react-popover";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@components/ui/popover";
 import { Check, ChevronsUpDown, Loader2 } from "lucide-react";
 import {
   Command,
   CommandEmpty,
-  CommandGroup,
   CommandInput,
   CommandItem,
   CommandList,
@@ -44,7 +46,9 @@ export default function LogonForm(props: LogonFormProps) {
   const [driver, setDriver] = useState<string>("");
   const [open, setOpen] = useState(false);
   const [submitting, setSubmitting] = useState<boolean>(false);
+  const [numPatrollers, setNumPatrollers] = useState<number>(2);
   const navigate = useNavigate();
+  console.log(numPatrollers)
 
   const membersFullName = props.patrolDetails["members_dev"]
     .filter((m) => m.cpnz_id !== props.currentUserDetails.cpnz_id)
@@ -61,12 +65,20 @@ export default function LogonForm(props: LogonFormProps) {
       patrol: z.string(),
       observerName: z.string(),
       observerNumber: z.string(),
+      numPatrollers: z.number().min(2).max(5),
+      additionalPatrollers: z
+        .array(
+          z.object({
+            name: z.string(),
+            number: z.string(),
+          })
+        )
+        .optional(),
       guestPatrollers: z
         .array(
           z.object({
             name: z.string(),
             number: z.string(),
-            registered: z.string(),
           })
         )
         .optional(),
@@ -101,8 +113,10 @@ export default function LogonForm(props: LogonFormProps) {
       patrol: props.patrolDetails.name.replace(/_/g, " "),
       observerName: `${props.currentUserDetails.first_names} ${props.currentUserDetails.surname}`,
       observerNumber: props.currentUserDetails.mobile_phone,
-      driver: "",
+      numPatrollers: 2,
+      additionalPatrollers: [],
       guestPatrollers: [],
+      driver: "",
       vehicle:
         (props.currentUserVehicles.find((v: VehicleDetails) => v.selected)
           ?.make || "") +
@@ -116,13 +130,38 @@ export default function LogonForm(props: LogonFormProps) {
     mode: "onSubmit",
   });
 
-  const { fields, append, remove } = useFieldArray({
+  const {
+    fields: additionalPatrollerFields,
+    append: appendPatroller,
+    remove: removePatroller,
+  } = useFieldArray({
+    control: form.control,
+    name: "additionalPatrollers",
+  });
+
+  const {
+    fields: guestFields,
+    append: appendGuest,
+    remove: removeGuest,
+  } = useFieldArray({
     control: form.control,
     name: "guestPatrollers",
   });
 
-  const addGuestPatroller = () => {
-    append({ name: "", number: "", registered: "No" });
+  const handleNumPatrollersChange = (value: number) => {
+    setNumPatrollers(value);
+    const currentAdditional =
+      form.getValues().additionalPatrollers?.length || 0;
+    if (value > 2) {
+      for (let i = currentAdditional; i < value - 2; i++) {
+        appendPatroller({ name: "", number: "" });
+      }
+    } else {
+      for (let i = currentAdditional; i > 0; i--) {
+        removePatroller(i - 1);
+      }
+    }
+    form.setValue("numPatrollers", value);
   };
 
   const onSubmit = async (data: z.infer<typeof formSchema>) => {
@@ -289,8 +328,36 @@ export default function LogonForm(props: LogonFormProps) {
             )}
           />
 
+          <FormField
+            control={form.control}
+            name="numPatrollers"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Number of Patrollers</FormLabel>
+                <FormControl>
+                  <select
+                    {...field}
+                    className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    onChange={(e) =>
+                      handleNumPatrollersChange(parseInt(e.target.value))
+                    }
+                  >
+                    {[2, 3, 4, 5].map((num) => (
+                      <option key={num} value={num}>
+                        {num}
+                      </option>
+                    ))}
+                  </select>
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
           <div className="col-span-2 mt-6">
-            <h4 className="text-2xl font-semibold mb-2">Patrol (observer)</h4>
+            <h4 className="text-2xl font-semibold mb-2">
+              Patroller (observer)
+            </h4>
             <div className="grid grid-cols-2 gap-4">
               <FormField
                 control={form.control}
@@ -322,7 +389,7 @@ export default function LogonForm(props: LogonFormProps) {
           </div>
 
           <div className="col-span-2">
-            <h4 className="text-2xl font-semibold mb-2">Patrol (driver)</h4>
+            <h4 className="text-2xl font-semibold mb-2">Patroller (driver)</h4>
             <FormField
               control={form.control}
               name="driver"
@@ -332,7 +399,7 @@ export default function LogonForm(props: LogonFormProps) {
                     <Popover open={open} onOpenChange={setOpen}>
                       <PopoverTrigger asChild>
                         <Button
-                          variant={"outline"}
+                          variant="outline"
                           role="combobox"
                           aria-expanded={open}
                           className="w-[300px] justify-between text-md text-gray-600"
@@ -345,44 +412,42 @@ export default function LogonForm(props: LogonFormProps) {
                           <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                         </Button>
                       </PopoverTrigger>
-                      <PopoverContent>
+                      <PopoverContent className="w-[300px] p-0">
                         <Command>
                           <CommandInput
                             placeholder="Search..."
-                            className="w-[255px]"
+                            className="h-9"
                           />
-                          <CommandEmpty>No user found.</CommandEmpty>
-                          <CommandGroup>
-                            <CommandList>
-                              {membersFullName.map((member) => (
-                                <CommandItem
-                                  key={member.name}
-                                  value={member.name}
-                                  onSelect={(currentDriver) => {
-                                    const newDriver =
-                                      currentDriver === driver
-                                        ? ""
-                                        : currentDriver;
-                                    setDriver(newDriver);
-                                    form.setValue("driver", newDriver, {
-                                      shouldValidate: true,
-                                    });
-                                    setOpen(false);
-                                  }}
-                                >
-                                  <Check
-                                    className={cn(
-                                      "mr-2 h-4 w-4",
-                                      driver === member.name
-                                        ? "opacity-100"
-                                        : "opacity-0"
-                                    )}
-                                  />
-                                  {member.name}
-                                </CommandItem>
-                              ))}
-                            </CommandList>
-                          </CommandGroup>
+                          <CommandEmpty>No driver found.</CommandEmpty>
+                          <CommandList>
+                            {membersFullName.map((member) => (
+                              <CommandItem
+                                key={member.name}
+                                value={member.name}
+                                onSelect={(currentDriver) => {
+                                  const newDriver =
+                                    currentDriver === driver
+                                      ? ""
+                                      : currentDriver;
+                                  setDriver(newDriver);
+                                  form.setValue("driver", newDriver, {
+                                    shouldValidate: true,
+                                  });
+                                  setOpen(false);
+                                }}
+                              >
+                                {member.name}
+                                <Check
+                                  className={cn(
+                                    "ml-auto h-4 w-4",
+                                    driver === member.name
+                                      ? "opacity-100"
+                                      : "opacity-0"
+                                  )}
+                                />
+                              </CommandItem>
+                            ))}
+                          </CommandList>
                         </Command>
                       </PopoverContent>
                     </Popover>
@@ -391,19 +456,99 @@ export default function LogonForm(props: LogonFormProps) {
               )}
             />
           </div>
-          {fields.map((_, index) => (
-            <div key={index} className="col-span-2 mt-8">
+
+          {additionalPatrollerFields.map((field, index) => (
+            <div key={field.id} className="col-span-2 mt-6">
+              <h4 className="text-2xl font-semibold mb-2">Patroller</h4>
+              <div className="grid grid-cols-2 gap-4">
+                <FormField
+                  control={form.control}
+                  name={`additionalPatrollers.${index}.name`}
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Name</FormLabel>
+                      <FormControl>
+                        <Popover>
+                          <PopoverTrigger asChild>
+                            <Button
+                              variant="outline"
+                              role="combobox"
+                              className="w-full justify-between"
+                            >
+                              {field.value
+                                ? membersFullName.find(
+                                    (member) => member.name === field.value
+                                  )?.name
+                                : "Select Patroller"}
+                              <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                            </Button>
+                          </PopoverTrigger>
+                          <PopoverContent className="w-[200px] p-0">
+                            <Command>
+                              <CommandInput placeholder="Search patroller..." />
+                              <CommandEmpty>No patroller found.</CommandEmpty>
+                              <CommandList>
+                                {membersFullName.map((member) => (
+                                  <CommandItem
+                                    key={member.name}
+                                    value={member.name}
+                                    onSelect={(currentPatroller) => {
+                                      form.setValue(
+                                        `additionalPatrollers.${index}.name`,
+                                        currentPatroller
+                                      );
+                                    }}
+                                  >
+                                    <Check
+                                      className={cn(
+                                        "mr-2 h-4 w-4",
+                                        field.value === member.name
+                                          ? "opacity-100"
+                                          : "opacity-0"
+                                      )}
+                                    />
+                                    {member.name}
+                                  </CommandItem>
+                                ))}
+                              </CommandList>
+                            </Command>
+                          </PopoverContent>
+                        </Popover>
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name={`additionalPatrollers.${index}.number`}
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Mobile Number</FormLabel>
+                      <FormControl>
+                        <Input {...field} className="w-full" />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+            </div>
+          ))}
+
+          {guestFields.map((field, index) => (
+            <div key={field.id} className="col-span-2 mt-8">
               <div className="flex items-center justify-between mb-2">
                 <h4 className="text-2xl font-semibold">Guest Patrol</h4>
                 <button
                   type="button"
                   className="px-2 py-1 bg-red-500 text-white rounded-md"
-                  onClick={() => remove(index)}
+                  onClick={() => removeGuest(index)}
                 >
                   -
                 </button>
               </div>
-              <div className="grid grid-cols-3 gap-4">
+              <div className="grid grid-cols-2 gap-4">
                 <FormField
                   control={form.control}
                   name={`guestPatrollers.${index}.name`}
@@ -436,53 +581,20 @@ export default function LogonForm(props: LogonFormProps) {
                     </FormItem>
                   )}
                 />
-                <FormField
-                  control={form.control}
-                  name={`guestPatrollers.${index}.registered`}
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>
-                        Is this guest a registered patroller?
-                      </FormLabel>
-                      <FormControl>
-                        <div className="flex items-center space-x-4">
-                          <label className="flex items-center">
-                            <input
-                              type="radio"
-                              {...field}
-                              className="mr-2"
-                              value={"Yes"}
-                            />
-                            Yes
-                          </label>
-                          <label className="flex items-center">
-                            <input
-                              type="radio"
-                              {...field}
-                              className="mr-2"
-                              value={"No"}
-                              defaultChecked
-                            />
-                            No
-                          </label>
-                        </div>
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
               </div>
             </div>
           ))}
+
           <div className="col-span-2 mt-2">
             <button
               type="button"
               className="px-4 py-2 bg-white text-black border-2 border-[#038400] rounded-md font-semibold underline hover:bg-[#038400] hover:text-white"
-              onClick={addGuestPatroller}
+              onClick={() => appendGuest({ name: "", number: "" })}
             >
               Add Guest Patrols
             </button>
           </div>
+
           <div className="col-span-2 mt-6">
             <h4 className="text-2xl font-semibold mb-2">Vehicle</h4>
             <div className="grid grid-cols-2 gap-4 items-center">
@@ -526,7 +638,7 @@ export default function LogonForm(props: LogonFormProps) {
                         {...field}
                         value="Yes"
                         className="mr-2"
-                        checked
+                        checked={field.value === "Yes"}
                       />
                       Yes
                     </label>
@@ -536,6 +648,7 @@ export default function LogonForm(props: LogonFormProps) {
                         {...field}
                         value="No"
                         className="mr-2"
+                        checked={field.value === "No"}
                       />
                       No
                     </label>
@@ -559,6 +672,7 @@ export default function LogonForm(props: LogonFormProps) {
                         {...field}
                         value="Yes"
                         className="mr-2"
+                        checked={field.value === "Yes"}
                       />
                       Yes
                     </label>
@@ -567,8 +681,8 @@ export default function LogonForm(props: LogonFormProps) {
                         type="radio"
                         {...field}
                         value="No"
-                        checked
                         className="mr-2"
+                        checked={field.value === "No"}
                       />
                       No
                     </label>
