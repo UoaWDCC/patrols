@@ -391,6 +391,7 @@ model shift {
   driver_id                                  BigInt
   vehicle_id                                 BigInt?
   total_hours_travelled                      BigInt?
+  additional_info                            String?
   amendment                                  amendment[]
   guest_patrollers                           guest_patrollers[]
   reports                                    reports[]

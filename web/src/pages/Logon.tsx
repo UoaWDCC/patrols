@@ -8,7 +8,7 @@ import {
   patrolDetailsSchema,
 } from "../schemas";
 import Loading from "@components/ui/Loading";
-import login from '../assets/images/login.png';
+import login from "../assets/images/login.png";
 import BottomNavBar from "@components/BottomNavBar";
 
 interface FormData {
@@ -45,7 +45,7 @@ export default function Logon() {
   }, [currentUserDetails, fullName, currentUserVehicles, patrolDetails]);
 
   if (loading) {
-    return <Loading />;    
+    return <Loading />;
   }
 
   if (formData) {
@@ -54,11 +54,7 @@ export default function Logon() {
         <div className="max-w-3xl w-full">
           <div className="bg-white py-8 max-w-800 mx-auto px-14 my-8">
             <div className="my-12 flex flex-row space-x-2 justify-center items-center">
-              <img
-                src={login}
-                alt="login"
-                className="w-8 h-8"
-              />
+              <img src={login} alt="login" className="w-8 h-8" />
               <h3 className="text-3xl font-semibold text-center">
                 Shift Log-on Form
               </h3>
@@ -72,7 +68,6 @@ export default function Logon() {
           <BottomNavBar />
         </div>
       </div>
-      
     );
   }
 }

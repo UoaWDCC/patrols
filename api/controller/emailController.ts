@@ -46,6 +46,7 @@ const formSchema = z.object({
   vehicle: z.string(),
   liveryOrSignage: z.string(),
   havePoliceRadio: z.string(),
+  additionalInfo: z.string(),
 });
 
 export const userDetailsSchema = z.object({
@@ -67,6 +68,8 @@ export const sendShiftRequest = async (req: Request, res: Response) => {
     formData: formSchema,
     driver: userDetailsSchema,
   });
+
+  console.log(req.body)
 
   const parseResult = emailSchema.safeParse(req.body);
   const recipientEmail = POLICE_EMAIL;
@@ -137,6 +140,7 @@ export const sendShiftRequest = async (req: Request, res: Response) => {
         driver_id: driver_id.id,
         vehicle_id: Number(parseResult.data.formData.vehicle),
         total_hours_travelled: totalHoursPatrolled,
+        additional_info: parseResult.data.formData.additionalInfo,
       },
     });
 
@@ -235,6 +239,7 @@ export const sendShiftRequest = async (req: Request, res: Response) => {
       <strong>Vehicle:</strong> ${formData.vehicle} <br>
       <strong>Livery or Signage:</strong> ${formData.liveryOrSignage} <br>
       <strong>Have Police Radio:</strong> ${formData.havePoliceRadio} <br>
+      <strong>Additional Details:</strong> ${formData.additionalInfo} <br>
     </p>
     <hr>
     <p>
