@@ -20,28 +20,34 @@ import axios from "axios";
 
 export default function Report() {
   const [submitting, setSubmitting] = useState(false);
-
   const { currentUserDetails, shiftDetails } = useUserData();
   const [registrationInput, setRegistrationInput] = useState("");
   const [vehicleData, setVehicleData] = useState<any>(null);
   const [openVehicleDialog, setOpenVehicleDialog] = useState<boolean>(false);
-  const [isRegistrationEmpty, setIsRegistrationEmpty] = useState<boolean>(false);
+  const [isRegistrationEmpty, setIsRegistrationEmpty] =
+    useState<boolean>(false);
 
   const navigate = useNavigate();
+
+  // temporary fix for error in report page where the submit button does not activate unless you refresh the page
+  localStorage.getItem("startOdometer") === null
+    ? localStorage.setItem("startOdometer", "000")
+    : null;
+
   const [observationsList, setObservationsList] = useState<
     z.infer<typeof formObservationSchema>
-  >(
+  >(() =>
     localStorage.getItem("observations")
       ? JSON.parse(localStorage.getItem("observations")!)
       : []
   );
 
   const [startOdometer, setStartOdometer] = useState<string>(
-    localStorage.getItem("startOdometer") || ""
+    localStorage.getItem("startOdometer") || "0"
   );
   const [endOdometer, setEndOdometer] = useState<string>(
     localStorage.getItem("endOdometer") ||
-    localStorage.getItem("startOdometer")!
+      localStorage.getItem("startOdometer")!
   );
   const [debrief, setDebrief] = useState<string>(
     localStorage.getItem("debrief") || "message"
@@ -55,11 +61,11 @@ export default function Report() {
   const form = useForm<z.infer<typeof reportFormSchema>>({
     resolver: zodResolver(reportFormSchema),
     defaultValues: {
-      startOdometer: startOdometer,
-      endOdometer: endOdometer,
+      startOdometer: startOdometer || "",
+      endOdometer: endOdometer || startOdometer || "",
       weatherCondition: "wet",
-      observations: observationsList,
-      debrief: debrief,
+      observations: observationsList || [],
+      debrief: debrief || "",
     },
   });
 
@@ -67,7 +73,6 @@ export default function Report() {
     control: form.control,
     name: "observations",
   });
-
 
   const onSubmit = (data: z.infer<typeof reportFormSchema>) => {
     setFormData(data);
@@ -88,21 +93,21 @@ export default function Report() {
       personIncidents,
       specialServiceIncidents,
     ] = [
-        parseInt(formData.endOdometer) - parseInt(formData.startOdometer),
-        ...[
-          "Vehicle",
-          "Property",
-          "Willful Damage",
-          "Disorder",
-          "People",
-          "Special Service",
-        ].map(
-          (category) =>
-            formData.observations.filter(
-              (o) => o.category.toString() === category
-            ).length
-        ),
-      ];
+      parseInt(formData.endOdometer) - parseInt(formData.startOdometer),
+      ...[
+        "Vehicle",
+        "Property",
+        "Willful Damage",
+        "Disorder",
+        "People",
+        "Special Service",
+      ].map(
+        (category) =>
+          formData.observations.filter(
+            (o) => o.category.toString() === category
+          ).length
+      ),
+    ];
     const totalIncidents =
       vehicleIncidents +
       propertyIncidents +
@@ -138,16 +143,14 @@ export default function Report() {
         isFootPatrol: false,
       },
       statistics,
+      eventNo: shiftDetails?.event_no,
     };
-
-    console.log(data);
 
     try {
       setSubmitting(true);
       await axios.post(`${import.meta.env.VITE_API_URL}/logoff/`, {
         data,
       });
-      console.log(formData, statistics);
       setSubmitting(false);
 
       localStorage.removeItem("observations");
@@ -225,7 +228,10 @@ export default function Report() {
                   className="font-light text-xs p-2 border border-gray-300 rounded-l-md w-full"
                   placeholder="Enter registration number"
                   value={registrationInput}
-                  onChange={(e) => (setRegistrationInput(e.target.value), setIsRegistrationEmpty(false))}
+                  onChange={(e) => (
+                    setRegistrationInput(e.target.value),
+                    setIsRegistrationEmpty(false)
+                  )}
                 />
                 <button
                   type="button"
@@ -244,21 +250,32 @@ export default function Report() {
             Submit Report & Log Off
           </button>
           <div>
-            <Dialog open={openVehicleDialog} onOpenChange={setOpenVehicleDialog}>
+            <Dialog
+              open={openVehicleDialog}
+              onOpenChange={setOpenVehicleDialog}
+            >
               <DialogContent>
                 <div className="mt-4 p-4 rounded-md">
                   {isRegistrationEmpty ? (
                     <div className="flex flex-col items-center">
                       <span className="text-4xl text-yellow-500">&#9888;</span>
-                      <p className="text-center text-yellow-500 font-semibold">Please enter a registration number</p>
+                      <p className="text-center text-yellow-500 font-semibold">
+                        Please enter a registration number
+                      </p>
                     </div>
                   ) : (
                     <>
-                      <h3 className="font-semibold text-[20px] text-black text-center my-4">Vehicle stolen status:</h3>
+                      <h3 className="font-semibold text-[20px] text-black text-center my-4">
+                        Vehicle stolen status:
+                      </h3>
                       {vehicleData ? (
-                        <p className="text-center text-red-600">This vehicle is stolen.</p>
+                        <p className="text-center text-red-600">
+                          This vehicle is stolen.
+                        </p>
                       ) : (
-                        <p className="text-center text-green-500">This vehicle is not stolen.</p>
+                        <p className="text-center text-green-500">
+                          This vehicle is not stolen.
+                        </p>
                       )}
                     </>
                   )}
@@ -266,8 +283,7 @@ export default function Report() {
               </DialogContent>
             </Dialog>
             <Dialog open={openDialog} onOpenChange={setOpenDialog}>
-              <DialogTrigger>
-              </DialogTrigger>
+              <DialogTrigger></DialogTrigger>
               <DialogContent>
                 <DialogDescription className="flex justify-center">
                   <div>

@@ -49,6 +49,7 @@ const emailSchema = z.object({
     email: z.string(),
     formData: reportSchema,
     statistics: statsSchema,
+    eventNo: z.string(),
   }),
 });
 
@@ -88,12 +89,15 @@ export const logOffEmail = async (req: Request, res: Response) => {
 
   /* throwing an error message if last shift does not exist */
   if (!lastShift) {
-    return res.status(400).json({ message: "No shift found with the provided shift_id" });
+    return res
+      .status(400)
+      .json({ message: "No shift found with the provided shift_id" });
   }
 
   /* calculating the shift duration */
   const shiftDuration =
-    new Date(lastShift.end_time).getTime() - new Date(lastShift.start_time).getTime();
+    new Date(lastShift.end_time).getTime() -
+    new Date(lastShift.start_time).getTime();
 
   /* Fetching for the amount of guest patrollers */
   const guestPatrollers = lastShift.guest_patrollers?.length || 0;
@@ -165,10 +169,10 @@ export const logOffEmail = async (req: Request, res: Response) => {
     const email = await resend.emails.send({
       from: `CPNZ <${CPNZ_APP_EMAIL}>`,
       to: [`${POLICE_EMAIL}`],
-      subject: `CPNZ - Log Off - Patrol ID: ${data.cpnzID} - Shift ID: ${data.formData.shiftId}`,
+      subject: `CPNZ - Log Off - Event No: ${data.eventNo} - Shift ID: ${data.formData.shiftId}`,
       html: `
             <div style="font-family: Arial, sans-serif; line-height: 1.8;">
-            <h2>This is a controlled test from CPNZ</h2>
+            <h2>This is sent from CPNZ for TESTING purposes, please kindly ignore this email</h2>
           <p style="font-size: 1.2em; font-weight: bold;">
             ${ObserverFullName} requests to log off. 
           </p>

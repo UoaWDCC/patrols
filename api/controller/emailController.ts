@@ -69,7 +69,7 @@ export const sendShiftRequest = async (req: Request, res: Response) => {
     driver: userDetailsSchema,
   });
 
-  console.log(req.body)
+  console.log(req.body);
 
   const parseResult = emailSchema.safeParse(req.body);
   const recipientEmail = POLICE_EMAIL;
@@ -189,18 +189,14 @@ export const sendShiftRequest = async (req: Request, res: Response) => {
     const guestPatrollersFormatted =
       formData.guestPatrollers
         ?.map(
-          (gp) =>
-            `Guest Name: ${gp.name}, Guest Phone Number: ${gp.number}`
+          (gp) => `Guest Name: ${gp.name}, Guest Phone Number: ${gp.number}`
         )
         .join("<br>") || "None";
 
     const additionalPatrollersFormatted =
-    formData.additionalPatrollers
-      ?.map(
-        (ap) =>
-          `Patroller Name: ${ap.name}, Patroller Phone Number: ${ap.number || "N/A"}`
-      )
-      .join("<br>") || "None";
+      formData.additionalPatrollers
+        ?.map((ap) => `Patroller Name: ${ap.name}`)
+        .join("<br>") || "None";
 
     const data = await resend.emails.send({
       from: `CPNZ <${CPNZ_APP_EMAIL}>`,
@@ -208,6 +204,7 @@ export const sendShiftRequest = async (req: Request, res: Response) => {
       subject: `CPNZ - Log On - Patrol ID: ${parseResult.data.driver.patrol_id} - Shift ID: ${shift?.id}`,
       html: `
       <div style="font-family: Arial, sans-serif; line-height: 1.8;">
+      <p style="font-size: 1.35em; font-weight: bold; margin-bottom: 15px;">This is a TEST logon email from CPNZ, please reply with a TEST event number (don't enter in database)</p>
     <p style="font-size: 1.2em; font-weight: bold;">
       ${
         formData.observerName
@@ -232,9 +229,7 @@ export const sendShiftRequest = async (req: Request, res: Response) => {
       <strong>Driver Number:</strong> ${
         driver.mobile_phone ? driver.mobile_phone : driver.home_phone
       } <br>
-      <strong>Additional Patrollers:</strong><br> ${
-        additionalPatrollersFormatted
-      }<br>
+      <strong>Additional Patrollers:</strong><br> ${additionalPatrollersFormatted}<br>
       <strong>Guest Patrollers:</strong><br> ${guestPatrollersFormatted}<br>
       <strong>Vehicle:</strong> ${formData.vehicle} <br>
       <strong>Livery or Signage:</strong> ${formData.liveryOrSignage} <br>
@@ -281,7 +276,10 @@ export const sendAmendEmail = async (
       from: `CPNZ <${CPNZ_APP_EMAIL}>`,
       to: [email],
       subject: subject,
-      html: `<p>${text}</p>`,
+      html: `<div>
+      <p style="font-size: 1.2em; font-weight: bold;">This is sent from CPNZ for TESTING purposes, please kindly ignore this email</p>
+      <p>${text}</p>
+      </div>`,
     });
     console.log("Email sent successfully:", data);
     return data;
