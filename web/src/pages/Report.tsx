@@ -143,16 +143,14 @@ export default function Report() {
         isFootPatrol: false,
       },
       statistics,
+      eventNo: shiftDetails?.event_no,
     };
-
-    console.log(data);
 
     try {
       setSubmitting(true);
       await axios.post(`${import.meta.env.VITE_API_URL}/logoff/`, {
         data,
       });
-      console.log(formData, statistics);
       setSubmitting(false);
 
       localStorage.removeItem("observations");
