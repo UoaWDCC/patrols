@@ -69,7 +69,7 @@ export const sendShiftRequest = async (req: Request, res: Response) => {
     driver: userDetailsSchema,
   });
 
-  console.log(req.body)
+  console.log(req.body);
 
   const parseResult = emailSchema.safeParse(req.body);
   const recipientEmail = POLICE_EMAIL;
@@ -189,18 +189,14 @@ export const sendShiftRequest = async (req: Request, res: Response) => {
     const guestPatrollersFormatted =
       formData.guestPatrollers
         ?.map(
-          (gp) =>
-            `Guest Name: ${gp.name}, Guest Phone Number: ${gp.number}`
+          (gp) => `Guest Name: ${gp.name}, Guest Phone Number: ${gp.number}`
         )
         .join("<br>") || "None";
 
     const additionalPatrollersFormatted =
-    formData.additionalPatrollers
-      ?.map(
-        (ap) =>
-          `Patroller Name: ${ap.name}, Patroller Phone Number: ${ap.number || "N/A"}`
-      )
-      .join("<br>") || "None";
+      formData.additionalPatrollers
+        ?.map((ap) => `Patroller Name: ${ap.name} || "N/A"}`)
+        .join("<br>") || "None";
 
     const data = await resend.emails.send({
       from: `CPNZ <${CPNZ_APP_EMAIL}>`,
@@ -232,9 +228,7 @@ export const sendShiftRequest = async (req: Request, res: Response) => {
       <strong>Driver Number:</strong> ${
         driver.mobile_phone ? driver.mobile_phone : driver.home_phone
       } <br>
-      <strong>Additional Patrollers:</strong><br> ${
-        additionalPatrollersFormatted
-      }<br>
+      <strong>Additional Patrollers:</strong><br> ${additionalPatrollersFormatted}<br>
       <strong>Guest Patrollers:</strong><br> ${guestPatrollersFormatted}<br>
       <strong>Vehicle:</strong> ${formData.vehicle} <br>
       <strong>Livery or Signage:</strong> ${formData.liveryOrSignage} <br>
