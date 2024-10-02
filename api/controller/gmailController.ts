@@ -170,7 +170,7 @@ const retrievePatrolIdAndLogOnId = (subject: string) => {
 const retrieveEventId = (emailContent: string) => {
   const decodedBuffer = Buffer.from(emailContent, "base64");
   const actualBodyInText = decodedBuffer.toString("utf-8");
-  const eventNoPattern = /[Pp]\d{7,9}/;
+  const eventNoPattern = /[Pp]\d{7,10}/;
   const eventNoMatch = actualBodyInText.match(eventNoPattern);
   const eventNo = eventNoMatch ? eventNoMatch[0] : undefined;
 

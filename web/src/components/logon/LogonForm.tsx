@@ -544,6 +544,19 @@ export default function LogonForm(props: LogonFormProps) {
                     </FormItem>
                   )}
                 />
+                {/* <FormField
+                  control={form.control}
+                  name={`additionalPatrollers.${index}.number`}
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Mobile Number</FormLabel>
+                      <FormControl>
+                        <Input {...field} className="w-full" />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                /> */}
               </div>
             </div>
           ))}
