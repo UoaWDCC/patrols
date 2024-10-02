@@ -47,7 +47,7 @@ export default function Report() {
   );
   const [endOdometer, setEndOdometer] = useState<string>(
     localStorage.getItem("endOdometer") ||
-      localStorage.getItem("startOdometer")! + 50
+      localStorage.getItem("startOdometer")!
   );
   const [debrief, setDebrief] = useState<string>(
     localStorage.getItem("debrief") || "message"
