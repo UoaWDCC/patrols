@@ -48,7 +48,7 @@ export default function LogonForm(props: LogonFormProps) {
   const [submitting, setSubmitting] = useState<boolean>(false);
   const [numPatrollers, setNumPatrollers] = useState<number>(2);
   const navigate = useNavigate();
-  console.log(numPatrollers)
+  console.log(numPatrollers);
 
   const membersFullName = props.patrolDetails["members_dev"]
     .filter((m) => m.cpnz_id !== props.currentUserDetails.cpnz_id)
@@ -333,7 +333,7 @@ export default function LogonForm(props: LogonFormProps) {
             name="numPatrollers"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Number of Patrollers</FormLabel>
+                <FormLabel>Number of Registered Patrollers</FormLabel>
                 <FormControl>
                   <select
                     {...field}
@@ -459,14 +459,15 @@ export default function LogonForm(props: LogonFormProps) {
 
           {additionalPatrollerFields.map((field, index) => (
             <div key={field.id} className="col-span-2 mt-6">
-              <h4 className="text-2xl font-semibold mb-2">Patroller</h4>
+              <h4 className="text-2xl font-semibold mb-2">
+                Patroller {index + 3}
+              </h4>
               <div className="grid grid-cols-2 gap-4">
                 <FormField
                   control={form.control}
                   name={`additionalPatrollers.${index}.name`}
                   render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Name</FormLabel>
+                    <FormItem className="text-xs">
                       <FormControl>
                         <Popover>
                           <PopoverTrigger asChild>
@@ -519,7 +520,7 @@ export default function LogonForm(props: LogonFormProps) {
                     </FormItem>
                   )}
                 />
-                <FormField
+                {/* <FormField
                   control={form.control}
                   name={`additionalPatrollers.${index}.number`}
                   render={({ field }) => (
@@ -531,7 +532,7 @@ export default function LogonForm(props: LogonFormProps) {
                       <FormMessage />
                     </FormItem>
                   )}
-                />
+                /> */}
               </div>
             </div>
           ))}
@@ -588,11 +589,14 @@ export default function LogonForm(props: LogonFormProps) {
           <div className="col-span-2 mt-2">
             <button
               type="button"
-              className="px-4 py-2 bg-white text-black border-2 border-[#038400] rounded-md font-semibold underline hover:bg-[#038400] hover:text-white"
+              className="px-4 py-2 bg-white text-black border-2 border-cpnz-blue-900 rounded-md font-semibold hover:bg-cpnz-blue-900 hover:text-white"
               onClick={() => appendGuest({ name: "", number: "" })}
             >
               Add Guest Patrols
             </button>
+            <p className="text-xs pt-2 italic">
+              Patrollers that are not registered with the selected patrol
+            </p>
           </div>
 
           <div className="col-span-2 mt-6">

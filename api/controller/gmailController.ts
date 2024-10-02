@@ -138,7 +138,6 @@ const storeEventIdInDb = async (
     }
 
     return true;
-
   } catch (error) {
     throw error;
   }
@@ -171,7 +170,7 @@ const retrievePatrolIdAndLogOnId = (subject: string) => {
 const retrieveEventId = (emailContent: string) => {
   const decodedBuffer = Buffer.from(emailContent, "base64");
   const actualBodyInText = decodedBuffer.toString("utf-8");
-  const eventNoPattern = /[Pp]\d{7}/;
+  const eventNoPattern = /[Pp]\d{7,9}/;
   const eventNoMatch = actualBodyInText.match(eventNoPattern);
   const eventNo = eventNoMatch ? eventNoMatch[0] : undefined;
 
@@ -395,8 +394,9 @@ const getMails = async () => {
   }
 };
 
-const saveWatchTimestampInDb = async (watchTimestamp: Date): Promise<boolean> => {
-
+const saveWatchTimestampInDb = async (
+  watchTimestamp: Date
+): Promise<boolean> => {
   const storeWatchTimestamp = await prisma.email_history_dev.update({
     where: {
       id: 1,
@@ -414,10 +414,9 @@ const saveWatchTimestampInDb = async (watchTimestamp: Date): Promise<boolean> =>
   console.log("Store watch timestamp: " + watchTimestamp);
 
   return true;
-}
+};
 
 const getWatchTimestampFromDb = async (): Promise<Date> => {
-
   const fetchWatchTimestamp = await prisma.email_history_dev.findUnique({
     where: {
       id: 1,
@@ -425,16 +424,17 @@ const getWatchTimestampFromDb = async (): Promise<Date> => {
     select: {
       watch_instance_timestamp: true,
     },
-  })
+  });
 
-  const timestamp: Date | null | undefined = fetchWatchTimestamp?.watch_instance_timestamp
+  const timestamp: Date | null | undefined =
+    fetchWatchTimestamp?.watch_instance_timestamp;
 
   if (!timestamp) {
-    throw new Error('Failed to fetch Watch\'s timestamp from DB')
+    throw new Error("Failed to fetch Watch's timestamp from DB");
   }
 
   return timestamp;
-}
+};
 
 /**
  * Reliability:
@@ -464,11 +464,13 @@ const callWatchMailsAPI = async (): Promise<any> => {
     const config = createPostConfig(url, token, data);
     const response = await axios.request(config);
 
-    const history_id = response.data.historyId
+    const history_id = response.data.historyId;
     saveHistoryIdInDb(history_id);
-    const date = new Date()
+    const date = new Date();
     saveWatchTimestampInDb(date);
-    console.log(`Store watch instance with info: History ID[${history_id}], Timestamp[${date}]`)
+    console.log(
+      `Store watch instance with info: History ID[${history_id}], Timestamp[${date}]`
+    );
 
     return response.data;
   } else {
@@ -505,14 +507,15 @@ const getAllMails = async (req: Request, res: Response): Promise<void> => {
 
 const checkAndRenewWatch = async () => {
   try {
-
     const currentTimestamp = await getWatchTimestampFromDb();
 
     if (currentTimestamp) {
       const now = new Date();
-      const differenceInDays = Math.floor((now.getTime() - currentTimestamp.getTime()) / (1000 * 3600 * 24));
+      const differenceInDays = Math.floor(
+        (now.getTime() - currentTimestamp.getTime()) / (1000 * 3600 * 24)
+      );
 
-      console.log(`Days since last call to watch: ${differenceInDays} days`)
+      console.log(`Days since last call to watch: ${differenceInDays} days`);
 
       // Check if more than 6 days have passed since last watch initiation
       if (differenceInDays >= 6) {
@@ -553,4 +556,10 @@ const stopWatchMails = async (req: Request, res: Response): Promise<void> => {
 // check daily
 setInterval(checkAndRenewWatch, 24 * 60 * 60 * 1000);
 
-export { watchMails, getHistoryRecords, stopWatchMails, saveHistoryIdInDb, getAllMails };
+export {
+  watchMails,
+  getHistoryRecords,
+  stopWatchMails,
+  saveHistoryIdInDb,
+  getAllMails,
+};
