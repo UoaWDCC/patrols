@@ -173,20 +173,20 @@ export default function LogonForm(props: LogonFormProps) {
       const now = new Date();
       const maxShiftDuration = 12 * 60 * 60 * 1000; // 12 hours in milliseconds
       const driver = data.driver;
-      console.log(data.numPatrollers);
+      // console.log(data.numPatrollers);
 
-      if (data.numPatrollers > 2) {
-        for (let i = 0; i < data.additionalPatrollers!.length; i++) {
-          console.log(data.additionalPatrollers![i].name);
-          if (data.additionalPatrollers![i].name === "") {
-            form.setError("additionalPatrollers", {
-              message: "Please select a patroller",
-            });
-            setSubmitting(false);
-            return;
-          }
-        }
-      }
+      // if (data.numPatrollers > 2) {
+      //   for (let i = 0; i < data.additionalPatrollers!.length; i++) {
+      //     console.log(data.additionalPatrollers![i].name);
+      //     if (data.additionalPatrollers![i].name === "") {
+      //       form.setError("additionalPatrollers", {
+      //         message: "Please select a patroller",
+      //       });
+      //       setSubmitting(false);
+      //       return;
+      //     }
+      //   }
+      // }
 
       if (start < now) {
         form.setError("startTime", {
