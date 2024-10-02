@@ -123,8 +123,8 @@ export default function LogonForm(props: LogonFormProps) {
         " " +
         (props.currentUserVehicles.find((v: VehicleDetails) => v.selected)
           ?.model || ""),
-      liveryOrSignage: "yes",
-      havePoliceRadio: "no",
+      liveryOrSignage: "Yes",
+      havePoliceRadio: "No",
       additionalInfo: "",
     },
     mode: "onSubmit",
@@ -172,6 +172,21 @@ export default function LogonForm(props: LogonFormProps) {
       const end = new Date(data.endTime);
       const now = new Date();
       const maxShiftDuration = 12 * 60 * 60 * 1000; // 12 hours in milliseconds
+      const driver = data.driver;
+      console.log(data.numPatrollers);
+
+      if (data.numPatrollers > 2) {
+        for (let i = 0; i < data.additionalPatrollers!.length; i++) {
+          console.log(data.additionalPatrollers![i].name);
+          if (data.additionalPatrollers![i].name === "") {
+            form.setError("additionalPatrollers", {
+              message: "Please select a patroller",
+            });
+            setSubmitting(false);
+            return;
+          }
+        }
+      }
 
       if (start < now) {
         form.setError("startTime", {
@@ -184,6 +199,14 @@ export default function LogonForm(props: LogonFormProps) {
       if (end.getTime() - start.getTime() > maxShiftDuration) {
         form.setError("endTime", {
           message: "Shift duration cannot exceed 12 hours",
+        });
+        setSubmitting(false);
+        return;
+      }
+
+      if (driver === "") {
+        form.setError("driver", {
+          message: "Please select a driver",
         });
         setSubmitting(false);
         return;
@@ -452,6 +475,7 @@ export default function LogonForm(props: LogonFormProps) {
                       </PopoverContent>
                     </Popover>
                   </FormControl>
+                  <FormMessage />
                 </FormItem>
               )}
             />
@@ -520,19 +544,6 @@ export default function LogonForm(props: LogonFormProps) {
                     </FormItem>
                   )}
                 />
-                {/* <FormField
-                  control={form.control}
-                  name={`additionalPatrollers.${index}.number`}
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Mobile Number</FormLabel>
-                      <FormControl>
-                        <Input {...field} className="w-full" />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                /> */}
               </div>
             </div>
           ))}
@@ -563,6 +574,7 @@ export default function LogonForm(props: LogonFormProps) {
                           {...field}
                         />
                       </FormControl>
+                      <FormMessage />
                     </FormItem>
                   )}
                 />
@@ -579,6 +591,7 @@ export default function LogonForm(props: LogonFormProps) {
                           {...field}
                         />
                       </FormControl>
+                      <FormMessage />
                     </FormItem>
                   )}
                 />
